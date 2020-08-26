@@ -1,0 +1,102 @@
+@import '../css/base.css';
+@import './_popper.scss';
+@import './_css-editor.scss';
+
+:host {
+  --primary: #4299E1;
+  --primary-light: #63B3ED;
+  --warning: #ECC94B;
+  --orange: #F6AD55;
+  --danger: #F56565;
+  --bg-default: #2d3748;
+  --bg-light: rgba(255, 255, 255, 0.05);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: #f7f7f7;
+}
+
+.button-icon {
+  color: #d4d6da;
+  &:focus {
+    outline: none;
+  }
+  &.active {
+    color: var(--primary);
+  }
+}
+
+.edit-element {	
+	position: fixed;
+	right: 30px;
+	top: 30px;
+	z-index: 9999;
+	width: 300px;
+  &__properties, &__content {
+	 border-radius: 15px;
+    box-shadow: 0 8px 40px -5px rgba(0,0,0,.09);
+    background-color: var(--bg-default);
+	  padding: 15px;
+  }
+  &__properties {
+    margin-bottom: 12px;
+  }
+}
+
+.text-overflow {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.line-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.horizontal-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.vertical-center {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.popper-container {
+  &.hide {
+    display: none;
+  }
+  width: 300px;
+  background-color: var(--bg-default);
+  padding: 15px;
+  border-radius: 15px;
+  z-index: 9999;
+  box-shadow: 0 8px 40px -5px rgba(0,0,0,.09);
+}
+
+.hover-css {
+	background-color: var(--bg-light);
+  padding: 8px 12px;
+  border-radius: 5px;
+  margin-top: 10px;
+  max-height: 120px;
+}
+
+.scroll {
+	&::-webkit-scrollbar {
+	  width: 7px;
+	  height: 9px;
+	}
+	&::-webkit-scrollbar-thumb {
+		background-color: rgba(255, 255, 255, 0.15);
+  	border-radius: 8px;
+	}
+	&::-webkit-scrollbar-track {
+		background: transparent;
+	}
+}

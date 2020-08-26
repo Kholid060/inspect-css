@@ -1,0 +1,55 @@
+.css-editor {
+	&:not(.hover) {
+		margin-top: 12px;
+	}
+	span, input {
+		&:focus {
+			outline: none;
+		}
+	}
+	&__properties {
+		max-height: 140px;
+		overflow: auto;
+	}
+	span {
+		vertical-align: middle;
+	}
+	&__color-preview {
+		height: 13px;
+		width: 13px;
+		margin-right: 3px;
+		border: 1px solid rgba(4, 4, 4, 0.3);
+		display: inline-block;
+	}
+	&__css-key, &__semicolon {
+		color: #80cbc4;
+	}
+	&__separator {
+		color: #89ddff;
+		margin-right: 6px;
+    margin-left: 2px;
+	}
+	&__css-value {
+		color: #fd9170;
+	}
+	&__add-property {
+		display: flex;
+		align-items: center;
+		margin-bottom: 4px;
+		border-radius: 5px;
+		border: 1px solid var(--bg-light);
+		button {
+			padding: 4px 8px;
+			svg {
+				fill: var(--primary);
+			}
+		}
+	}
+	input.css-editor__css-key, 
+	input.css-editor__css-value {
+		font-size: 14px;
+		background-color: transparent;
+		width: 50%;
+		padding: 4px 8px;
+	}
+}

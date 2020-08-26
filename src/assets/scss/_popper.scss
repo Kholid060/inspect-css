@@ -1,0 +1,58 @@
+$directions: ('top', 'right', 'bottom', 'left');
+
+.popper {
+	&__element-selector {
+		font-weight: 600;
+    font-size: 16px;
+		.tag {
+			color: var(--danger);
+		}
+		.id {
+			color: var(--primary);
+		}
+		.classes {
+			color: var(--primary-light);
+		}
+	}
+  &__font {
+    margin-bottom: 8px;
+    margin-top: 4px;
+  }
+	&__margin, &__padding, &__size {
+		background-color: rgba(66, 153, 225, 0.3);
+		border-radius: 15px;
+	}
+	&__margin {
+		border-radius: 15px;
+		position: relative;
+		padding: 30px 40px;
+		height: 150px;
+		.text {
+			position: absolute;
+			top: 5px;
+			left: 10px;
+			font-size: 12px;
+		}
+		@each $direction in $directions {
+			.#{$direction} {
+				#{$direction}: 5px;
+			}
+		}
+	}
+	&__padding {
+		position: relative;
+		height: 100%;
+		padding: 30px 40px;
+	}
+	&__size {
+		height: 100%;
+		display: flex;
+	  justify-content: center;
+	  align-items: center;
+	}
+  &__info {
+    font-size: 13px;
+    margin-top: 6px;
+    color: #dedee2;
+  }
+}
