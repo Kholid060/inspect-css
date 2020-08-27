@@ -15,18 +15,18 @@ $directions: ('top', 'right', 'bottom', 'left');
 		}
 	}
   &__font {
-    margin-bottom: 8px;
-    margin-top: 4px;
+    margin-bottom: var(--spacing-2);
   }
 	&__margin, &__padding, &__size {
 		background-color: rgba(66, 153, 225, 0.3);
-		border-radius: 15px;
+		border-radius: var(--rounded-lg);
+	}
+	&__margin, &__padding {
+		padding: var(--spacing-8) var(--spacing-10);
 	}
 	&__margin {
-		border-radius: 15px;
 		position: relative;
-		padding: 30px 40px;
-		height: 150px;
+		height: 160px;
 		.text {
 			position: absolute;
 			top: 5px;
@@ -42,7 +42,6 @@ $directions: ('top', 'right', 'bottom', 'left');
 	&__padding {
 		position: relative;
 		height: 100%;
-		padding: 30px 40px;
 	}
 	&__size {
 		height: 100%;
@@ -52,7 +51,7 @@ $directions: ('top', 'right', 'bottom', 'left');
 	}
   &__info {
     font-size: 13px;
-    margin-top: 6px;
-    color: #dedee2;
+    margin-top: var(--spacing-2);
+    color: var(--text-light);
   }
 }

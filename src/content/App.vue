@@ -1,7 +1,7 @@
 <template>
   <div class="app">
     <popper></popper>
-    <edit-element></edit-element>
+    <edit-element style="z-index: 999"></edit-element>
   </div>
 </template>
 <script>

@@ -5,9 +5,12 @@
 	outline: 1px solid var(--danger);
 }
 
+.inspector {
+  position: relative;
+  z-index: 9999;
+}
+
 .active-element {
-  touch-action: none;
-  user-select: none;
   outline: 1px solid var(--danger);
   transition: none !important;
 }

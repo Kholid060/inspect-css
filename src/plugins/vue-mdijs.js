@@ -7,6 +7,7 @@ import {
 	mdiSquareEditOutline,
 	mdiDrag,
 	mdiClose,
+	mdiDelete,
 } from '@mdi/js';
 
 VueMdijs.add({
@@ -17,6 +18,7 @@ VueMdijs.add({
   mdiSquareEditOutline,
   mdiDrag,
   mdiClose,
+  mdiDelete,
 });
 
 export default VueMdijs;

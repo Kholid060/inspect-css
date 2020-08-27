@@ -1,7 +1,7 @@
 <template>
-  <div class="edit-element">
+  <div class="fixed right-0 m-8 top-0" style="width: 300px;">
   	<Menu @close="closeExtension" :menu="menu" v-model="state.activeMenu"></Menu>
-    <div class="edit-element__content">
+    <div class="bg-default p-5 rounded-lg overflow-hidden" style="min-height: 200px">
       <transition :name="state.transition" mode="out-in">
     	  <component 
           :is="state.activeMenu" 

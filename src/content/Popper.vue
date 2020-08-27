@@ -1,5 +1,9 @@
 <template>
-  <div class="popper-container" ref="container">
+  <div 
+    class="bg-default rounded-lg p-5 shadow-xl" 
+    style="width: 300px; z-index: 999" 
+    ref="container"
+  >
     <element-size v-bind="state"></element-size>
   </div>
 </template>
@@ -37,8 +41,8 @@ export default {
         ],
       });
       const mousemove = ({ target, clientX, clientY }) => {
-        if (target.classList.contains('inspector')) return container.value.classList.add('hide');
-        container.value.classList.remove('hide');
+        if (target.classList.contains('inspector')) return container.value.classList.add('hidden');
+        container.value.classList.remove('hidden');
 
         const isDragging = document.body.classList.contains('dragging');
 

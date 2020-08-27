@@ -30,17 +30,17 @@
 	z-index: 9999;
 	width: 300px;
   &__menu, &__content {
-	  border-radius: 15px;
+	  border-radius: var(--rounded-lg);
     overflow: hidden;
     box-shadow: 0 8px 40px -5px rgba(0,0,0,.09);
     background-color: var(--bg-default);
-	  padding: 15px;
+	  padding: var(--spacing-4);
   }
   &__content {
   	min-height: 250px;
   }
   &__menu {
-    margin-bottom: 12px;
+    margin-bottom: var(--spacing-3);
     display: flex;
     color: var(--text-light);
     .icons {
@@ -61,7 +61,10 @@
 	.attribute {
 		display: flex;
 		align-items: center;
-		margin-bottom: 12px;
+		margin-bottom: var(--spacing-3);
+		&__delete-btn {
+			background-color: transparent;
+		}
 		&__key {
 			width: 40%;
 			text-transform: capitalize;
@@ -72,9 +75,9 @@
 			}
 			width: 60%;
 			background-color: var(--bg-light);
-			border-radius: 5px;
-			padding: 6px 8px;
-			margin-left: 6px;
+			border-radius: var(--rounded);
+			padding: var(--spacing-2) var(--spacing-3);
+			margin: 0 var(--spacing-2);
 			border: 1px solid rgba(255, 255, 255, 0.05);
 		}
 	}

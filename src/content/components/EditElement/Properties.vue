@@ -11,11 +11,15 @@
       @change:value="onEditorValueChange" 
     	@blur:value="onValueBlur"
     	@add="onAddProperty"
+      class="mt-4"
     	:css="state.appliedCSS.css"
     ></css-editor>
-    <div class="hover-css" v-if="state.appliedCSS.hover.length !== 0">
+    <div class="px-3 py-2 bg-light rounded-lg mt-4" v-if="state.appliedCSS.hover.length !== 0">
       <p>:hover</p>
-      <css-editor class="hover" :css="state.appliedCSS.hover" readonly></css-editor>
+      <css-editor
+        :css="state.appliedCSS.hover"
+        readonly
+      ></css-editor>
     </div>
   </div>
 </template>

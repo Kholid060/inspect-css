@@ -1,5 +1,5 @@
 <template>
-	<button class="button-icon" :class="{ active }">
+	<button class="focus:outline-none" :class="[active ? 'text-primary' : 'text-light']">
 		<v-mdi :name="icon" size="22"></v-mdi>
 	</button>
 </template>

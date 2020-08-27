@@ -22,7 +22,7 @@ const config = {
     extensions: ['.js', '.vue'],
     alias: {
       '~': path.resolve(__dirname, 'src/'),
-      'vue': 'vue/dist/vue.esm-bundler.js',
+      'vue': 'vue/dist/vue.runtime.esm-bundler.js',
     },
   },
   module: {
@@ -45,6 +45,16 @@ const config = {
         use: [
           'to-string-loader',
           'css-loader',
+          {
+            loader: 'postcss-loader',
+            options: {
+              ident: 'postcss',
+              plugins: [
+                require('tailwindcss'),
+                require('autoprefixer'),
+              ],
+            },
+          },
           'sass-loader',
         ],
       },
@@ -53,6 +63,16 @@ const config = {
         use: [
           'to-string-loader',
           'css-loader',
+          {
+            loader: 'postcss-loader',
+            options: {
+              ident: 'postcss',
+              plugins: [
+                require('tailwindcss'),
+                require('autoprefixer'),
+              ],
+            },
+          },
           'sass-loader?indentedSyntax',
         ],
       },
@@ -67,14 +87,8 @@ const config = {
         },
       },
       {
-        test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
-        loader: 'file-loader',
-        options: {
-          name: '[path][name].[ext]',
-          outputPath: '/fonts/',
-          emitFile: true,
-          esModule: false,
-        },
+        test: /\.(woff(2)?|ttf|eot)(\?v=\d+\.\d+\.\d+)?$/,
+        loader: 'url-loader',
       },
     ],
   },

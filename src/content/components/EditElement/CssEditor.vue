@@ -5,6 +5,7 @@
       v-model:key="state.key" 
       v-model:value="state.value" 
       @submit="submitForm"
+      class="mb-1"
     ></add-form>
     <div class="css-editor__properties scroll" v-if="css.length !== 0">
 	    <div 
@@ -22,7 +23,7 @@
 	      <span class="css-editor__separator">:</span>
 	      <span
 	      	v-if="isValidColor(property)" 
-	      	class="css-editor__color-preview" 
+	      	class="css-editor__color-preview h-3 w-3 inline-block border mr-1" 
 	      	:style="{ backgroundColor: property.value }"
 	      ></span>
 	      <span 

@@ -1,0 +1,44 @@
+$colors: (
+  'primary': #4299E1,
+  'primary-light': #63B3ED,
+  'warning': #ECC94B,
+  'danger': #F56565,
+  'orange': #F6AD55,
+);
+$bgColors: (
+  'bg-default': #2d3748,
+  'bg-light': rgba(255, 255, 255, 0.05),
+);
+$textColors: (
+  'text-default': #f7f7f7,
+  'text-light': #efefef,
+);
+$spacing: (
+  'spacing-1': 4px,
+  'spacing-2': 8px, 
+  'spacing-3': 12px,  
+  'spacing-4': 16px,  
+  'spacing-5': 20px,  
+  'spacing-6': 24px,  
+  'spacing-8': 32px,  
+  'spacing-10': 40px, 
+  'spacing-12': 48px,
+);
+$radius: (
+  'rounded': 5px,
+  'rounded-lg': 15px,
+);
+
+@mixin extractVariables($vars) {
+  @each $name, $value in $vars {
+    --#{$name}: #{$value};
+  }
+}
+
+:host {
+  @include extractVariables($colors);
+  @include extractVariables($radius);
+  @include extractVariables($spacing);
+  @include extractVariables($bgColors);
+  @include extractVariables($textColors);
+}

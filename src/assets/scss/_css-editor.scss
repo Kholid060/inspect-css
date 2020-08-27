@@ -1,7 +1,4 @@
 .css-editor {
-	&:not(.hover) {
-		margin-top: 12px;
-	}
 	span {
 		&:focus {
 			outline: none;
@@ -13,13 +10,6 @@
 	}
 	span {
 		vertical-align: middle;
-	}
-	&__color-preview {
-		height: 13px;
-		width: 13px;
-		margin-right: 3px;
-		border: 1px solid rgba(4, 4, 4, 0.3);
-		display: inline-block;
 	}
 	&__css-key, &__semicolon, .add-form__key {
 		color: #80cbc4;

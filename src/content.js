@@ -1,7 +1,7 @@
 import { createApp } from 'vue';
 import App from './content/App.vue';
 import VueMdijs from './plugins/vue-mdijs';
-import style from '~/assets/scss/style.scss';
+import style from '~/assets/scss/tailwind.scss';
 
 const app = createApp(App);
 app.use(VueMdijs);
