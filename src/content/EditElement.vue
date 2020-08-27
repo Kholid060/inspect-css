@@ -1,20 +1,34 @@
 <template>
   <div class="edit-element">
-  	<Menu></Menu>
+  	<Menu @close="closeExtension" :menu="menu" v-model="state.activeMenu"></Menu>
     <div class="edit-element__content">
-    	<properties v-bind="{ activeElementId }"></properties>
-  	</div>
+      <transition :name="state.transition" mode="out-in">
+    	  <component 
+          :is="state.activeMenu" 
+          :activeElementId="state.activeElementId"
+        ></component>
+      </transition>
+    </div>
   </div>
 </template>
 <script>
-import { onMounted, ref } from 'vue';
+import { onMounted, shallowReactive, watch } from 'vue';
 import Properties from './components/EditElement/Properties.vue';
+import Attributes from './components/EditElement/Attributes.vue';
 import Menu from './components/Menu.vue';
 
 export default {
-  components: { Properties, Menu },
+  components: { Properties, Menu, Attributes },
   setup() {
-  	const activeElementId = ref(0);
+    const state = shallowReactive({
+          activeElementId: 0,
+          activeMenu: 'properties',
+          transition: 'slide-right',
+    });
+    const menu = [
+      { name: 'properties', icon: 'mdi-vector-square' },
+      { name: 'attributes', icon: 'mdi-square-edit-outline' },
+    ];
   	const eventHandler = target => {
       if (target.matches('.inspector,.active-element,html,body')) return;
 
@@ -23,23 +37,43 @@ export default {
 
       target.classList.add('active-element');
 
-      activeElementId.value += 1;
+      state.activeElementId += 1;
+    };
+    const clickHandler = ({ target }) => eventHandler(target);
+    const keyupHandler = ({ code, ctrlKey }) => {
+      if (ctrlKey && code === 'Space') {
+        const target = document.querySelector('.hover-element');
+
+        eventHandler(target);
+      }
+    }
+    const closeExtension = () => {
+      window.removeEventListener('click', clickHandler);
+      document.removeEventListener('keyup', keyupHandler);
+    
+      const container = document.querySelector('.inspector');
+      document.body.removeChild(container);
+
+      const activeElement = document.querySelector('.active-element');
+      activeElement && activeElement.classList.remove('active-element');
     };
 
   	onMounted(() => {
-      window.addEventListener('click', ({ target }) => eventHandler(target));
+      window.addEventListener('click', clickHandler);
+      document.addEventListener('keyup', keyupHandler);
+    });
+    watch(() => state.activeMenu, (value, old) => {
+      const findIndex = (key) => menu.findIndex(({ name }) => key === name);
+      const indexNewMenu = findIndex(value);
+      const indexOldMenu = findIndex(old);
 
-      document.addEventListener('keyup', ({ code, ctrlKey }) => {
-        if (ctrlKey && code === 'Space') {
-          const target = document.querySelector('code');
-
-          eventHandler(target);
-        }
-      });
+      state.transition = indexNewMenu > indexOldMenu ? 'slide-right' : 'slide-left';
     });
 
     return {
-    	activeElementId,
+      menu,
+      state,
+      closeExtension,
     };
   },
 };

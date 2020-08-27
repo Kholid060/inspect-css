@@ -2,7 +2,7 @@
 	&:not(.hover) {
 		margin-top: 12px;
 	}
-	span, input {
+	span {
 		&:focus {
 			outline: none;
 		}
@@ -21,7 +21,7 @@
 		border: 1px solid rgba(4, 4, 4, 0.3);
 		display: inline-block;
 	}
-	&__css-key, &__semicolon {
+	&__css-key, &__semicolon, .add-form__key {
 		color: #80cbc4;
 	}
 	&__separator {
@@ -29,27 +29,7 @@
 		margin-right: 6px;
     margin-left: 2px;
 	}
-	&__css-value {
+	&__css-value, .add-form__value {
 		color: #fd9170;
-	}
-	&__add-property {
-		display: flex;
-		align-items: center;
-		margin-bottom: 4px;
-		border-radius: 5px;
-		border: 1px solid var(--bg-light);
-		button {
-			padding: 4px 8px;
-			svg {
-				fill: var(--primary);
-			}
-		}
-	}
-	input.css-editor__css-key, 
-	input.css-editor__css-value {
-		font-size: 14px;
-		background-color: transparent;
-		width: 50%;
-		padding: 4px 8px;
 	}
 }

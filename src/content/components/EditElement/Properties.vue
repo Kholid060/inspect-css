@@ -1,28 +1,26 @@
 <template>
-  <div class="properties">
-  	<h3>Element Properties</h3>
-    <template v-if="state.selected">
-      <element-size 
-      	:size="state.size" 
-      	:selector="state.selector" 
-      	:computedStyles="state.computedStyles" 
-      	:show-info="false"
-      ></element-size>
-      <css-editor
-      	@change="onEditorChange" 
-      	@add="onAddProperty"
-      	@blur:value="onValueBlur"
-      	:css="state.appliedCSS.css"
-      ></css-editor>
-      <div class="hover-css" v-if="state.appliedCSS.hover.length !== 0">
-        <p>:hover</p>
-        <css-editor class="hover" :css="state.appliedCSS.hover" readonly></css-editor>
-      </div>
-    </template>
+  <div class="properties" v-if="state.selected">
+    <element-size 
+    	:size="state.size" 
+    	:selector="state.selector" 
+    	:computedStyles="state.computedStyles" 
+    	:show-info="false"
+    ></element-size>
+    <css-editor
+    	@change:key="onEditorKeyChange" 
+      @change:value="onEditorValueChange" 
+    	@blur:value="onValueBlur"
+    	@add="onAddProperty"
+    	:css="state.appliedCSS.css"
+    ></css-editor>
+    <div class="hover-css" v-if="state.appliedCSS.hover.length !== 0">
+      <p>:hover</p>
+      <css-editor class="hover" :css="state.appliedCSS.hover" readonly></css-editor>
+    </div>
   </div>
 </template>
 <script>
-import { watch, reactive } from 'vue';
+import { watch, reactive, onMounted } from 'vue';
 import CssEditor from './CssEditor.vue';
 import ElementSize from '../ElementSize.vue';
 import getElementProperties, { computedStyleKeys } from '~/utils/getElementProperties';
@@ -45,33 +43,36 @@ export default {
       appliedCSS: { css: [], hover: [] },
     });
     const findDuplicateKey = (key) => state.appliedCSS.css.findIndex((style) => style.key === key);
-    const onEditorChange = ({ value, index, change }) => {
-      if (typeof change === 'undefined') return;
-
+    const onEditorKeyChange = ({ value, index }) => {
+      const activeElement = document.querySelector('.active-element');
       const styles = state.appliedCSS.css;
       const currentEdit = styles[index];
+      const newKey = value.replace(/\s/g, '');
+      const duplicateIndex = findDuplicateKey(newKey);
 
-      if (change === 'key') {
-        const newKey = value.replace(/\s/g, '');
-        const duplicateIndex = findDuplicateKey(newKey);
-
-        if (newKey === '') {
-          state.appliedCSS.css.splice(index, 1);
-        } else if (duplicateIndex !== -1) {
-          state.appliedCSS.css[index] = {
-            key: newKey,
-            value: currentEdit.value,
-          };
-          state.appliedCSS.css.splice(duplicateIndex, 1);
-        } else {
-          state.appliedCSS.css[index].key = newKey;
-        }
-      } else if (change === 'value') {
-        state.appliedCSS.css[index].value = value;
+      if (newKey === '') {
+        state.appliedCSS.css.splice(index, 1);
+      } else if (duplicateIndex !== -1) {
+        activeElement.style[currentEdit.key] = null;
+        state.appliedCSS.css[index] = {
+          key: newKey,
+          value: currentEdit.value,
+        };
+        state.appliedCSS.css.splice(duplicateIndex, 1);
+      } else if (currentEdit.key !== value) {
+        activeElement.style[currentEdit.key] = null;
       }
 
+      activeElement.style[value] = currentEdit.value;
+      state.appliedCSS.css[index].key = newKey;
+    };
+    const onEditorValueChange = ({ value, index, change }) => {
+      const styles = state.appliedCSS.css;
+      const currentEdit = styles[index];
       const activeElement = document.querySelector('.active-element');
-      activeElement.style[styles[index].key] = currentEdit.value;
+
+      state.appliedCSS.css[index].value = value;
+      activeElement.style[currentEdit.key] = currentEdit.value;
 
       const matchKeyword = [...computedStyleKeys, 'height', 'width'].indexOf(currentEdit.key);
       if (matchKeyword) {
@@ -98,8 +99,7 @@ export default {
     		state.appliedCSS.css.splice(index, 1);
     	}
     };
-
-    watch(() => props.activeElementId, () => {
+    const init = () => {
     	const target = document.querySelector('.active-element');
 
     	if (!target) return;
@@ -111,13 +111,17 @@ export default {
       state.selector = selector;
       state.computedStyles = computedStyles;
       state.selected = true;
-    });
+    };
+
+    watch(() => props.activeElementId, init);
+    onMounted(init);
 
     return {
       state,
       onValueBlur,
       onAddProperty,
-      onEditorChange,
+      onEditorKeyChange,
+      onEditorValueChange,
     };
   },
 };

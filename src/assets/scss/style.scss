@@ -1,6 +1,8 @@
 @import '../css/base.css';
 @import './_popper.scss';
 @import './_css-editor.scss';
+@import './_edit-element.scss';
+@import './_add-form.scss';
 
 :host {
   --primary: #4299E1;
@@ -10,36 +12,10 @@
   --danger: #F56565;
   --bg-default: #2d3748;
   --bg-light: rgba(255, 255, 255, 0.05);
+  --text-light: #efefef;
   font-family: 'Inter', sans-serif;
   font-size: 14px;
   color: #f7f7f7;
-}
-
-.button-icon {
-  color: #d4d6da;
-  &:focus {
-    outline: none;
-  }
-  &.active {
-    color: var(--primary);
-  }
-}
-
-.edit-element {	
-	position: fixed;
-	right: 30px;
-	top: 30px;
-	z-index: 9999;
-	width: 300px;
-  &__properties, &__content {
-	 border-radius: 15px;
-    box-shadow: 0 8px 40px -5px rgba(0,0,0,.09);
-    background-color: var(--bg-default);
-	  padding: 15px;
-  }
-  &__properties {
-    margin-bottom: 12px;
-  }
 }
 
 .text-overflow {
@@ -99,4 +75,9 @@
 	&::-webkit-scrollbar-track {
 		background: transparent;
 	}
+}
+
+.content-title {
+  font-size: 14px;
+  margin-bottom: 14px
 }

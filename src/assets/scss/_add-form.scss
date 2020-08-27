@@ -1,0 +1,23 @@
+.add-form {
+	display: flex;
+	align-items: center;
+	margin-bottom: 4px;
+	border-radius: 5px;
+	border: 1px solid var(--bg-light);
+	button {
+		padding: 4px 8px;
+		svg {
+			fill: var(--primary);
+		}
+	}
+	&__key,
+	&__value {
+		&:focus {
+			outline: none;
+		}
+		font-size: 14px;
+		background-color: transparent;
+		width: 50%;
+		padding: 4px 8px;
+	}
+}

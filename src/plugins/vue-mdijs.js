@@ -5,6 +5,8 @@ import {
 	mdiDragVariant,
 	mdiVectorSquare,
 	mdiSquareEditOutline,
+	mdiDrag,
+	mdiClose,
 } from '@mdi/js';
 
 VueMdijs.add({
@@ -13,6 +15,8 @@ VueMdijs.add({
   mdiDragVariant,
   mdiVectorSquare,
   mdiSquareEditOutline,
+  mdiDrag,
+  mdiClose,
 });
 
 export default VueMdijs;

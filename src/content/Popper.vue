@@ -6,6 +6,7 @@
 <script>
 import { ref, onMounted, shallowReactive } from 'vue';
 import { createPopper } from '@popperjs/core';
+import emitter from 'tiny-emitter/instance';
 import ElementSize from './components/ElementSize.vue';
 import { generateGetBoundingClientRect } from '~/utils/helper';
 import getElementProperties from '~/utils/getElementProperties';
@@ -35,8 +36,7 @@ export default {
           },
         ],
       });
-
-      window.addEventListener('mousemove', ({ target, clientX, clientY }) => {
+      const mousemove = ({ target, clientX, clientY }) => {
         if (target.classList.contains('inspector')) return container.value.classList.add('hide');
         container.value.classList.remove('hide');
 
@@ -63,6 +63,11 @@ export default {
             { once: true }
           );
         }
+      };
+      
+      window.addEventListener('mousemove', mousemove);
+      emitter.on('extension-close', () => {
+        window.removeEventListener('mousemove', mousemove);
       });
     });
 
