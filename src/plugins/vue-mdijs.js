@@ -8,6 +8,7 @@ import {
 	mdiDrag,
 	mdiClose,
 	mdiDelete,
+	mdiCodeTags,
 } from '@mdi/js';
 
 VueMdijs.add({
@@ -19,6 +20,7 @@ VueMdijs.add({
   mdiDrag,
   mdiClose,
   mdiDelete,
+  mdiCodeTags,
 });
 
 export default VueMdijs;

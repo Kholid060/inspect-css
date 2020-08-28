@@ -48,7 +48,7 @@ export default function(el) {
 
   el.matches = el.matches || el.webkitMatchesSelector || el.mozMatchesSelector || el.msMatchesSelector || el.oMatchesSelector;
 
-  sheets.forEach(sheet => {
+  sheets.forEach((sheet) => {
     try {
       const rules = Array.from(sheet.rules || sheet.cssRules);
       const filteredRules = rules.filter(rule => el.matches(rule.selectorText));

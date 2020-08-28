@@ -1,0 +1,77 @@
+.codeflask {
+  position: relative !important;
+  background-color: transparent;
+  height: 300px !important;
+  color: #fd9170;
+  &__flatten {
+    caret-color: white !important;
+    padding: 0 !important;
+  }
+  &__textarea, &__code {
+  	font-family: 'Fira Code', monospace !important;
+  }
+  .token.atrule, 
+  .token.boolean, 
+  .token.constant {
+		color: #c792ea;
+	}
+
+	.token.class {
+		color: #ffcb6b;
+	}
+
+	.token.class-name, 
+	.token.hexcode {
+		color: #f2ff00;
+	}
+
+	.token.comment {
+		color: #616161;
+	}
+
+	.token.deleted, 
+	.token.entity, 
+	.token.selector, 
+	.token.tag, 
+	.token.url, 
+	.token.variable {
+		color: #ff6666;
+	}
+
+	.token.id, 
+	.token.important, 
+	.token.symbol {
+		color: #c792ea;
+		font-weight: bold;
+	}
+
+	.token.inserted {
+		color: #80cbc4;
+	}
+
+	.token.number {
+		color: #fd9170;
+	}
+
+	.token.operator, 
+	.token.punctuation {
+		color: #89ddff;
+	}
+
+	.token.prolog {
+		color: #616161;
+	}
+
+	.token.property {
+		color: #80cbc4;
+	}
+
+	.token.pseudo-class, 
+	.token.pseudo-element, 
+	.token.string {
+		color: #a5e844;
+	}
+	.token.unit {
+		color: #fd9170;
+	}
+}

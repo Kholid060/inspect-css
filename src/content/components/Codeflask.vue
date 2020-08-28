@@ -15,7 +15,7 @@ export default {
     },
     language: {
       type: String,
-      default: 'text/css',
+      default: 'css',
     },
     readonly: {
       type: Boolean,
@@ -37,13 +37,18 @@ export default {
         language: props.language,
         readonly: props.readonly,
         styleParent: shadowRoot,
+        defaultTheme: false,
       });
       editor.value.updateCode(props.code);
       editor.value.onUpdate(value => {
         emit('update:code', value);
         emit('change', value);
       });
-      editor.value.elTextarea.placeholder = 'Your code here';
+      editor.value.elTextarea.placeholder = 'CSS Code here';
+
+      shadowRoot.querySelectorAll('.codeflask__flatten').forEach((el) => {
+        el.classList.add('scroll');
+      });
     });
 
     return {

@@ -25,6 +25,8 @@
   "dependencies": {
     "@mdi/js": "^5.5.55",
     "@popperjs/core": "^2.4.4",
+    "codeflask": "^1.4.1",
+    "codemirror": "^5.57.0",
     "draggabilly": "^2.3.0",
     "lodash.debounce": "^4.0.8",
     "prismjs": "^1.21.0",

@@ -8,11 +8,13 @@
 				:active="item.name === modelValue" 
 				@click="emitValue(item.name)"
 				class="mr-4"
+				:title="item.title"
 			></button-icon>	
 		</div>
 		<v-mdi 
 			@click="closeExtension" 
-			name="mdi-close" 
+			name="mdi-close"
+			size="22"
 			class="cursor-pointer hover:text-danger"
 		></v-mdi>
 	</div>

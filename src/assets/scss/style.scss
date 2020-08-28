@@ -1,11 +1,10 @@
-@import './variables.scss';
-@import './_popper.scss';
 @import './_css-editor.scss';
-@import './_edit-element.scss';
+@import './_codeflask.scss';
 
 :host {
+  @apply text-default;
   font-family: 'Inter', sans-serif;
-  color: var(--text-default);
+  font-size: 14px;
 }
 
 * {
