@@ -1,12 +1,12 @@
 <template>
   <div class="popper">
-    <div class="line-clamp font-semibold mb-1" style="font-size: 16px">
+    <div class="line-clamp font-semibold mb-1">
       <span class="text-danger">{{ selector.tag }}</span
       ><span class="text-primary">{{ selector.id }}</span
       ><span class="text-primary-light">{{ selector.classes }}</span>
     </div>
     <p class="text-overflow mb-3">
-      <v-mdi name="mdi-format-font"></v-mdi>
+      <v-mdi name="mdi-format-color-text" style="margin-left: -5px"></v-mdi>
       {{ computedStyles.fontFamily }}
     </p>
     <div class="px-10 py-8 bg-primary bg-opacity-25 rounded-lg relative mb-2 h-40" style="height: 166px">

@@ -24,7 +24,7 @@
 	      <span
 	      	v-if="isValidColor(property)" 
 	      	class="css-editor__color-preview h-3 w-3 inline-block border mr-1" 
-	      	:style="{ backgroundColor: property.value }"
+	      	:style="{ backgroundColor: colorValue(property.value) }"
 	      ></span>
 	      <span 
 	      	@input="handleChange($event, index, 'value')" 
@@ -37,6 +37,9 @@
 	      <span class="css-editor__semicolon">;</span>
 	    </div>
 	  </div>
+    <p v-else class="text-center mt-4 text-light">
+      There's no CSS that applied at this element
+    </p>
   </div>
 </template>
 <script>
@@ -58,6 +61,7 @@ export default {
 
     return {
     	state,
+      colorValue: (str) => str.replace('!important', ''),
       isValidColor: ({ key, value }) => {
         const keywords = ['color', 'background'];
         const matchKeyword = keywords.some(keyword => key.match(keyword));

@@ -1,6 +1,7 @@
 :root {
 	--danger: #F56565;
 }
+
 .hover-element {
 	outline: 1px solid var(--danger);
 }
@@ -12,7 +13,7 @@
 
 .active-element {
   outline: 1px solid var(--danger);
-  transition: none !important;
+  position: relative !important;
 }
 
 /* inter-regular - latin */

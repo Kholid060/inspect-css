@@ -3,8 +3,8 @@
 
 :host {
   @apply text-default;
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 14px !important;
 }
 
 * {
@@ -61,3 +61,18 @@
 		background: transparent;
 	}
 }
+
+@mixin slideTransition($name, $translate) {
+  .slide-#{$name}-enter-active,
+  .slide-#{$name}-leave-active {
+    transition: all 500ms ease;
+  }
+  .slide-#{$name}-enter-from,
+  .slide-#{$name}-leave-to {
+    transform: translateX($translate);
+    opacity: 0;
+  }
+}
+
+@include slideTransition('right', 100%);
+@include slideTransition('left', -100%);
