@@ -9,35 +9,27 @@
       <v-mdi name="mdi-format-color-text" style="margin-left: -5px"></v-mdi>
       {{ computedStyles.fontFamily }}
     </p>
-    <div class="px-10 py-8 bg-primary bg-opacity-25 rounded-lg relative mb-2 h-40" style="height: 166px">
+    <div class="px-10 py-8 bg-primary bg-opacity-25 rounded-lg relative mb-2 text-sm" style="height: 166px">
       <span class="absolute left-0 top-0 ml-2 mt-1 text-sm">margin</span>
-      <span 
-        v-for="direction in directions" 
+      <span
+        v-for="direction in directions"
         :key="direction"
-        :class="[
-          direction, 
-          direction === 'top' || direction === 'bottom' ? 'horizontal-center' : 'vertical-center'
-        ]"
+        :class="[direction, direction === 'top' || direction === 'bottom' ? 'horizontal-center' : 'vertical-center']"
         :style="{ [direction]: '5px' }"
       >
         {{ computedStyles[`margin-${direction}`] }}
       </span>
       <div class="px-10 py-8 bg-primary bg-opacity-25 rounded-lg relative">
         <span class="absolute left-0 top-0 ml-2 mt-1 text-sm">padding</span>
-        <span 
-          v-for="direction in directions" 
-          :key="direction" 
-          :class="[
-            direction, 
-            direction === 'top' || direction === 'bottom' ? 'horizontal-center' : 'vertical-center'
-          ]"
+        <span
+          v-for="direction in directions"
+          :key="direction"
+          :class="[direction, direction === 'top' || direction === 'bottom' ? 'horizontal-center' : 'vertical-center']"
           :style="{ [direction]: '5px' }"
         >
           {{ computedStyles[`padding-${direction}`] }}
         </span>
-        <div class="bg-primary bg-opacity-25 rounded-lg text-center p-2">
-          {{ Math.floor(size.width) }} x {{ Math.floor(size.height) }}
-        </div>
+        <div class="bg-primary bg-opacity-25 rounded-lg text-center p-2">{{ Math.floor(size.width) }} x {{ Math.floor(size.height) }}</div>
       </div>
     </div>
     <p class="text-sm mt-4 text-light" v-show="showInfo">

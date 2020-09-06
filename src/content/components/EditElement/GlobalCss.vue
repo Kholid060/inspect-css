@@ -1,8 +1,8 @@
 <template>
-	<div class="global-css">
-		<p class="font-semibold mb-3">Global CSS</p>
-		<codeflask v-model:code="codes"></codeflask>
-	</div>
+  <div class="global-css p-5">
+    <p class="font-semibold mb-3">Global CSS</p>
+    <codeflask v-model:code="codes"></codeflask>
+  </div>
 </template>
 <script>
 import { onMounted, ref, watch } from 'vue';
@@ -10,36 +10,39 @@ import debounce from 'lodash.debounce';
 import Codeflask from '../Codeflask.vue';
 
 export default {
-	components: { Codeflask },
-	setup() {
-		const codes = ref('');
+  components: { Codeflask },
+  setup() {
+    const codes = ref('');
 
-		watch(codes, debounce((value) => {
-			if (typeof value !== 'string') return;
+    watch(
+      codes,
+      debounce(value => {
+        if (typeof value !== 'string') return;
 
-			const style = document.getElementById('custom-global-css');
-			style.innerText = value;
+        const style = document.getElementById('custom-global-css');
+        style.innerText = value;
 
-			localStorage.setItem('global-css', value);
-		}, 250));
+        localStorage.setItem('global-css', value);
+      }, 250)
+    );
 
-		onMounted(() => {
-			const storageCodes = localStorage.getItem('global-css') || '';
-			
-			codes.value = storageCodes;
+    onMounted(() => {
+      const storageCodes = localStorage.getItem('global-css') || '';
 
-			const styleEl = document.getElementById('custom-global-css');
-			if (styleEl) return;
+      codes.value = storageCodes;
 
-			const style = document.createElement('style');
-			style.id = 'custom-global-css';
-			style.innerText = storageCodes;
-			document.body.appendChild(style);
-		});
+      const styleEl = document.getElementById('custom-global-css');
+      if (styleEl) return;
 
-		return {
-			codes,
-		};
-	},
+      const style = document.createElement('style');
+      style.id = 'custom-global-css';
+      style.innerText = storageCodes;
+      document.body.appendChild(style);
+    });
+
+    return {
+      codes,
+    };
+  },
 };
 </script>

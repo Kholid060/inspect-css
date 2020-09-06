@@ -1,9 +1,5 @@
 <template>
-  <div 
-    class="bg-default rounded-lg p-5 shadow-xl" 
-    style="width: 300px; z-index: 999" 
-    ref="container"
-  >
+  <div class="bg-default rounded-lg p-5 shadow-2xl" style="width: 300px; z-index: 999" ref="container">
     <element-size v-bind="state"></element-size>
   </div>
 </template>
@@ -68,7 +64,7 @@ export default {
           );
         }
       };
-      
+
       window.addEventListener('mousemove', mousemove);
       emitter.on('extension-close', () => {
         window.removeEventListener('mousemove', mousemove);

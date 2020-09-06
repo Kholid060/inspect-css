@@ -11,7 +11,7 @@ const config = {
   mode: process.env.NODE_ENV,
   context: __dirname + '/src',
   entry: {
-    content: ['./assets/css/content.css', './content.js'],
+    content: ['./assets/scss/tailwind.scss', './content.js'],
     background: './background.js',
   },
   output: {
@@ -22,7 +22,7 @@ const config = {
     extensions: ['.js', '.vue'],
     alias: {
       '~': path.resolve(__dirname, 'src/'),
-      'vue': 'vue/dist/vue.runtime.esm-bundler.js',
+      vue: 'vue/dist/vue.runtime.esm-bundler.js',
     },
   },
   module: {
@@ -43,16 +43,13 @@ const config = {
       {
         test: /\.scss$/,
         use: [
-          'to-string-loader',
+          MiniCssExtractPlugin.loader,
           'css-loader',
           {
             loader: 'postcss-loader',
             options: {
               ident: 'postcss',
-              plugins: [
-                require('tailwindcss'),
-                require('autoprefixer'),
-              ],
+              plugins: [require('tailwindcss'), require('autoprefixer')],
             },
           },
           'sass-loader',
@@ -67,10 +64,7 @@ const config = {
             loader: 'postcss-loader',
             options: {
               ident: 'postcss',
-              plugins: [
-                require('tailwindcss'),
-                require('autoprefixer'),
-              ],
+              plugins: [require('tailwindcss'), require('autoprefixer')],
             },
           },
           'sass-loader?indentedSyntax',
@@ -105,7 +99,7 @@ const config = {
       {
         from: 'manifest.json',
         to: 'manifest.json',
-        transform: (content) => {
+        transform: content => {
           const jsonContent = JSON.parse(content);
           jsonContent.version = version;
 

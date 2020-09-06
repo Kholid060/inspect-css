@@ -41,12 +41,14 @@ export default {
       });
       editor.value.updateCode(props.code);
       editor.value.onUpdate(value => {
+        if (typeof value !== 'string') return;
+
         emit('update:code', value);
         emit('change', value);
       });
       editor.value.elTextarea.placeholder = 'CSS Code here';
 
-      shadowRoot.querySelectorAll('.codeflask__flatten').forEach((el) => {
+      shadowRoot.querySelectorAll('.codeflask__flatten').forEach(el => {
         el.classList.add('scroll');
       });
     });

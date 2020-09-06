@@ -15,7 +15,7 @@ export const deletePx = text => {
 
 export const computedStyleKeys = ['margin-bottom', 'margin-top', 'margin-right', 'margin-left', 'padding-bottom', 'padding-top', 'padding-right', 'padding-left', 'fontFamily'];
 
-export const getSelector = (target) => {
+export const getSelector = target => {
   const selector = {
     tag: target.tagName.toLowerCase(),
     id: target.id ? `#${target.id}` : '',
@@ -23,7 +23,7 @@ export const getSelector = (target) => {
   };
 
   return selector;
-}
+};
 
 export default function(target) {
   const { height, width } = target.getBoundingClientRect();

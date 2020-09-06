@@ -1,0 +1,13 @@
+.hover-element {
+  outline: 1px solid var(--danger);
+}
+
+.inspector {
+  position: relative;
+  z-index: 9999;
+}
+
+.active-element {
+  outline: 1px solid var(--danger);
+  position: relative !important;
+}

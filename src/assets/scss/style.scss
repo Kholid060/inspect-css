@@ -1,14 +1,12 @@
-@import './_css-editor.scss';
+@import './_fonts.scss';
+@import './_element.scss';
 @import './_codeflask.scss';
+@import './_website-palettes.scss';
 
-:host {
-  @apply text-default;
-  font-family: 'Inter', sans-serif !important;
-  font-size: 14px !important;
-}
-
-* {
-  border-color: rgba(255, 255, 255, 0.15) !important;
+.global-css {
+  .codeflask {
+    height: 250px !important;
+  }
 }
 
 .text-overflow {
@@ -49,30 +47,41 @@
 }
 
 .scroll {
-	&::-webkit-scrollbar {
-	  width: 7px;
-	  height: 9px;
-	}
-	&::-webkit-scrollbar-thumb {
-		background-color: rgba(255, 255, 255, 0.15);
-  	border-radius: 8px;
-	}
-	&::-webkit-scrollbar-track {
-		background: transparent;
-	}
-}
-
-@mixin slideTransition($name, $translate) {
-  .slide-#{$name}-enter-active,
-  .slide-#{$name}-leave-active {
-    transition: all 500ms ease;
+  &::-webkit-scrollbar {
+    width: 7px;
+    height: 9px;
   }
-  .slide-#{$name}-enter-from,
-  .slide-#{$name}-leave-to {
-    transform: translateX($translate);
-    opacity: 0;
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
   }
 }
 
-@include slideTransition('right', 100%);
-@include slideTransition('left', -100%);
+.zoom-enter-active,
+.zoom-leave-active {
+  transition: all 300ms ease;
+}
+.zoom-enter-from,
+.zoom-leave-to {
+  transform: scale(0.7);
+  transform-origin: top center;
+  opacity: 0;
+}
+
+// @mixin slideTransition($name, $translate) {
+//   .slide-#{$name}-enter-active,
+//   .slide-#{$name}-leave-active {
+//     transition: all 500ms ease;
+//   }
+//   .slide-#{$name}-enter-from,
+//   .slide-#{$name}-leave-to {
+//     transform: translateX($translate);
+//     opacity: 0;
+//   }
+// }
+
+// @include slideTransition('right', 100%);
+// @include slideTransition('left', -100%);

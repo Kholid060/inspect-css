@@ -1,0 +1,15 @@
+.toast {
+  .toast-content {
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-40px) translateX(-50%);
+    transition: all 250ms ease;
+  }
+  &.open {
+    .toast-content {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+  }
+}

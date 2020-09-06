@@ -8,3 +8,13 @@ browser.browserAction.onClicked.addListener(async tab => {
     file: 'content.css',
   });
 });
+
+browser.runtime.onMessage.addListener(({ type }) => {
+  if (type === 'captureTab') {
+    return new Promise(resolve => {
+      browser.tabs.captureVisibleTab().then(image => {
+        resolve(image);
+      });
+    });
+  }
+});
