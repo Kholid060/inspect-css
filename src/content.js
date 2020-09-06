@@ -2,31 +2,28 @@ import { createApp } from 'vue';
 import App from './content/App.vue';
 import VueMdijs from './plugins/vue-mdijs';
 import style from './assets/scss/tailwind.scss';
-import VueTippy from 'vue-tippy';
+import VTooltip from './directives/VTooltip';
 
 const app = createApp(App);
+
 app.use(VueMdijs);
 
-// const shadowEl = document.createElement('div');
-// shadowEl.classList.add('inspector');
-// shadowEl.attachShadow({ mode: 'open' });
+app.directive('tooltip', VTooltip);
 
-// const { shadowRoot } = shadowEl;
+const shadowEl = document.createElement('div');
+shadowEl.classList.add('inspector');
+shadowEl.attachShadow({ mode: 'open' });
 
-// const rootElement = document.createElement('div');
-// rootElement.classList.add('root');
+const { shadowRoot } = shadowEl;
 
-// const styleEl = document.createElement('style');
-// styleEl.innerText = style;
+const rootElement = document.createElement('div');
+rootElement.classList.add('root');
 
-// shadowRoot.appendChild(rootElement);
-// shadowRoot.appendChild(styleEl);
-// document.body.appendChild(shadowEl);
+const styleEl = document.createElement('style');
+styleEl.innerText = style;
 
-const extensionContainer = document.createElement('div');
-extensionContainer.classList.add('inspector');
-document.body.appendChild(extensionContainer);
+shadowRoot.appendChild(rootElement);
+shadowRoot.appendChild(styleEl);
+document.body.appendChild(shadowEl);
 
-app.use(VueTippy);
-
-app.mount(extensionContainer);
+app.mount(rootElement);

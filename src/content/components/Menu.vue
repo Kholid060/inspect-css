@@ -4,10 +4,10 @@
       v-for="item in menu"
       :key="item.name"
       :content="item.name"
-      v-tippy
       class="focus:outline-none"
       :class="[item.name === modelValue ? 'text-primary' : 'text-light']"
       :title="item.title"
+      v-tooltip="item.name"
       @click="emitValue(item.name)"
     >
       <v-mdi :name="item.icon" size="24"></v-mdi>

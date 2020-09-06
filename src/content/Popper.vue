@@ -5,11 +5,11 @@
 </template>
 <script>
 import { ref, onMounted, shallowReactive } from 'vue';
-import { createPopper } from '@popperjs/core';
 import emitter from 'tiny-emitter/instance';
 import ElementSize from './components/ElementSize.vue';
 import { generateGetBoundingClientRect } from '~/utils/helper';
 import getElementProperties from '~/utils/getElementProperties';
+import createPopper from '~/utils/createPopper';
 
 export default {
   components: { ElementSize },
@@ -25,16 +25,12 @@ export default {
       const virtualElement = {
         getBoundingClientRect: generateGetBoundingClientRect(),
       };
-      const instance = createPopper(virtualElement, container.value, {
-        placement: 'right-end',
-        modifiers: [
-          {
-            name: 'offset',
-            options: {
-              offset: [20, 20],
-            },
-          },
-        ],
+      const instance = createPopper({
+        container: virtualElement,
+        content: container.value,
+        options: {
+          placement: 'right-end',
+        },
       });
       const mousemove = ({ target, clientX, clientY }) => {
         if (target.classList.contains('inspector')) return container.value.classList.add('hidden');

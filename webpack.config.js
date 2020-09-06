@@ -43,7 +43,7 @@ const config = {
       {
         test: /\.scss$/,
         use: [
-          MiniCssExtractPlugin.loader,
+          'to-string-loader',
           'css-loader',
           {
             loader: 'postcss-loader',
