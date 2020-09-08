@@ -1,12 +1,13 @@
 import CreateTooltip from '~/utils/createTooltip';
 
-export default () => {
-  const options = typeof value === 'string' ? { content: value } : value;
+export default function(el, { value, args = 'top' }) {
   const { shadowRoot } = document.querySelector('.inspector');
-
+  // TO DO why the fuck all the valus is same
+  // Split Code
   const test = new CreateTooltip(el, {
     placement: args,
     tooltipRoot: shadowRoot,
-    ...options,
+    content: value,
   });
-};
+  console.log(test);
+}

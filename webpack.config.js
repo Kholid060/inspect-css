@@ -19,7 +19,7 @@ const config = {
     filename: '[name].js',
   },
   resolve: {
-    extensions: ['.js', '.vue'],
+    extensions: ['.js'],
     alias: {
       '~': path.resolve(__dirname, 'src/'),
       vue: 'vue/dist/vue.runtime.esm-bundler.js',

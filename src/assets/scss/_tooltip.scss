@@ -1,0 +1,27 @@
+$placements: (
+  'right': translateX(-5px),
+  'left': translateX(5px),
+  'top': translateY(-5px),
+  'bottom': translateY(5px),
+);
+
+.tooltip-ui {
+  z-index: 9999;
+  visibility: hidden;
+  &__content {
+    transition: all 200ms cubic-bezier(0.54, 1.5, 0.38, 1.11);
+    @each $direction, $translate in $placements {
+      &[data-placement='#{$direction}'] {
+        opacity: 0;
+        transform: $translate;
+      }
+    }
+  }
+  &.show {
+    visibility: visible;
+    .tooltip-ui__content {
+      opacity: 1;
+      transform: translate(0) !important;
+    }
+  }
+}

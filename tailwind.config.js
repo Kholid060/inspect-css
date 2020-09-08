@@ -35,6 +35,9 @@ module.exports = {
       56: '224px',
       64: '256px',
     },
+    future: {
+      purgeLayersByDefault: true,
+    },
     extend: {
       colors: {
         primary: '#4299E1',
