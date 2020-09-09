@@ -5,11 +5,11 @@
       Extracting Colors...
     </p>
     <div class="content mb-5" v-else>
-      <div v-for="color in state.palette" :key="color" class="h-16 flex items-center px-5 color-card" :style="{ backgroundColor: color.hex }">
-        <p class="text-xl flex-1 color-card__text" :style="{ color: color.title }">
+      <div v-for="(color, index) in state.palette" :key="color" class="h-20 flex items-center px-5 color-card" :style="{ backgroundColor: color.hex }">
+        <p class="text-lg flex-1 color-card__text" :style="{ color: color.title }">
           {{ color.hex }}
         </p>
-        <button @click="copyColor(color.hex)" class="color-card__btn">
+        <button @click="copyColor(color.hex, index)" class="color-card__btn" v-tooltip:left="color.copied ? 'copied' : 'Copy color'">
           <v-mdi name="mdi-content-copy"></v-mdi>
         </button>
       </div>
@@ -17,13 +17,13 @@
   </div>
 </template>
 <script>
-import { shallowReactive, onMounted } from 'vue';
+import { reactive, onMounted } from 'vue';
 import extractColors from '~/utils/extractColors';
 import copyToClipboard from '~/utils/copyToClipboard';
 
 export default {
   setup() {
-    const state = shallowReactive({
+    const state = reactive({
       palette: [],
       loading: false,
     });
@@ -31,7 +31,7 @@ export default {
       state.loading = true;
 
       extractColors().then(colors => {
-        state.palette = colors;
+        state.palette = colors.map(color => ({ ...color, copied: false }));
         state.loading = false;
       });
     };
@@ -41,8 +41,13 @@ export default {
     return {
       state,
       getColorPalettes,
-      copyColor: color => {
+      copyColor: (color, index) => {
+        state.palette[index].copied = true;
         copyToClipboard(color);
+
+        setTimeout(() => {
+          state.palette[index].copied = false;
+        }, 1000);
       },
     };
   },

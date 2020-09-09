@@ -1,31 +1,56 @@
 import { createPopper } from '@popperjs/core';
-import tooltipTemplate from './tooltipTemplate';
+import createTooltipTemplate from './createTooltipTemplate';
 
 let id = 1;
 
-const defaultOptions = {
-  placement: 'top',
-  tooltipRoot: document.body,
-  content: '',
-};
-
 export default class CreateTooltip {
-  constructor(element, options = {}) {
+  constructor(reference, options = {}) {
+    const defaultOptions = {
+      placement: 'top',
+      tooltipRoot: document.body,
+      offset: [0, 5],
+    };
+
     Object.assign(this, {
-      element,
+      reference,
       options: Object.assign(defaultOptions, options),
       timeoutDelay: 250,
       popperInstance: null,
       id: id++,
     });
 
-    this.bindShow = this.show.bind(this);
-    this.bindHide = this.hide.bind(this);
+    this.show = this._show.bind(this);
+    this.hide = this._hide.bind(this);
 
     this._init();
   }
 
-  hide() {
+  setOptions(options = {}) {
+    Object.assign(this.options, options);
+
+    if (this.popperInstance) {
+      this.popperInstance.setOptions(this.options);
+    }
+
+    if (this._getCurrentTooltip) {
+      const currentTooltipContent = this._getCurrentTooltip.querySelector('.tooltip-ui__content');
+
+      currentTooltipContent.innerText = this.options.content;
+    }
+  }
+
+  destroy() {
+    this.reference.removeEventListener('mouseenter', this.show);
+    this.reference.removeEventListener('focus', this.show);
+    this.reference.removeEventListener('mouseleave', this.hide);
+    this.reference.removeEventListener('click', this.hide);
+  }
+
+  get _getCurrentTooltip() {
+    return this.options.tooltipRoot.querySelector(`[tooltip-id="${this.id}"]`);
+  }
+
+  _hide() {
     if (this._getCurrentTooltip) {
       this._getCurrentTooltip.classList.remove('show');
 
@@ -35,7 +60,7 @@ export default class CreateTooltip {
     }
   }
 
-  show() {
+  _show() {
     if (this._getCurrentTooltip) return;
 
     const content = this._createTooltipContent();
@@ -47,33 +72,24 @@ export default class CreateTooltip {
     }, this.timeoutDelay);
   }
 
-  setOptions(options) {
-    Object.assign(this.options, options);
-  }
-
-  destroy() {
-    this.element.removeEventListener('mouseenter', this.bindShow);
-    this.element.removeEventListener('focus', this.bindShow);
-    this.element.removeEventListener('mouseleave', this.bindHide);
-    this.element.removeEventListener('click', this.bindHide);
-  }
-
-  get _getCurrentTooltip() {
-    return this.options.tooltipRoot.querySelector(`[tooltip-id="${this.id}"]`);
-  }
-
   _createTooltipContent() {
-    console.log(this.options);
-    const content = tooltipTemplate(this.id, {
+    const content = createTooltipTemplate(this.id, {
       content: this.options.content,
       placement: this.options.placement,
     });
-    this.popperInstance = createPopper(this.element, content, {
+
+    this.popperInstance = createPopper(this.reference, content, {
       modifiers: [
         {
           name: 'offset',
           options: {
-            offset: [0, 5],
+            offset: this.options.offset,
+          },
+        },
+        {
+          name: 'arrow',
+          options: {
+            padding: 5,
           },
         },
       ],
@@ -86,9 +102,9 @@ export default class CreateTooltip {
   _init() {
     this.destroy();
 
-    this.element.addEventListener('mouseenter', this.bindShow);
-    this.element.addEventListener('focus', this.bindShow);
-    this.element.addEventListener('mouseleave', this.bindHide);
-    this.element.addEventListener('click', this.bindHide);
+    this.reference.addEventListener('mouseenter', this.show);
+    this.reference.addEventListener('focus', this.show);
+    this.reference.addEventListener('mouseleave', this.hide);
+    // this.reference.addEventListener('click', this.hide);
   }
 }

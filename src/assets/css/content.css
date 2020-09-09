@@ -13,7 +13,6 @@
 
 .active-element {
   outline: 1px solid var(--danger);
-  position: relative !important;
 }
 
 /* inter-regular - latin */

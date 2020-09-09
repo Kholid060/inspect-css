@@ -11,12 +11,13 @@ const config = {
   mode: process.env.NODE_ENV,
   context: __dirname + '/src',
   entry: {
-    content: ['./assets/scss/tailwind.scss', './content.js'],
+    content: ['./assets/css/content.css', './content.js'],
     background: './background.js',
   },
   output: {
     path: __dirname + '/dist',
     filename: '[name].js',
+    publicPath: '/dist/',
   },
   resolve: {
     extensions: ['.js'],
@@ -38,7 +39,17 @@ const config = {
       },
       {
         test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          {
+            loader: 'postcss-loader',
+            options: {
+              ident: 'postcss',
+              plugins: [require('tailwindcss'), require('autoprefixer')],
+            },
+          },
+        ],
       },
       {
         test: /\.scss$/,
