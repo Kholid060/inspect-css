@@ -15,6 +15,7 @@ import {
   mdiGrid,
   mdiPause,
   mdiEyedropper,
+  mdiInformation,
 } from '@mdi/js';
 
 VueMdijs.add({
@@ -33,6 +34,7 @@ VueMdijs.add({
   mdiGrid,
   mdiPause,
   mdiEyedropper,
+  mdiInformation,
 });
 
 export default VueMdijs;

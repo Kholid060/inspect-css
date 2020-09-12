@@ -44,8 +44,8 @@ function getInlineCSS(el) {
 }
 
 function getCSSFromMediaQuery(el, rules) {
-  const mediaQueries = rules.filter(rule => {
-    return rule.media && window.matchMedia(rule.conditionText) && getNumber(rule.conditionText);
+  const mediaQueries = rules.filter(({ conditionText, media }) => {
+    return media && window.matchMedia(conditionText).matches && getNumber(conditionText);
   });
   const mediaQueriesSorted = mediaQueries.sort((a, b) => {
     const aMedia = getNumber(a.conditionText);
@@ -92,12 +92,12 @@ function getAllCSS(el, rules) {
 
   return {
     css: inlineCSS + mediaCSS + css,
-    hover: mediaCSS + css,
+    hover: mediaHover + hover,
   };
 }
 
 export default function(el) {
-  el.matches || el.webkitMatchesSelector || el.mozMatchesSelector || el.msMatchesSelector || el.oMatchesSelector;
+  el.matches = el.matches || el.webkitMatchesSelector || el.mozMatchesSelector || el.msMatchesSelector || el.oMatchesSelector;
 
   const slice = Function.call.bind(Array.prototype.slice);
   const rules = Array.from(document.styleSheets).reduce((rules, sheet) => {

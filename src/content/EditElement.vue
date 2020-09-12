@@ -1,53 +1,50 @@
 <template>
-  <div class="fixed rounded-lg shadow-2xl overflow-hidden right-0 m-4 bg-default top-0" style="width: 300px;">
-    <div class="pb-16 overflow-auto scroll" style="min-height: 400px; max-height: calc(100vh - 140px)">
-      <keep-alive>
-        <component :key="state.activeMenu" :is="state.activeMenu" :activeElementId="state.activeElementId"></component>
-      </keep-alive>
+  <div class="fixed right-0 m-4 top-0" style="width: 300px;">
+    <edit-navigation></edit-navigation>
+    <div class="rounded-lg shadow-2xl overflow-hidden bg-default">
+      <div class="pb-16 overflow-auto scroll" style="height: calc(100vh - 140px)">
+        <keep-alive>
+          <component :key="state.activeMenu" :is="state.activeMenu" :activeElementId="state.activeElementId"></component>
+        </keep-alive>
+      </div>
+      <edit-menu @close="closeExtension" :menu="menu" v-model="state.activeMenu"></edit-menu>
     </div>
-    <Menu @close="closeExtension" :menu="menu" v-model="state.activeMenu"></Menu>
   </div>
 </template>
 <script>
 import { onMounted, shallowReactive, watch } from 'vue';
-import Properties from './components/EditElement/Properties.vue';
-import Attributes from './components/EditElement/Attributes.vue';
-import Codes from './components/EditElement/GlobalCss.vue';
-import Palletes from './components/EditElement/WebsitePalettes.vue';
-import Menu from './components/Menu.vue';
+import EditProperties from './components/EditElement/EditProperties.vue';
+import EditAttributes from './components/EditElement/EditAttributes.vue';
+import EditCodes from './components/EditElement/EditCss.vue';
+import EditPalettes from './components/EditElement/EditPalettes.vue';
+import EditMenu from './components/EditElement/EditMenu.vue';
+import EditNavigation from './components/EditElement/EditNavigation.vue';
+import GlobalEvent from '../utils/globalEvent';
 
 export default {
-  components: { Properties, Menu, Attributes, Codes, Palletes },
+  components: {
+    EditProperties,
+    EditAttributes,
+    EditCodes,
+    EditPalettes,
+    EditMenu,
+    EditNavigation,
+  },
   setup() {
     const state = shallowReactive({
       activeElementId: 0,
-      activeMenu: 'properties',
+      activeMenu: 'edit-properties',
       transition: 'slide-right',
     });
     const menu = [
-      { name: 'properties', title: 'Element properties', icon: 'mdi-view-grid' },
-      { name: 'attributes', title: 'Edit attributes', icon: 'mdi-square-edit-outline' },
-      { name: 'codes', title: 'Global CSS Code', icon: 'mdi-xml' },
-      { name: 'palletes', title: 'Palettes', icon: 'mdi-palette' },
+      { name: 'edit-properties', title: 'Properties', icon: 'mdi-view-grid' },
+      // { name: 'edit-font', title: 'Fonts', icon: 'mdi-format-color-text' },
+      { name: 'edit-attributes', title: 'Attributes', icon: 'mdi-square-edit-outline' },
+      { name: 'edit-codes', title: 'CSS Code', icon: 'mdi-xml' },
+      { name: 'edit-palettes', title: 'Palettes', icon: 'mdi-palette' },
+      { name: 'information', title: 'Info', icon: 'mdi-information' },
       // { name: 'assets', title: 'Assets', icon: 'mdi-image-multiple' },
     ];
-    const eventHandler = target => {
-      if (target.matches('.inspector,.active-element,html,body')) return;
-
-      const activeElement = document.querySelector('.active-element');
-      activeElement && activeElement.classList.remove('active-element');
-
-      target.classList.add('active-element');
-      state.activeElementId += 1;
-    };
-    const clickHandler = ({ target }) => eventHandler(target);
-    const keyupHandler = ({ code, ctrlKey }) => {
-      if (ctrlKey && code === 'Space') {
-        const target = document.querySelector('.hover-element');
-
-        eventHandler(target);
-      }
-    };
     const closeExtension = () => {
       window.removeEventListener('click', clickHandler);
       document.removeEventListener('keyup', keyupHandler);
@@ -60,8 +57,9 @@ export default {
     };
 
     onMounted(() => {
-      window.addEventListener('click', clickHandler);
-      document.addEventListener('keyup', keyupHandler);
+      GlobalEvent.init({
+        onEventFired: () => (state.activeElementId += 1),
+      });
     });
 
     return {

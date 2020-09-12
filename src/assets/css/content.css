@@ -1,9 +1,9 @@
-:root {
-  --danger: #f56565;
+.hover-element {
+  outline: 1px solid #f56565 !important;
 }
 
-.hover-element {
-  outline: 1px solid var(--danger);
+.display-grid * {
+  outline: 1px solid rgba(245, 101, 101, 0.2);
 }
 
 .inspector {
@@ -12,7 +12,7 @@
 }
 
 .active-element {
-  outline: 1px solid var(--danger);
+  outline: 1px solid #4299e1;
 }
 
 /* inter-regular - latin */

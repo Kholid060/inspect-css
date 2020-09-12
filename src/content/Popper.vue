@@ -1,24 +1,21 @@
 <template>
   <div class="bg-default rounded-lg p-5 shadow-2xl" style="width: 300px; z-index: 999" ref="container">
-    <element-size v-bind="state"></element-size>
+    <element-properties :properties="state.properties" v-if="state.properties !== null"></element-properties>
   </div>
 </template>
 <script>
-import { ref, onMounted, shallowReactive } from 'vue';
-import emitter from 'tiny-emitter/instance';
-import ElementSize from './components/ElementSize.vue';
+import { ref, onMounted, reactive } from 'vue';
+import ElementProperties from './components/ElementProperties.vue';
 import { generateGetBoundingClientRect } from '~/utils/helper';
-import getElementProperties from '~/utils/getElementProperties';
+import GetElementProperties from '~/utils/getElementProperties';
 import createPopper from '~/utils/createPopper';
 
 export default {
-  components: { ElementSize },
+  components: { ElementProperties },
   setup() {
     const container = ref(null);
-    const state = shallowReactive({
-      size: {},
-      selector: {},
-      computedStyles: {},
+    const state = reactive({
+      properties: null,
     });
 
     onMounted(() => {
@@ -33,19 +30,18 @@ export default {
         },
       });
       const mousemove = ({ target, clientX, clientY }) => {
-        if (target.classList.contains('inspector')) return container.value.classList.add('hidden');
-        container.value.classList.remove('hidden');
+        const isPaused = document.body.classList.contains('pause');
+        const isMatchExtensionEl = target.classList.contains('inspector');
 
-        const isDragging = document.body.classList.contains('dragging');
+        if (isPaused || isMatchExtensionEl) return container.value.classList.add('hidden');
+        container.value.classList.remove('hidden');
 
         virtualElement.getBoundingClientRect = generateGetBoundingClientRect(clientX, clientY);
         instance.update();
 
-        if (!target.matches('.active-element,.hover-element,.inspector') && !isDragging) {
-          const { size, selector, computedStyles } = getElementProperties(target);
-          state.size = size;
-          state.selector = selector;
-          state.computedStyles = computedStyles;
+        if (!target.matches('.hover-element,.inspector')) {
+          const properties = new GetElementProperties(target);
+          state.properties = properties.getAll();
 
           const element = document.querySelector('.hover-element');
           element && element.classList.remove('hover-element');
@@ -62,9 +58,6 @@ export default {
       };
 
       window.addEventListener('mousemove', mousemove);
-      emitter.on('extension-close', () => {
-        window.removeEventListener('mousemove', mousemove);
-      });
     });
 
     return {

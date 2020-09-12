@@ -1,21 +1,22 @@
 <template>
   <div class="absolute w-full z-10 bottom-0 flex shadow-xl justify-evenly rounded-lg h-16 items-center bg-light">
-    <button
+    <button-icon
       v-for="item in menu"
       :key="item.name"
-      class="focus:outline-none"
-      :class="[item.name === modelValue ? 'text-primary' : 'text-light']"
+      :active="item.name === modelValue"
       v-tooltip="item.title"
+      :icon="item.icon"
       @click="emitValue(item.name)"
-    >
-      <v-mdi :name="item.icon" size="24"></v-mdi>
-    </button>
+      :class="{ 'bg-default': item.name === modelValue }"
+      class="hover:bg-default rounded-lg p-2"
+    ></button-icon>
   </div>
 </template>
 <script>
-import emitter from 'tiny-emitter/instance';
+import ButtonIcon from '../ButtonIcon.vue';
 
 export default {
+  components: { ButtonIcon },
   props: {
     menu: Array,
     modelValue: {

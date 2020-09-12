@@ -1,8 +1,10 @@
 module.exports = {
-  prefix: 'tw-',
+  future: {
+    purgeLayersByDefault: true,
+  },
   purge: {
-    enabled: process.env.NODE_ENV === 'production',
-    content: ['./src/**/*.html', './src/**/*.vue'],
+    mode: 'all',
+    content: ['./src/**/*.js', './src/**/*.vue'],
   },
   theme: {
     fontFamily: {
@@ -44,9 +46,6 @@ module.exports = {
       48: '192px',
       56: '224px',
       64: '256px',
-    },
-    future: {
-      purgeLayersByDefault: true,
     },
     extend: {
       colors: {

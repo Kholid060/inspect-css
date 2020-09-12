@@ -3,6 +3,10 @@
 @import './_website-palettes.scss';
 @import './_tooltip.scss';
 
+.root {
+  @apply text-default text-base #{!important};
+}
+
 .global-css {
   .codeflask {
     height: 250px !important;

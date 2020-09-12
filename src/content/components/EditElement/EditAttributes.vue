@@ -1,13 +1,19 @@
 <template>
   <div class="edit-attributes p-5">
     <h3 class="mb-3 font-semibold">Edit Attributes</h3>
-    <add-form style="margin-bottom: 14px" v-model:key="state.key" v-model:value="state.value" @submit="addAttribute"></add-form>
-    <p class="text-light mt-6 text-center text-opacity-75" v-show="Object.keys(state.attributes).length === 0">
+    <form @submit.prevent="addAttribute" class="rounded-md add-form border text-sm flex items-center mb-6" autocomplete="off">
+      <input name="key" type="text" class="p-2 w-5/12 bg-transparent" v-model="state.key" placeholder="key" />
+      <input name="value" type="text" class="p-2 w-5/12 bg-transparent" v-model="state.value" placeholder="value" />
+      <button class="p-2 focus:outline-none w-2/12 text-primary" type="submit">
+        <v-mdi name="mdi-plus"></v-mdi>
+      </button>
+    </form>
+    <p class="text-light mt-6 text-center text-opacity-75 text-sm" v-show="Object.keys(state.attributes).length === 0">
       There's no attribute that you can edit
     </p>
     <div class="flex items-center mb-3" v-for="(value, key) in state.attributes" v-bind="{ key }">
       <p class="text-overflow w-4/12">{{ key }}</p>
-      <input type="text" class="mx-2 w-7/12 bg-light px-3 py-2 rounded-md" @change="updateAttribute($event.target.value, key)" :value="state.attributes[key]" />
+      <input type="text" class="mx-2 w-7/12 bg-light px-3 py-2 rounded-md" @input="updateAttribute($event.target.value, key)" :value="state.attributes[key]" />
       <button class="w-1/12" title="Delete attribute" @click="deleteAttribute(key)">
         <v-mdi name="mdi-delete" class="text-danger"></v-mdi>
       </button>
@@ -17,10 +23,8 @@
 <script>
 import { watch, onMounted, reactive } from 'vue';
 import debounce from 'lodash.debounce';
-import AddForm from '../AddForm.vue';
 
 export default {
-  components: { AddForm },
   props: {
     activeElementId: Number,
   },

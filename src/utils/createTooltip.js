@@ -43,7 +43,7 @@ export default class CreateTooltip {
     this.reference.removeEventListener('mouseenter', this.show);
     this.reference.removeEventListener('focus', this.show);
     this.reference.removeEventListener('mouseleave', this.hide);
-    this.reference.removeEventListener('click', this.hide);
+    // this.reference.removeEventListener('click', this.hide);
   }
 
   get _getCurrentTooltip() {
@@ -55,7 +55,11 @@ export default class CreateTooltip {
       this._getCurrentTooltip.classList.remove('show');
 
       setTimeout(() => {
-        this._getCurrentTooltip.remove();
+        try {
+          this._getCurrentTooltip.remove();
+        } catch (err) {
+          // Do nothing
+        }
       }, this.timeoutDelay);
     }
   }

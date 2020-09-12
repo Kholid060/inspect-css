@@ -1,7 +1,7 @@
 <template>
-  <div class="global-css p-5">
+  <div class="global-css p-5 h-full">
     <p class="font-semibold mb-3">Global CSS</p>
-    <codeflask v-model:code="codes"></codeflask>
+    <codeflask v-model:code="codes" class="h-full"></codeflask>
   </div>
 </template>
 <script>

@@ -10,6 +10,7 @@
   background-color: transparent;
   color: #f8f8f2 !important;
   min-height: 100px;
+  @apply py-2;
   &__textarea,
   &__code {
     font-size: 15px !important;

@@ -1,46 +1,65 @@
-const filterClasses = classes => {
-  const blackListClasses = ['hover-element', 'active-element'];
-  const filtered = classes.filter(name => !blackListClasses.includes(name));
+function generateKeys(name) {
+  const directions = ['top', 'right', 'bottom', 'left'];
+  const keys = directions.map(direction => `${name}-${direction}`);
 
-  return filtered.length !== 0 ? `.${filtered.join('.')}` : '';
-};
-const computedStyle = () => getComputedStyle(target);
+  return keys;
+}
 
-export const deletePx = text => {
-  if (text === 'fontFamily') return;
-  const value = text.replace('px', '');
+export default class ElementProperties {
+  constructor(reference) {
+    this.reference = reference;
+    this.computedStyleKeys = [...generateKeys('margin'), ...generateKeys('padding'), 'fontFamily'];
+  }
 
-  return +value === 0 ? '-' : Math.floor(value);
-};
+  getSelector() {
+    const selector = {
+      tag: this.reference.tagName.toLowerCase(),
+      id: this.reference.id ? `#${this.reference.id}` : '',
+      classes: this._filterClasses(Array.from(this.reference.classList)),
+    };
 
-export const computedStyleKeys = ['margin-bottom', 'margin-top', 'margin-right', 'margin-left', 'padding-bottom', 'padding-top', 'padding-right', 'padding-left', 'fontFamily'];
+    return selector;
+  }
 
-export const getSelector = target => {
-  const selector = {
-    tag: target.tagName.toLowerCase(),
-    id: target.id ? `#${target.id}` : '',
-    classes: filterClasses(Array.from(target.classList)),
-  };
+  getSize() {
+    const { height, width } = this.reference.getBoundingClientRect();
 
-  return selector;
-};
+    return { height, width };
+  }
 
-export default function(target) {
-  const { height, width } = target.getBoundingClientRect();
-  const computedStyles = computedStyleKeys.reduce((styles, key) => {
-    const value = getComputedStyle(target)[key];
+  getComputedStyles() {
+    const computedStyles = this.computedStyleKeys.reduce((styles, key) => {
+      const value = getComputedStyle(this.reference)[key];
 
-    styles[key] = key === 'fontFamily' ? value.split(',')[0].replace(/"/g, '') : deletePx(value);
+      styles[key] = key === 'fontFamily' ? value.split(',')[0].replace(/"/g, '') : this._removePx(value);
 
-    return styles;
-  }, {});
+      return styles;
+    }, {});
 
-  return {
-    selector: getSelector(target),
-    size: {
-      height,
-      width,
-    },
-    computedStyles,
-  };
+    return computedStyles;
+  }
+
+  getAll() {
+    const properties = {
+      selector: this.getSelector(),
+      size: this.getSize(),
+      computedStyles: this.getComputedStyles(),
+    };
+
+    return properties;
+  }
+
+  _filterClasses(classes) {
+    const blackListClasses = ['hover-element', 'active-element'];
+    const filtered = classes.filter(name => !blackListClasses.includes(name));
+
+    return filtered.length !== 0 ? `.${filtered.join('.')}` : '';
+  }
+
+  _removePx(text) {
+    if (text === 'fontFamily') return;
+    const value = text.replace('px', '');
+
+    return +value === 0 ? '-' : Math.floor(value);
+  }
 }
