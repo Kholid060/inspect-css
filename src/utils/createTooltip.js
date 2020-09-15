@@ -41,9 +41,7 @@ export default class CreateTooltip {
 
   destroy() {
     this.reference.removeEventListener('mouseenter', this.show);
-    this.reference.removeEventListener('focus', this.show);
     this.reference.removeEventListener('mouseleave', this.hide);
-    this.reference.removeEventListener('blur', this.hide);
     // this.reference.removeEventListener('click', this.hide);
   }
 
@@ -108,9 +106,7 @@ export default class CreateTooltip {
     this.destroy();
 
     this.reference.addEventListener('mouseenter', this.show);
-    this.reference.addEventListener('focus', this.show);
     this.reference.addEventListener('mouseleave', this.hide);
-    this.reference.addEventListener('blur', this.hide);
     // this.reference.addEventListener('click', this.hide);
   }
 }

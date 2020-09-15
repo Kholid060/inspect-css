@@ -2,15 +2,20 @@
   <div class="properties p-5">
     <template v-if="state.selected">
       <element-properties :properties="state.properties" :show-info="false"></element-properties>
-      <div class="flex bg-light p-1 rounded-lg mt-5 text-sm">
-        <button
-          v-for="tab in tabs"
-          :key="tab"
-          :class="{ 'bg-default': tab === state.activeTab }"
-          class="w-6/12 rounded-lg focus:outline-none h-10 uppercase"
-          @click="state.activeTab = tab"
-        >
-          {{ tab }}
+      <div class="flex mt-5">
+        <div class="flex flex-1 bg-light p-1 rounded-lg mr-3 text-sm">
+          <button
+            v-for="tab in tabs"
+            :key="tab"
+            :class="{ 'bg-default': tab === state.activeTab }"
+            class="w-6/12 rounded-lg focus:outline-none h-10 uppercase"
+            @click="state.activeTab = tab"
+          >
+            {{ tab }}
+          </button>
+        </div>
+        <button class="bg-light rounded-lg w-12 focus:outline-none" v-tooltip:left="state.copied ? 'Copied' : 'Copy code'" @click="copyCode">
+          <v-mdi name="mdi-content-copy" size="22"></v-mdi>
         </button>
       </div>
       <div class="properties__css-code mt-4">
@@ -38,6 +43,7 @@ import GetElementProperties from '~/utils/getElementProperties';
 import GetAppliedCSS from '~/utils/getAppliedCSS';
 import ElementProperties from '../ElementProperties.vue';
 import Codeflask from '../Codeflask.vue';
+import copyToClipboard from '~/utils/copyToClipboard';
 
 export default {
   components: { ElementProperties, Codeflask },
@@ -51,6 +57,7 @@ export default {
     const state = reactive({
       properties: null,
       selected: false,
+      copied: false,
       activeTab: 'css',
       appliedCSS: { css: '', hover: '' },
     });
@@ -73,14 +80,25 @@ export default {
       state.appliedCSS = new GetAppliedCSS(target).all();
       state.selected = true;
     };
+    const copyCode = () => {
+      state.copied = true;
+      const content = state.activeTab === 'css' ? state.appliedCSS.css : state.appliedCSS.hover;
+
+      copyToClipboard(content);
+
+      setTimeout(() => {
+        state.copied = false;
+      }, 1000);
+    };
 
     watch(() => props.activeElementId, init);
     onMounted(init);
 
     return {
       state,
-      tabs: ['css', ':hover'],
+      copyCode,
       onEditorChange,
+      tabs: ['css', ':hover'],
     };
   },
 };
