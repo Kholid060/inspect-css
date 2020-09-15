@@ -1,10 +1,15 @@
 module.exports = {
   future: {
     purgeLayersByDefault: true,
+    removeDeprecatedGapUtilities: true,
   },
   purge: {
     mode: 'all',
     content: ['./src/**/*.js', './src/**/*.vue'],
+    options: {
+      whitelist: ['codeflask', 'token'],
+      whitelistPatterns: [/codeflask/, /token/],
+    },
   },
   theme: {
     fontFamily: {

@@ -1,7 +1,7 @@
 import CreateTooltip from '~/utils/createTooltip';
 
 const setOptions = (content, placement) => {
-  const { shadowRoot } = document.querySelector('.inspector');
+  const { shadowRoot } = document.querySelector('.inspect-css');
 
   if (typeof content === 'string') {
     return {

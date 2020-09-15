@@ -1,6 +1,6 @@
 {
-  "name": "inspectv",
-  "version": "1.0.0",
+  "name": "inspect-css",
+  "version": "0.2.0",
   "description": "A Vue.js web extension",
   "author": "Ahmad Kholid <kholid060@gmail.com>",
   "license": "MIT",
@@ -26,6 +26,9 @@
     "@mdi/js": "^5.5.55",
     "@popperjs/core": "^2.4.4",
     "codeflask": "^1.4.1",
+    "codejar": "^3.1.0",
+    "colorthief": "^2.3.2",
+    "dom-to-image": "^2.6.0",
     "draggabilly": "^2.3.0",
     "html2canvas": "^1.0.0-rc.7",
     "lodash.debounce": "^4.0.8",

@@ -1,8 +1,8 @@
 export default class GlobalEvent {
   static init({ onEventFired }) {
     this.callback = onEventFired;
-    this.bindMouseEvent = this._clickHandler.bind(this);
-    this.bindKeyupEvent = this._keyupHandler.bind(this);
+    this.bindMouseEvent = this.clickHandler.bind(this);
+    this.bindKeyupEvent = this.keyupHandler.bind(this);
 
     this.addListener();
   }
@@ -17,25 +17,29 @@ export default class GlobalEvent {
     document.removeEventListener('keyup', this.bindKeyupEvent);
   }
 
-  static _keyupHandler({ code, ctrlKey }) {
+  static keyupHandler({ code, ctrlKey }) {
     if (ctrlKey && code === 'Space') {
       const target = document.querySelector('.hover-element');
 
-      this._eventHandler(target);
+      this.eventHandler(target);
     }
   }
 
-  static _clickHandler({ target }) {
-    this._eventHandler(target);
+  static clickHandler({ target }) {
+    this.eventHandler(target);
   }
 
-  static _eventHandler(target) {
-    if (target.matches('.inspector,.active-element,html,body')) return;
+  static eventHandler(target) {
+    const isPaused = document.body.classList.contains('pause');
+    const isMatchExtensionElement = target.matches('.inspect-css,.active-element,html');
+    if (isMatchExtensionElement || isPaused) return;
 
     const activeElement = document.querySelector('.active-element');
     activeElement && activeElement.classList.remove('active-element');
 
     target.classList.add('active-element');
+    target.classList.remove('hover-element');
+
     this.callback();
   }
 }

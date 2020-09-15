@@ -19,10 +19,10 @@ export default class CreateTooltip {
       id: id++,
     });
 
-    this.show = this._show.bind(this);
-    this.hide = this._hide.bind(this);
+    this.show = this.showTooltip.bind(this);
+    this.hide = this.hideTooltip.bind(this);
 
-    this._init();
+    this.init();
   }
 
   setOptions(options = {}) {
@@ -32,8 +32,8 @@ export default class CreateTooltip {
       this.popperInstance.setOptions(this.options);
     }
 
-    if (this._getCurrentTooltip) {
-      const currentTooltipContent = this._getCurrentTooltip.querySelector('.tooltip-ui__content');
+    if (this.getCurrentTooltip) {
+      const currentTooltipContent = this.getCurrentTooltip.querySelector('.tooltip-ui__content');
 
       currentTooltipContent.innerText = this.options.content;
     }
@@ -43,20 +43,21 @@ export default class CreateTooltip {
     this.reference.removeEventListener('mouseenter', this.show);
     this.reference.removeEventListener('focus', this.show);
     this.reference.removeEventListener('mouseleave', this.hide);
+    this.reference.removeEventListener('blur', this.hide);
     // this.reference.removeEventListener('click', this.hide);
   }
 
-  get _getCurrentTooltip() {
+  get getCurrentTooltip() {
     return this.options.tooltipRoot.querySelector(`[tooltip-id="${this.id}"]`);
   }
 
-  _hide() {
-    if (this._getCurrentTooltip) {
-      this._getCurrentTooltip.classList.remove('show');
+  hideTooltip() {
+    if (this.getCurrentTooltip) {
+      this.getCurrentTooltip.classList.remove('show');
 
       setTimeout(() => {
         try {
-          this._getCurrentTooltip.remove();
+          this.getCurrentTooltip.remove();
         } catch (err) {
           // Do nothing
         }
@@ -64,10 +65,10 @@ export default class CreateTooltip {
     }
   }
 
-  _show() {
-    if (this._getCurrentTooltip) return;
+  showTooltip() {
+    if (this.getCurrentTooltip) return;
 
-    const content = this._createTooltipContent();
+    const content = this.createTooltipContent();
 
     this.options.tooltipRoot.appendChild(content);
 
@@ -76,7 +77,7 @@ export default class CreateTooltip {
     }, this.timeoutDelay);
   }
 
-  _createTooltipContent() {
+  createTooltipContent() {
     const content = createTooltipTemplate(this.id, {
       content: this.options.content,
       placement: this.options.placement,
@@ -103,12 +104,13 @@ export default class CreateTooltip {
     return content;
   }
 
-  _init() {
+  init() {
     this.destroy();
 
     this.reference.addEventListener('mouseenter', this.show);
     this.reference.addEventListener('focus', this.show);
     this.reference.addEventListener('mouseleave', this.hide);
+    this.reference.addEventListener('blur', this.hide);
     // this.reference.addEventListener('click', this.hide);
   }
 }

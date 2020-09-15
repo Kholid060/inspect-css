@@ -4,26 +4,31 @@ import VueMdijs from './plugins/vue-mdijs';
 import style from './assets/scss/style.scss';
 import VTooltip from './directives/VTooltip';
 
-const app = createApp(App);
+(() => {
+  if (document.body.hasAttribute('inspect-css')) return;
 
-app.use(VueMdijs);
+  const app = createApp(App);
 
-app.directive('tooltip', VTooltip);
+  app.use(VueMdijs);
 
-const shadowEl = document.createElement('div');
-shadowEl.classList.add('inspector');
-shadowEl.attachShadow({ mode: 'open' });
+  app.directive('tooltip', VTooltip);
 
-const { shadowRoot } = shadowEl;
+  const shadowEl = document.createElement('div');
+  shadowEl.classList.add('inspect-css');
+  shadowEl.attachShadow({ mode: 'open' });
 
-const rootElement = document.createElement('div');
-rootElement.classList.add('root');
+  const { shadowRoot } = shadowEl;
 
-const styleEl = document.createElement('style');
-styleEl.innerText = style;
+  const rootElement = document.createElement('div');
+  rootElement.classList.add('root');
 
-shadowRoot.appendChild(rootElement);
-shadowRoot.appendChild(styleEl);
-document.body.appendChild(shadowEl);
+  const styleEl = document.createElement('style');
+  styleEl.innerText = style;
 
-app.mount(rootElement);
+  shadowRoot.appendChild(rootElement);
+  shadowRoot.appendChild(styleEl);
+  document.body.appendChild(shadowEl);
+  document.body.setAttribute('inspect-css', true);
+
+  app.mount(rootElement);
+})();

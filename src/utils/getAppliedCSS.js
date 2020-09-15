@@ -1,6 +1,3 @@
-const getNumber = text => +text.replace(/\D/g, '');
-const addNewLine = cssText => cssText.replace(/;\s|;/g, ';\n');
-
 function extractCSS(rules) {
   const result = { css: '', hover: '' };
 
@@ -32,90 +29,101 @@ function removeDuplicateCSS(css) {
     return !duplicate;
   });
 
-  return filteredCssArray.map(css => css.trim()).join(';\n');
+  return filteredCssArray.map(cssStr => cssStr.trim()).join(';\n');
 }
 
-function getInlineCSS(el) {
-  const styleAttribute = el.getAttribute('style');
+function getNumber(text) {
+  const number = +text.replace(/\D/g, '');
 
-  if (!styleAttribute) return '';
-
-  return styleAttribute.endsWith(';') ? styleAttribute : styleAttribute + ';';
+  return number;
 }
 
-function getCSSFromMediaQuery(el, rules) {
-  const mediaQueries = rules.filter(({ conditionText, media }) => {
-    return media && window.matchMedia(conditionText).matches && getNumber(conditionText);
-  });
-  const mediaQueriesSorted = mediaQueries.sort((a, b) => {
-    const aMedia = getNumber(a.conditionText);
-    const bMedia = getNumber(b.conditionText);
+function filterRules(element, rules) {
+  const filteredRules = rules.filter(({ selectorText }) => element.matches(selectorText));
 
-    if (aMedia > bMedia) return -1;
-    else if (bMedia > aMedia) return 1;
+  return filteredRules;
+}
 
-    return 0;
-  });
-  const cssRules = mediaQueriesSorted.reduce(
-    (result, media) => {
-      if (media.cssRules) {
-        const filteredRules = Array.from(media.cssRules).filter(rule => {
-          return el.matches(rule.selectorText);
-        });
-        const { css, hover } = extractCSS(filteredRules);
+class GetAppliedCSS {
+  constructor(el) {
+    el.matches = el.matches || el.webkitMatchesSelector || el.mozMatchesSelector || el.msMatchesSelector || el.oMatchesSelector;
+    this.element = el;
+  }
 
-        result.css += css;
-        result.hover += hover;
+  get rules() {
+    const slice = Function.call.bind(Array.prototype.slice);
+    const rules = Array.from(document.styleSheets).reduce((rules, sheet) => {
+      try {
+        if (sheet.cssRules) {
+          return rules.concat(slice(sheet.cssRules));
+        }
+      } catch (err) {
+        return rules;
+      }
+    }, []);
+
+    return rules;
+  }
+
+  all() {
+    const { css: mediaCSS, hover: mediaHover } = this.mediaQueryCSS();
+    const { css: styleCSS, hover: styleHover } = this.css();
+    const inlineCSS = this.inlineCSS();
+
+    const css = removeDuplicateCSS(inlineCSS + mediaCSS + styleCSS);
+    const hover = removeDuplicateCSS(mediaHover + styleHover);
+
+    return { css, hover };
+  }
+
+  inlineCSS() {
+    const styleAttribute = this.element.getAttribute('style');
+
+    if (!styleAttribute) return '';
+
+    return styleAttribute.endsWith(';') ? styleAttribute : `${styleAttribute};`;
+  }
+
+  mediaQueryCSS() {
+    const mediaQueries = this.rules.filter(({ conditionText, media }) => {
+      return media && window.matchMedia(conditionText).matches && getNumber(conditionText);
+    });
+    const mediaQueriesSorted = mediaQueries.sort((a, b) => {
+      const aMedia = getNumber(a.conditionText);
+      const bMedia = getNumber(b.conditionText);
+
+      if (aMedia > bMedia) return -1;
+      if (bMedia > aMedia) return 1;
+
+      return 0;
+    });
+
+    const cssRules = mediaQueriesSorted.reduce(
+      (result, media) => {
+        if (media.cssRules) {
+          const filteredRules = filterRules(this.element, Array.from(media.cssRules));
+          const { css, hover } = extractCSS(filteredRules);
+
+          result.css += css;
+          result.hover += hover;
+
+          return result;
+        }
 
         return result;
-      }
+      },
+      { css: '', hover: '' }
+    );
 
-      return result;
-    },
-    { css: '', hover: '' }
-  );
+    return cssRules;
+  }
 
-  return cssRules;
+  css() {
+    const filteredRules = filterRules(this.element, this.rules);
+    const result = extractCSS(filteredRules);
+
+    return result;
+  }
 }
 
-function getCSS(el, rules) {
-  const filteredRules = rules.filter(rule => el.matches(rule.selectorText));
-  const result = extractCSS(filteredRules);
-
-  return result;
-}
-
-function getAllCSS(el, rules) {
-  const { css: mediaCSS, hover: mediaHover } = getCSSFromMediaQuery(el, rules);
-  const { css, hover } = getCSS(el, rules);
-  const inlineCSS = getInlineCSS(el);
-
-  return {
-    css: inlineCSS + mediaCSS + css,
-    hover: mediaHover + hover,
-  };
-}
-
-export default function(el) {
-  el.matches = el.matches || el.webkitMatchesSelector || el.mozMatchesSelector || el.msMatchesSelector || el.oMatchesSelector;
-
-  const slice = Function.call.bind(Array.prototype.slice);
-  const rules = Array.from(document.styleSheets).reduce((rules, sheet) => {
-    try {
-      if (sheet.cssRules) {
-        return rules.concat(slice(sheet.cssRules));
-      }
-    } catch (err) {
-      return rules;
-    }
-  }, []);
-
-  const { css, hover } = getAllCSS(el, rules);
-
-  const result = {
-    css: removeDuplicateCSS(css),
-    hover: removeDuplicateCSS(hover),
-  };
-
-  return result;
-}
+export default GetAppliedCSS;

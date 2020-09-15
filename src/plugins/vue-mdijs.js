@@ -16,6 +16,8 @@ import {
   mdiPause,
   mdiEyedropper,
   mdiInformation,
+  mdiCursorDefaultClick,
+  mdiArrowLeft,
 } from '@mdi/js';
 
 VueMdijs.add({
@@ -35,6 +37,8 @@ VueMdijs.add({
   mdiPause,
   mdiEyedropper,
   mdiInformation,
+  mdiCursorDefaultClick,
+  mdiArrowLeft,
 });
 
 export default VueMdijs;

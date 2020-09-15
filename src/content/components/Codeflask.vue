@@ -36,7 +36,7 @@ export default {
     );
 
     onMounted(() => {
-      const { shadowRoot } = document.querySelector('.inspector');
+      const { shadowRoot } = document.querySelector('.inspect-css');
 
       editor.value = new CodeFlask(editorEl.value, {
         language: props.language,

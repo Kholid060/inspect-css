@@ -1,6 +1,6 @@
 {
-  "name": "inspector",
-  "description": "A Vue.js web extension",
+  "name": "Inspect CSS",
+  "description": "Easiest way to inspect any element CSS",
   "version": null,
   "manifest_version": 2,
   "icons": {
@@ -9,9 +9,7 @@
   },
   "browser_action": {},
   "background": {
-    "scripts": [
-      "background.js"
-    ]
+    "scripts": ["background.js"]
   },
-  "permissions": ["activeTab", "unlimitedStorage", "storage"]
+  "permissions": ["activeTab"]
 }

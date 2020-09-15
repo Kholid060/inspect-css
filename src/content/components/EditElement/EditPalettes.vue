@@ -4,14 +4,20 @@
     <p class="text-light text-center" v-if="state.loading">
       Extracting Colors...
     </p>
-    <div class="content mb-5" v-else>
-      <div v-for="(color, index) in state.palette" :key="color" class="h-20 flex items-center px-5 color-card" :style="{ backgroundColor: color.hex }">
-        <p class="text-lg flex-1 color-card__text" :style="{ color: color.title }">
+    <div class="content mb-5 px-5 grid grid-cols-2" v-else>
+      <div
+        v-for="(color, index) in state.palette"
+        :key="color"
+        class="h-32 flex items-center justify-center cursor-pointer flex-col color-card"
+        :style="{ backgroundColor: color.hex }"
+        @click="copyColor(color.hex, index)"
+      >
+        <p class="color-card__text uppercase leading-none" :style="{ color: color.title }">
           {{ color.hex }}
         </p>
-        <button @click="copyColor(color.hex, index)" class="color-card__btn" v-tooltip:left="color.copied ? 'copied' : 'Copy color'">
-          <v-mdi name="mdi-content-copy"></v-mdi>
-        </button>
+        <p class="color-card__copy-text text-sm invisible opacity-0" :style="{ color: color.title }">
+          {{ color.copied ? 'copied' : 'Copy color' }}
+        </p>
       </div>
     </div>
   </div>

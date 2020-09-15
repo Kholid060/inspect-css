@@ -1,8 +1,17 @@
 .color-card {
-  transition: all 250ms ease;
+  &__text,
+  &__copy-text {
+    transition: all 250ms ease;
+    transform: translateY(15px);
+  }
   &:hover {
-    &.color-card__text {
-      opacity: 0.8;
+    .color-card__copy-text {
+      visibility: visible;
+      opacity: 0.75;
+    }
+    .color-card__text,
+    .color-card__copy-text {
+      transform: translateY(0px);
     }
   }
 }

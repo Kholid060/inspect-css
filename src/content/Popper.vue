@@ -5,6 +5,7 @@
 </template>
 <script>
 import { ref, onMounted, reactive } from 'vue';
+import emitter from 'tiny-emitter/instance';
 import ElementProperties from './components/ElementProperties.vue';
 import { generateGetBoundingClientRect } from '~/utils/helper';
 import GetElementProperties from '~/utils/getElementProperties';
@@ -31,7 +32,7 @@ export default {
       });
       const mousemove = ({ target, clientX, clientY }) => {
         const isPaused = document.body.classList.contains('pause');
-        const isMatchExtensionEl = target.classList.contains('inspector');
+        const isMatchExtensionEl = target.classList.contains('inspect-css');
 
         if (isPaused || isMatchExtensionEl) return container.value.classList.add('hidden');
         container.value.classList.remove('hidden');
@@ -39,7 +40,7 @@ export default {
         virtualElement.getBoundingClientRect = generateGetBoundingClientRect(clientX, clientY);
         instance.update();
 
-        if (!target.matches('.hover-element,.inspector')) {
+        if (!target.matches('.hover-element,.inspect-css')) {
           const properties = new GetElementProperties(target);
           state.properties = properties.getAll();
 
@@ -58,6 +59,10 @@ export default {
       };
 
       window.addEventListener('mousemove', mousemove);
+
+      emitter.on('closeExtension', () => {
+        window.removeEventListener('mousemove', mousemove);
+      });
     });
 
     return {

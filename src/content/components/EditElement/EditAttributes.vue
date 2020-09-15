@@ -12,8 +12,13 @@
       There's no attribute that you can edit
     </p>
     <div class="flex items-center mb-3" v-for="(value, key) in state.attributes" v-bind="{ key }">
-      <p class="text-overflow w-4/12">{{ key }}</p>
-      <input type="text" class="mx-2 w-7/12 bg-light px-3 py-2 rounded-md" @input="updateAttribute($event.target.value, key)" :value="state.attributes[key]" />
+      <p class="text-overflow w-4/12 text-light" :title="key">{{ key }}</p>
+      <input
+        type="text"
+        class="mx-2 w-7/12 bg-light px-3 focus:outline-none py-2 text-sm rounded-md"
+        @input="updateAttribute($event.target.value, key)"
+        :value="state.attributes[key]"
+      />
       <button class="w-1/12" title="Delete attribute" @click="deleteAttribute(key)">
         <v-mdi name="mdi-delete" class="text-danger"></v-mdi>
       </button>
@@ -29,7 +34,7 @@ export default {
     activeElementId: Number,
   },
   setup(props) {
-    const blackListAttrs = ['class', 'id', 'style'];
+    const blackListAttrs = ['style'];
     const state = reactive({
       attributes: {},
       key: '',
@@ -43,16 +48,26 @@ export default {
       const attributes = Array.from(target.attributes).reduce((attrs, { name, value }) => {
         if (blackListAttrs.includes(name)) return attrs;
 
-        attrs[name] = value;
+        attrs[name] = value.replace('active-element', '');
 
         return attrs;
       }, {});
       state.attributes = attributes;
     };
     const updateAttribute = debounce((value, key) => {
+      let newAttribute = value;
+
+      if (key === 'class') {
+        const findActiveClasses = key.split(' ').includes('active-element');
+
+        if (!findActiveClasses) {
+          newAttribute += ' active-element';
+        }
+      }
+
       const activeElement = document.querySelector('.active-element');
 
-      activeElement.setAttribute(key, value);
+      activeElement.setAttribute(key, newAttribute);
     }, 400);
     const addAttribute = () => {
       if (state.key === '' || blackListAttrs.includes(state.key)) return;
