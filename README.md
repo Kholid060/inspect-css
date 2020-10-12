@@ -1,3 +1,5 @@
+<img src="https://img.shields.io/chrome-web-store/v/fbopfffegfehobgoommphghohinpkego" />
+
 # Inspect CSS
 The easiest way to inspect and edit CSS
 
