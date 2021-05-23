@@ -1,28 +1,36 @@
-function generateKeys(name) {
+/* eslint-disable no-param-reassign */
+
+function generateBoxModels(name) {
   const directions = ['top', 'right', 'bottom', 'left'];
-  const keys = directions.map(direction => `${name}-${direction}`);
+  const keys = directions.map((direction) => `${name}-${direction}`);
 
   return keys;
 }
 
-function removePx(text) {
-  if (text === 'fontFamily') return;
-  const value = text.replace('px', '');
+function removePx(str) {
+  if (str === 'fontFamily') return '';
 
-  return +value === 0 ? '-' : Math.floor(value);
+  const value = str.replace('px', '');
+  const result = +value === 0 ? '-' : Math.floor(value);
+
+  return result;
 }
 
 function filterClasses(classes) {
   const blackListClasses = ['hover-element', 'active-element'];
-  const filtered = classes.filter(name => !blackListClasses.includes(name));
+  const filtered = classes.filter((name) => !blackListClasses.includes(name));
 
   return filtered.length !== 0 ? `.${filtered.join('.')}` : '';
 }
 
-export default class ElementProperties {
+class ElementProperties {
   constructor(reference) {
     this.reference = reference;
-    this.computedStyleKeys = [...generateKeys('margin'), ...generateKeys('padding'), 'fontFamily'];
+    this.computedStyleKeys = [
+      ...generateBoxModels('margin'),
+      ...generateBoxModels('padding'),
+      'fontFamily',
+    ];
   }
 
   getSelector() {
@@ -63,3 +71,5 @@ export default class ElementProperties {
     return properties;
   }
 }
+
+export default ElementProperties;

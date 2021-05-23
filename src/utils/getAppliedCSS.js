@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 function extractCSS(rules) {
   const result = { css: '', hover: '' };
 
@@ -18,7 +20,7 @@ function extractCSS(rules) {
 function removeDuplicateCSS(css) {
   const seen = new Set();
   const cssArray = css.split(';');
-  const filteredCssArray = cssArray.filter(property => {
+  const filteredCssArray = cssArray.filter((property) => {
     if (property === '') return;
 
     const [key] = property.split(':');
@@ -29,7 +31,7 @@ function removeDuplicateCSS(css) {
     return !duplicate;
   });
 
-  return filteredCssArray.map(cssStr => cssStr.trim()).join(';\n');
+  return filteredCssArray.map((cssStr) => cssStr.trim()).join(';\n');
 }
 
 function getNumber(text) {
@@ -46,19 +48,19 @@ function filterRules(element, rules) {
 
 class GetAppliedCSS {
   constructor(el) {
-    el.matches = el.matches || el.webkitMatchesSelector || el.mozMatchesSelector || el.msMatchesSelector || el.oMatchesSelector;
+    // el.matches = el.matches || el.webkitMatchesSelector || el.mozMatchesSelector || el.msMatchesSelector || el.oMatchesSelector;
     this.element = el;
   }
 
   get rules() {
     const slice = Function.call.bind(Array.prototype.slice);
-    const rules = Array.from(document.styleSheets).reduce((rules, sheet) => {
+    const rules = Array.from(document.styleSheets).reduce((rulesArr, sheet) => {
       try {
-        if (sheet.cssRules) {
-          return rules.concat(slice(sheet.cssRules));
+        if (sheet?.cssRules) {
+          return rulesArr.concat(slice(sheet.cssRules));
         }
-      } catch (err) {
-        return rules;
+      } catch {
+        return rulesArr;
       }
     }, []);
 
@@ -85,9 +87,7 @@ class GetAppliedCSS {
   }
 
   mediaQueryCSS() {
-    const mediaQueries = this.rules.filter(({ conditionText, media }) => {
-      return media && window.matchMedia(conditionText).matches && getNumber(conditionText);
-    });
+    const mediaQueries = this.rules.filter(({ conditionText, media }) => media && window.matchMedia(conditionText).matches && getNumber(conditionText));
     const mediaQueriesSorted = mediaQueries.sort((a, b) => {
       const aMedia = getNumber(a.conditionText);
       const bMedia = getNumber(b.conditionText);
@@ -112,7 +112,7 @@ class GetAppliedCSS {
 
         return result;
       },
-      { css: '', hover: '' }
+      { css: '', hover: '' },
     );
 
     return cssRules;

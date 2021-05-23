@@ -1,0 +1,35 @@
+@import "../base/fonts.css";
+
+body.is-screenshotting .inspect-css {
+  display: none;
+}
+body.is-screenshotting .hover-element,
+body.is-screenshotting [active-element],
+body.is-screenshotting .display-grid * {
+  outline:  none !important;
+}
+
+.inspect-css {
+	z-index: 99999;
+	position: relative;
+}
+
+body.is-screenshotting [is-sticky] {
+  position: relative !important;
+}
+.hide-fixed [is-fixed] {
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+.hover-element {
+  outline: 1px solid #f56565 !important;
+}
+
+.display-grid * {
+  outline: 1px solid rgba(245, 101, 101, 0.2);
+}
+
+[active-element] {
+  outline: 1px solid #4299e1 !important;
+}
