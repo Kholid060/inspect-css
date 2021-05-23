@@ -3,7 +3,7 @@
   "name": "__MSG_extName__",
   "description": "The easiest way to inspect and edit CSS.",
   "default_locale": "en",
-  "permissions": ["activeTab", "storage"],
+  "permissions": ["activeTab"],
   "icons": {
     "48": "icons/48.png",
     "128": "icons/128.png"
