@@ -1,15 +1,19 @@
 {
-  "name": "Inspect CSS",
-  "description": "The easiest way to inspect and edit CSS.",
-  "version": null,
   "manifest_version": 2,
+  "name": "__MSG_extName__",
+  "homepage_url": "http://localhost:8080/",
+  "description": "The easiest way to inspect and edit CSS.",
+  "default_locale": "en",
+  "permissions": ["activeTab", "storage"],
   "icons": {
-    "48": "icons/icon_48.png",
-    "128": "icons/icon_128.png"
+    "48": "icons/48.png",
+    "128": "icons/128.png"
   },
-  "browser_action": {},
   "background": {
-    "scripts": ["background.js"]
+    "scripts": [
+      "js/background.js"
+    ],
+    "persistent": false
   },
-  "permissions": ["activeTab"]
+  "browser_action": {}
 }

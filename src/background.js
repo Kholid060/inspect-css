@@ -1,11 +1,25 @@
-const browser = require('webextension-polyfill');
+browser.runtime.onInstalled.addListener(({ reason }) => {
+  if (reason === 'install') {
+    browser.storage.local.set({
+      setting: {
+        isOnLeft: false,
+        isGridActive: false,
+        isPauseActive: false,
+      },
+    });
+  }
+});
 
-browser.browserAction.onClicked.addListener(async ({ id }) => {
-  await browser.tabs.executeScript({
-    file: 'content.js',
+browser.browserAction.onClicked.addListener(() => {
+  browser.tabs.executeScript({
+    file: './js/content-script.js',
   });
+});
 
-  await browser.tabs.insertCSS({
-    file: 'content.css',
-  });
+browser.runtime.onMessage.addListener(async ({ type }) => {
+  if (type === 'screenshot') {
+    const imageUri = await browser.tabs.captureVisibleTab({ quality: 70 });
+
+    return imageUri;
+  }
 });

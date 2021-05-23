@@ -1,6 +1,6 @@
 export default class GlobalEvent {
-  static init({ onEventFired }) {
-    this.callback = onEventFired;
+  static init(callback) {
+    this.callback = callback;
     this.bindMouseEvent = this.clickHandler.bind(this);
     this.bindKeyupEvent = this.keyupHandler.bind(this);
 
@@ -12,7 +12,7 @@ export default class GlobalEvent {
     document.addEventListener('keyup', this.bindKeyupEvent);
   }
 
-  static removeListener() {
+  static removeListeners() {
     window.removeEventListener('click', this.bindMouseEvent);
     document.removeEventListener('keyup', this.bindKeyupEvent);
   }
@@ -31,13 +31,14 @@ export default class GlobalEvent {
 
   static eventHandler(target) {
     const isPaused = document.body.classList.contains('pause');
-    const isMatchExtensionElement = target.matches('.inspect-css,.active-element,html');
+    const isMatchExtensionElement = target.matches('.inspect-css,[active-element],html');
+
     if (isMatchExtensionElement || isPaused) return;
 
-    const activeElement = document.querySelector('.active-element');
-    activeElement && activeElement.classList.remove('active-element');
+    const activeElement = document.querySelector('[active-element]');
+    activeElement?.removeAttribute('active-element');
 
-    target.classList.add('active-element');
+    target.setAttribute('active-element', '');
     target.classList.remove('hover-element');
 
     this.callback();

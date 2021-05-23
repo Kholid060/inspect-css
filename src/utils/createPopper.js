@@ -1,6 +1,6 @@
 import { createPopper } from '@popperjs/core';
 
-export default function({ container = null, content, options = {} }) {
+export default function ({ container = null, content, options = {} }) {
   if (container === null) throw new Error('container is required');
 
   const instance = createPopper(container, content, {
