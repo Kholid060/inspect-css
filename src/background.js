@@ -1,15 +1,3 @@
-browser.runtime.onInstalled.addListener(({ reason }) => {
-  if (reason === 'install') {
-    browser.storage.local.set({
-      setting: {
-        isOnLeft: false,
-        isGridActive: false,
-        isPauseActive: false,
-      },
-    });
-  }
-});
-
 browser.browserAction.onClicked.addListener(() => {
   browser.tabs.executeScript({
     file: './js/content-script.js',
