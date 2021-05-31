@@ -10,9 +10,6 @@
           {{ type.name }}
         </option>
       </ui-select>
-      <ui-button :loading="state.loadingSaveAll" variant="primary" @click="downloadAllAssets">
-        Save all
-      </ui-button>
     </div>
     <div class="image-card-container grid grid-cols-2 gap-2">
       <transition-group name="list-transition">
@@ -125,7 +122,10 @@ export default {
         const { tagName, src } = element;
 
         if ((tagName === 'IMG' || 'VIDEO') && src) {
+          /* eslint-disable-next-line */
+          // const name = (src.split('/').pop()).replace(/[\#\?].*$/, '');
           const name = src.split('/').pop();
+          console.log(name, src);
 
           if (acc.seen.has(name)) return acc;
 
