@@ -35,14 +35,5 @@
     "tailwindcss": "npm:@tailwindcss/postcss7-compat",
     "to-string-loader": "^1.1.6",
     "vue-cli-plugin-browser-extension": "latest"
-  },
-  "gitHooks": {
-    "pre-commit": "lint-staged"
-  },
-  "lint-staged": {
-    "*.{js,jsx,vue}": [
-      "vue-cli-service lint",
-      "git add"
-    ]
   }
 }
