@@ -108,7 +108,7 @@ export default {
 
       zip.generateAsync({ type: 'blob' }).then((content) => {
         const { hostname } = window.location;
-        const name = `${hostname}-assets`;
+        const name = `${hostname}-assets.zip`;
 
         saveAs(content, name);
 
