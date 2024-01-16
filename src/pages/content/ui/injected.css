@@ -1,1 +1,14 @@
 @import '@src/assets/style/theme.css';
+
+.toolbar-button {
+  @apply h-11 w-11 text-center rounded-lg hover:bg-muted/80 hover:highlight-white/10 hover:text-foreground transition;
+
+  svg {
+    height: theme('size.6');
+    width: theme('size.6');
+  }
+}
+
+.cm-editor .cm-content {
+  font-family: theme('fontFamily.mono');
+}

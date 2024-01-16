@@ -4,7 +4,9 @@ import App from '@root/src/pages/content/ui/App.vue';
 import refreshOnUpdate from 'virtual:reload-on-update-in-view';
 import injectedStyle from './injected.css?inline';
 import fontCss from '@assets/style/fonts.css?inline';
-import { SELECTED_EL_ATTR_NAME } from '@root/src/utils/constant';
+import { EL_ATTR_NAME } from '@root/src/utils/constant';
+import { appPlugin } from './app-plugin';
+import { MotionPlugin } from '@vueuse/motion';
 
 refreshOnUpdate('pages/content');
 
@@ -12,8 +14,9 @@ function initSelectedStyleEl() {
   const selectedElStyle = document.createElement('style');
   selectedElStyle.id = 'inspect-css-style';
   selectedElStyle.textContent = `
-    [${SELECTED_EL_ATTR_NAME}] { outline: 1px solid hsl(0deg 90.6% 70.78%) }
-    [${SELECTED_EL_ATTR_NAME}="true"] { outline-color: hsl(217.22deg 91.22% 59.8%) }
+    [${EL_ATTR_NAME.hover}] { outline: 2px solid hsl(0deg 90.6% 70.78%) }
+    [${EL_ATTR_NAME.selected}="true"] { outline: 2px solid hsl(217.22deg 91.22% 59.8%) !important }
+    [${EL_ATTR_NAME.dragging}] { user-select: none !important; }
   `;
 
   document.head.appendChild(selectedElStyle);
@@ -42,26 +45,27 @@ function initApp() {
   fontStyle.textContent = fontCss.replaceAll('/assets/', fontURL);
   document.head.appendChild(fontStyle);
 
-  /** Inject styles into shadow dom */
+  // Inject styles into shadow dom
   const styleElement = document.createElement('style');
   styleElement.innerHTML = injectedStyle;
   shadowRoot.appendChild(styleElement);
 
-  /**
-   * https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite/pull/174
-   *
-   * In the firefox environment, the adoptedStyleSheets bug may prevent contentStyle from being applied properly.
-   * Please refer to the PR link above and go back to the contentStyle.css implementation, or raise a PR if you have a better way to improve it.
-   */
+  initSelectedStyleEl();
 
-  createApp(App, { shadowRoot }).mount(rootIntoShadow);
+  createApp(App)
+    .use(appPlugin, shadowRoot)
+    .use(MotionPlugin)
+    .mount(rootIntoShadow);
 
   return true;
 }
 
 (() => {
-  const appInitialized = initApp();
-  if (!appInitialized) return;
+  initApp();
 
-  initSelectedStyleEl();
+  Browser.runtime.onMessage.addListener((message: { type: string }) => {
+    if (message?.type !== 'init') return;
+
+    initApp();
+  });
 })();

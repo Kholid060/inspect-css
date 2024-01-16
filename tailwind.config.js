@@ -1,4 +1,5 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
+import flattenColorPalette from 'tailwindcss/lib/util/flattenColorPalette';
 
 function rem2px(input, fontSize = 16) {
   if (input == null) {
@@ -75,7 +76,6 @@ export default {
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
       },
-      borderRadius: rem2px(defaultTheme.borderRadius),
       columns: rem2px(defaultTheme.columns),
       fontSize: rem2px(defaultTheme.fontSize),
       lineHeight: rem2px(defaultTheme.lineHeight),
@@ -85,5 +85,17 @@ export default {
       spacing: rem2px(defaultTheme.spacing),
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ matchUtilities, theme }) {
+      matchUtilities(
+        {
+          highlight: (value) => ({ boxShadow: `inset 0 1px 0 0 ${value}` }),
+        },
+        {
+          values: flattenColorPalette(theme('backgroundColor')),
+          type: 'color',
+        },
+      );
+    },
+  ],
 };

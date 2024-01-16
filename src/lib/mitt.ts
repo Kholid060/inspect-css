@@ -1,9 +1,10 @@
 import mitt from 'mitt';
+import { ElementProperties } from '../utils/getElProperties';
 
-type MittEvents = {
-  'content:el-selected': Element;
+export type EmitterEvents = {
+  'content:el-selected': { el: Element; properties: ElementProperties };
 };
 
-export const emitter = mitt<MittEvents>();
+export const emitter = mitt<EmitterEvents>();
 
 export default mitt;

@@ -62,5 +62,5 @@
 }
 
 .kbd {
-  @apply rounded-md border border-b-2 px-1 py-0.5 inline-flex items-center justify-center bg-popover min-w-2 min-h-2;
+  @apply rounded-sm border border-b-2 px-1 py-0.5 inline-flex items-center justify-center bg-popover min-w-2 min-h-2;
 }

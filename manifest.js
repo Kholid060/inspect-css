@@ -15,7 +15,8 @@ const manifest = {
   name: '__MSG_extensionName__',
   version: packageJson.version,
   description: '__MSG_extensionDescription__',
-  permissions: ['activeTab', 'scripting'],
+  permissions: ['activeTab', 'scripting', 'tabs'],
+  host_permissions: ['http://*/*'],
   action: {},
   background: {
     service_worker: 'src/pages/background/index.js',

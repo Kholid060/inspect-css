@@ -1,30 +1,15 @@
 <template>
   <main class="text-base text-left">
-    <AppElementScanner />
+    <AppElementScanner v-if="!state.paused" />
     <AppElementDetail />
+    <AppToolbar />
   </main>
 </template>
 <script setup lang="ts">
-import { provide, shallowReactive } from 'vue';
-import { APP_PROVIDER_KEY } from './keys';
+import { useAppProvider } from './app-plugin';
 import AppElementDetail from './app/AppElementDetail.vue';
 import AppElementScanner from './app/AppElementScanner.vue';
-import { AppState, AppStateProvider } from '@src/interfaces/app.interface';
+import AppToolbar from './app/AppToolbar.vue';
 
-const props = defineProps<{ shadowRoot: ShadowRoot }>();
-
-const appState = shallowReactive<AppState>({
-  paused: false,
-  showGrid: false,
-});
-
-function updateState(newState: Partial<AppState>) {
-  Object.assign(appState, newState);
-}
-
-provide<AppStateProvider>(APP_PROVIDER_KEY, {
-  updateState,
-  state: appState,
-  shadowRoot: props.shadowRoot,
-});
+const { state } = useAppProvider();
 </script>

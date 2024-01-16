@@ -1,15 +1,5 @@
 <template>
-  <div class="line-clamp-2 font-semibold leading-tight">
-    <span class="text-red-500">
-      {{ properties.selector.tag }}
-    </span>
-    <span class="text-primary">
-      {{ properties.selector.id }}
-    </span>
-    <span class="text-blue-400">
-      {{ properties.selector.classes }}
-    </span>
-  </div>
+  <UiElementSelector :selector="properties.selector" />
   <div class="flex items-center mt-0.5 gap-1 text-sm">
     <CaseSensitiveIcon class="h-7 w-7" />
     <p>
@@ -36,6 +26,7 @@
 import { CaseSensitiveIcon } from 'lucide-vue-next';
 import UiElementSpacing from './UiElementSpacing.vue';
 import { ElementProperties } from '@root/src/utils/getElProperties';
+import UiElementSelector from './UiElementSelector.vue';
 
 interface Props {
   properties: ElementProperties;

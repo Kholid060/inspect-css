@@ -8,38 +8,48 @@ import {
 } from './css-rule-parser';
 import type { SetRequired } from 'type-fest';
 
-class CSSRules {
-  private initialized = false;
+const MAX_RULES_CACHE_MS = 60_000; // 1 minute
 
-  rules: (CSSMediaRule | CSSStyleRule)[];
+export interface ElementAppliedStyleRules extends ElementAppliedCSS {
+  media: SetRequired<ElementAppliedCSS, 'mediaCondition'>[];
+}
 
-  constructor() {
-    this.rules = [];
-  }
+class CSSRulesUtils {
+  private lastRetrievedRules: null | number = null;
+  private _rules: (CSSMediaRule | CSSStyleRule)[] = [];
 
-  init() {
-    if (this.initialized) return;
+  constructor() {}
 
-    for (const styleSheet of document.styleSheets) {
-      try {
-        if (styleSheet.disabled) continue;
+  get rules() {
+    if (
+      !this.lastRetrievedRules ||
+      Date.now() - this.lastRetrievedRules < MAX_RULES_CACHE_MS
+    ) {
+      this._rules = [];
 
-        for (const rule of styleSheet.cssRules) {
-          if (!(rule instanceof CSSStyleRule || rule instanceof CSSMediaRule))
-            continue;
+      for (const styleSheet of document.styleSheets) {
+        try {
+          if (styleSheet.disabled) continue;
 
-          this.rules.push(rule);
+          for (const rule of styleSheet.cssRules) {
+            if (!(rule instanceof CSSStyleRule || rule instanceof CSSMediaRule))
+              continue;
+
+            this._rules.push(rule);
+          }
+        } catch (error) {
+          // 3rd-party CSS;
+          console.error(error);
         }
-      } catch (error) {
-        // 3rd-party CSS;
-        console.error(error);
       }
+
+      this.lastRetrievedRules = Date.now();
     }
 
-    this.initialized = true;
+    return this._rules;
   }
 
-  getElementRules(element: Element) {
+  getAppliedRules(element: Element): ElementAppliedStyleRules {
     const rules: ElementCSSRule[] = [];
 
     const mediaRules: ElementMediaCSSRule[] = [];
@@ -91,6 +101,10 @@ class CSSRules {
       media: appliedMediaCSS,
     };
   }
+
+  destroy() {
+    this._rules = [];
+  }
 }
 
-export default CSSRules;
+export default CSSRulesUtils;
