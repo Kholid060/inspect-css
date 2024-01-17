@@ -4,38 +4,29 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, watch } from 'vue';
 import { EditorState } from '@codemirror/state';
-import { EditorView, keymap, highlightActiveLine } from '@codemirror/view';
+import {
+  EditorView,
+  keymap,
+  highlightActiveLine,
+  highlightActiveLineGutter,
+} from '@codemirror/view';
 import { defaultKeymap, indentWithTab } from '@codemirror/commands';
-import { createTheme } from '@uiw/codemirror-themes';
-import { css } from '@codemirror/lang-css';
-import { tags as t } from '@lezer/highlight';
+import { css } from '@src/lib/codemirror/css';
+import { themeInit } from '@src/lib/codemirror/theme';
+import { color } from '@uiw/codemirror-extensions-color';
+import { toggleCommentGutter } from '@src/lib/codemirror/extensions';
+import { autocompletion } from '@codemirror/autocomplete';
 
-const [model] = defineModel({
-  default: '',
-  type: String,
+interface Props {
+  modelValue: string;
+}
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: '',
 });
-
-const myTheme = createTheme({
-  theme: 'dark',
-  settings: {
-    background: 'transparent',
-    foreground: '#CECFD0',
-    caret: '#fff',
-    selection: '#727377',
-    selectionMatch: '#727377',
-    lineHighlight: '#ffffff0f',
-  },
-  styles: [
-    { tag: [t.comment, t.quote], color: '#7F8C98' },
-    { tag: [t.keyword], color: '#FF7AB2', fontWeight: 'bold' },
-    { tag: [t.string, t.meta, t.integer], color: '#FF8170' },
-    { tag: [t.typeName], color: '#DABAFF' },
-    { tag: [t.definition(t.variableName)], color: '#6BDFFF' },
-    { tag: [t.name], color: '#6BAA9F' },
-    { tag: [t.variableName], color: '#ACF2E4' },
-    { tag: [t.regexp, t.link], color: '#FF8170' },
-  ],
-});
+const emit = defineEmits<{
+  (e: 'change', value: string): void;
+  (e: 'update:modelValue', value: string): void;
+}>();
 
 let editorView: EditorView;
 let editorState: EditorState;
@@ -43,8 +34,10 @@ let editorState: EditorState;
 const editorEl = ref<HTMLElement>();
 
 watch(
-  () => model.value,
+  () => props.modelValue,
   (newValue) => {
+    if (newValue === editorState.doc.toString()) return;
+
     editorView.dispatch({
       changes: {
         from: 0,
@@ -52,21 +45,38 @@ watch(
         to: editorView.state.doc.length,
       },
     });
-    console.log(newValue);
+    console.log('nanan');
   },
 );
 
 onMounted(() => {
-  console.log(model);
+  const updateListener = EditorView.updateListener.of((viewUpdate) => {
+    if (!viewUpdate.docChanged) return;
+
+    const newValue = viewUpdate.state.doc.toString();
+    emit('change', newValue);
+    emit('update:modelValue', newValue);
+  });
+
   editorState = EditorState.create({
-    doc: model.value,
+    doc: props.modelValue,
     extensions: [
       css(),
-      myTheme,
+      color,
+      updateListener,
+      autocompletion(),
+      toggleCommentGutter,
       highlightActiveLine(),
       EditorView.lineWrapping,
       keymap.of(defaultKeymap),
       keymap.of([indentWithTab]),
+      highlightActiveLineGutter(),
+      themeInit({
+        settings: {
+          background: 'transparent',
+          gutterBackground: 'transparent',
+        },
+      }),
     ],
   });
 

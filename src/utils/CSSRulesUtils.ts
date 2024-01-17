@@ -29,7 +29,12 @@ class CSSRulesUtils {
 
       for (const styleSheet of document.styleSheets) {
         try {
-          if (styleSheet.disabled) continue;
+          if (
+            styleSheet.disabled ||
+            (styleSheet.ownerNode instanceof HTMLElement &&
+              styleSheet.ownerNode.id === 'inspect-css-style')
+          )
+            continue;
 
           for (const rule of styleSheet.cssRules) {
             if (!(rule instanceof CSSStyleRule || rule instanceof CSSMediaRule))
@@ -98,7 +103,7 @@ class CSSRulesUtils {
 
     return {
       ...mainRules,
-      media: appliedMediaCSS,
+      media: appliedMediaCSS.reverse(),
     };
   }
 

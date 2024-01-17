@@ -40,10 +40,12 @@
         {{ item.name }}
       </button>
     </div>
-    <div style="max-height: calc(100vh - 400px)" class="overflow-auto">
+    <div style="max-height: calc(100vh - 200px)" class="overflow-auto">
       <DetailStyle
+        :el-selector="elSelector"
         :properties="elProperties"
-        :applied-style="elAppliedStyle!" />
+        :applied-style="elAppliedStyle!"
+        @update:applied-style="elAppliedStyle = $event" />
     </div>
   </div>
 </template>
@@ -72,7 +74,7 @@ import DetailStyle from './detail/DetailStyle.vue';
 import UiElementSelector from '@root/src/pages/components/ui/UiElementSelector.vue';
 import { finder } from '@medv/finder';
 
-const CONTAINER_WIDTH = 340;
+const CONTAINER_WIDTH = 350;
 
 let lastPosition: { x: number; y: number } | null = null;
 
@@ -91,7 +93,7 @@ const containerRef = ref<HTMLDivElement>();
 
 const elSelector = shallowRef('');
 const elProperties = shallowRef<ElementProperties | null>(null);
-const elAppliedStyle = ref<ElementAppliedStyleRules | null>(null);
+const elAppliedStyle = shallowRef<ElementAppliedStyleRules | null>(null);
 
 function closeWindow() {
   elProperties.value = null;
@@ -101,7 +103,6 @@ function updateWindowPosition(x: number, y: number) {
   if (!containerRef.value) return;
 
   lastPosition = { x, y };
-  console.log('hahaha', lastPosition);
   containerRef.value.style.transform = `translate(${x}px, ${y}px)`;
 }
 function startDragging(pointerDownEvent: PointerEvent) {

@@ -1,5 +1,5 @@
 <template>
-  <main class="text-base text-left">
+  <main class="text-base text-left" style="color-scheme: dark">
     <AppElementScanner v-if="!state.paused" />
     <AppElementDetail />
     <AppToolbar />

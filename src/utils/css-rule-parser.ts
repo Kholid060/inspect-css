@@ -4,41 +4,18 @@ const CSS_PSEUDO = [
   ':disabled',
   ':empty',
   ':enabled',
-  ':first-child',
-  ':first-of-type',
   ':focus',
   ':hover',
-  ':in-range',
   ':invalid',
-  ':lang(language)',
-  ':last-child',
-  ':last-of-type',
-  ':link',
-  ':not(selector)',
-  ':nth-child(n)',
-  ':nth-last-child(n)',
-  ':nth-last-of-type(n)',
-  ':nth-of-type(n)',
-  ':only-of-type',
-  ':only-child',
-  ':optional',
-  ':out-of-range',
-  ':read-only',
-  ':read-write',
-  ':required',
-  ':root',
-  ':target',
   ':valid',
   ':visited',
-  ':after',
-  ':before',
   ':first-letter',
   ':first-line',
   ':marker',
   ':selection',
 ] as const;
 
-const CSS_PSEUDO_REGEX = new RegExp(CSS_PSEUDO.join('|'));
+const CSS_PSEUDO_REGEX = new RegExp(':?' + CSS_PSEUDO.join('|'));
 
 export interface ElementStyleProperty {
   key: string;
@@ -144,9 +121,20 @@ export function parseCSSStyleRule(
     styleRule: CSSStyleRule,
     mediaCondition: string | null = null,
   ) => {
-    const selector = styleRule.selectorText
-      .split(',')
-      .find((str) => element.matches(str.trim()));
+    let isPseudo = false;
+
+    const selector = styleRule.selectorText.split(',').find((str) => {
+      const normalizeSelector = str.trim().replace(CSS_PSEUDO_REGEX, () => {
+        isPseudo = true;
+        return '';
+      });
+
+      try {
+        return element.matches(normalizeSelector);
+      } catch (error) {
+        return false;
+      }
+    });
 
     if (!selector || (mediaCondition && !window.matchMedia(mediaCondition)))
       return;
@@ -154,9 +142,9 @@ export function parseCSSStyleRule(
     const extractedCSSText = extractCSSText(styleRule.cssText).trim();
 
     result.rules.push({
+      isPseudo,
       selector: selector.trim(),
       cssText: extractedCSSText,
-      isPseudo: CSS_PSEUDO_REGEX.test(selector),
       properties: cssTextToObject(extractedCSSText),
     });
   };
