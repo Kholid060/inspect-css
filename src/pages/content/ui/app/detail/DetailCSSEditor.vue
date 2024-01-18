@@ -2,7 +2,7 @@
   <div ref="editorEl" class="font-mono"></div>
 </template>
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, watch } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import { EditorState } from '@codemirror/state';
 import {
   EditorView,
@@ -32,22 +32,6 @@ let editorView: EditorView;
 let editorState: EditorState;
 
 const editorEl = ref<HTMLElement>();
-
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    if (newValue === editorState.doc.toString()) return;
-
-    editorView.dispatch({
-      changes: {
-        from: 0,
-        insert: newValue,
-        to: editorView.state.doc.length,
-      },
-    });
-    console.log('nanan');
-  },
-);
 
 onMounted(() => {
   const updateListener = EditorView.updateListener.of((viewUpdate) => {

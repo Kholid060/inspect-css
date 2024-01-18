@@ -1,4 +1,3 @@
-import * as specificity from 'specificity';
 import {
   ElementAppliedCSS,
   ElementCSSRule,
@@ -80,22 +79,17 @@ class CSSRulesUtils {
     }
 
     const sortedRules = rules.sort((a, b) =>
-      specificity.compareDesc(
-        specificity.calculate(a.selector),
-        specificity.calculate(b.selector),
-      ),
+      a.specificity > b.specificity ? -1 : 1,
     );
-    const mainRules = getAppliedCSSProperties(sortedRules);
+    const mainRules = getAppliedCSSProperties(element, sortedRules);
 
     const appliedMediaCSS = mediaRules.map((mediaRule) => {
       const sortedMediaRules = mediaRule.rules.sort((a, b) =>
-        specificity.compareDesc(
-          specificity.calculate(a.selector),
-          specificity.calculate(b.selector),
-        ),
+        a.specificity > b.specificity ? -1 : 1,
       );
 
       return getAppliedCSSProperties(
+        element,
         sortedMediaRules,
         mediaRule.mediaCondition,
       ) as SetRequired<ElementAppliedCSS, 'mediaCondition'>;

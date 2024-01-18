@@ -3,18 +3,33 @@ import { wrapInParenthesis } from './helper';
 
 function replaceAllStyleValue(
   css: string,
-  value: string | ((match: string, ...rest: string[]) => string),
+  replacement: string | ((key: string, value: string) => string),
 ) {
-  return css.replace(/:\s*([^;]+);/g, (match, ...rest) => {
-    if (typeof value === 'function') return value(match, ...rest);
+  let updatedCSS = '';
 
-    return value;
-  });
+  for (const property of css.split(';')) {
+    if (!property.trim()) continue;
+
+    const [key, value] = property.split(/:\s*([^;]+)/);
+    const newProperty =
+      typeof replacement === 'string'
+        ? replacement
+        : replacement(key.trim(), value);
+    if (!newProperty) continue;
+
+    updatedCSS += newProperty + '\n';
+  }
+
+  return updatedCSS;
 }
 
 export function resetAppliedStyleValue(style: ElementAppliedStyleRules) {
   const copyStyle = structuredClone(style);
-  const replaceValue = ': initial !important;';
+  const replaceValue = (key: string) => {
+    if (key.startsWith('--')) return '';
+
+    return `${key}: initial !important;`;
+  };
 
   copyStyle.cssText = replaceAllStyleValue(copyStyle.cssText, replaceValue);
   copyStyle.media = copyStyle.media.map((media) => ({
@@ -44,26 +59,53 @@ export function generateElementCSS({
 }) {
   let css = '';
 
-  const addImportantRule = (cssStr: string) =>
-    replaceAllStyleValue(cssStr, (match) => {
-      if (match.includes('!important')) return match;
+  const addImportantRule = (cssStr: string) => {
+    return replaceAllStyleValue(cssStr, (key, value) => {
+      if (!key || !value) return `${key || ''}${value || ''}`;
+      if (value.includes('!important') || key.startsWith('--'))
+        return `${key}: ${value};`;
 
-      return match.replace(/;$/, ' !important;');
+      return `${key}: ${value} !important;`;
     });
+  };
 
   css += `${selector} {
-    ${initialStyle.cssText}\n\n
+    ${initialStyle.cssText}
+
     ${addImportantRule(style.cssText)}
   }\n`;
 
   style.media.forEach((media, index) => {
-    css += `@screen ${wrapInParenthesis(media.mediaCondition)} {
+    const pseudoMediaCSS = media.pseudo
+      .map(
+        (pseudo, pseudoIdx) =>
+          `${selector}${pseudo.pseudo} {
+            ${initialStyle.media[index]?.pseudo[pseudoIdx]?.cssText || ''}
+            ${addImportantRule(pseudo.cssText)}
+        }`,
+      )
+      .join('\n');
+
+    css += `@media ${wrapInParenthesis(media.mediaCondition)} {
       ${selector} {
-        ${initialStyle.media[index]?.cssText || ''}\n\n
+        ${initialStyle.media[index]?.cssText || ''}
+
         ${addImportantRule(media.cssText)}
+        
+        ${pseudoMediaCSS}
       }
     }\n`;
   });
+
+  css += style.pseudo
+    .map(
+      (pseudo, pseudoIdx) =>
+        `${selector}${pseudo.pseudo} {
+        ${initialStyle.pseudo[pseudoIdx]?.cssText || ''}
+        ${addImportantRule(pseudo.cssText)}
+    }`,
+    )
+    .join('\n');
 
   return css;
 }

@@ -1,3 +1,6 @@
+import * as specificity from 'specificity';
+import { SetRequired } from 'type-fest';
+
 const CSS_PSEUDO = [
   ':active',
   ':checked',
@@ -15,7 +18,7 @@ const CSS_PSEUDO = [
   ':selection',
 ] as const;
 
-const CSS_PSEUDO_REGEX = new RegExp(':?' + CSS_PSEUDO.join('|'));
+const CSS_PSEUDO_REGEX = new RegExp(`:?(${CSS_PSEUDO.join('|')})$`);
 
 export interface ElementStyleProperty {
   key: string;
@@ -24,9 +27,10 @@ export interface ElementStyleProperty {
 }
 
 export interface ElementCSSRule {
+  pseudo?: string;
   cssText: string;
   selector: string;
-  isPseudo: boolean;
+  specificity: number;
   properties: ElementStyleProperty[];
 }
 
@@ -38,7 +42,7 @@ export interface ElementMediaCSSRule {
 export interface ElementAppliedCSS {
   cssText: string;
   mediaCondition?: string;
-  pseudo: { selector: string; cssText: string }[];
+  pseudo: { cssText: string; pseudo: string }[];
 }
 
 const extractCSSText = (cssText: string) =>
@@ -64,43 +68,132 @@ function cssTextToObject(cssText: string) {
 }
 
 export function getAppliedCSSProperties(
+  element: Element,
   rules: ElementCSSRule[],
   mediaCondition?: string,
 ): ElementAppliedCSS {
   const pseudo: ElementAppliedCSS['pseudo'] = [];
-  const mainProperties = new Map<
-    string,
-    { value: string; isImportant: boolean }
-  >();
 
-  for (const rule of rules) {
-    if (rule.isPseudo) {
-      pseudo.push({ cssText: rule.cssText, selector: rule.selector });
-      continue;
-    }
+  type PropertyValue = {
+    value: string;
+    isImportant: boolean;
+    specificity: number;
+  };
 
+  const mainProperties = new Map<string, PropertyValue>();
+  const pseudoProperties = new Map<string, Record<string, PropertyValue>>();
+
+  const handleMainProps = (rule: ElementCSSRule) => {
     for (const { isImportant, key, value } of rule.properties) {
       const property = mainProperties.get(key);
-      if (property) {
-        if (isImportant) {
-          mainProperties.set(key, { isImportant, value });
-        }
-
+      if (!property) {
+        mainProperties.set(key, {
+          isImportant,
+          value,
+          specificity: rule.specificity,
+        });
         continue;
       }
 
-      mainProperties.set(key, { isImportant, value });
+      if (
+        isImportant ||
+        (!isImportant &&
+          !property.isImportant &&
+          property.specificity === rule.specificity)
+      ) {
+        mainProperties.set(key, {
+          value,
+          isImportant,
+          specificity: rule.specificity,
+        });
+      }
+    }
+  };
+  const handlePseudoProps = (rule: SetRequired<ElementCSSRule, 'pseudo'>) => {
+    const pseudoProps = pseudoProperties.get(rule.pseudo);
+    if (!pseudoProps) {
+      const objProps = rule.properties.reduce<Record<string, PropertyValue>>(
+        (acc, curr) => {
+          acc[curr.key] = {
+            value: curr.value,
+            isImportant: curr.isImportant,
+            specificity: rule.specificity,
+          };
+
+          return acc;
+        },
+        {},
+      );
+      pseudoProperties.set(rule.pseudo, objProps);
+      return;
+    }
+
+    for (const { key, value, isImportant } of rule.properties) {
+      const property = pseudoProps[key];
+
+      if (!property) {
+        pseudoProps[key] = {
+          value,
+          isImportant,
+          specificity: rule.specificity,
+        };
+        continue;
+      }
+
+      if (
+        isImportant ||
+        (!isImportant &&
+          !property.isImportant &&
+          property.specificity === rule.specificity)
+      ) {
+        pseudoProps[key] = {
+          value,
+          isImportant,
+          specificity: rule.specificity,
+        };
+      }
+    }
+
+    pseudoProperties.set(rule.pseudo, pseudoProps);
+  };
+
+  for (const rule of rules) {
+    if (rule.pseudo) {
+      handlePseudoProps(rule as SetRequired<ElementCSSRule, 'pseudo'>);
+    } else {
+      handleMainProps(rule);
     }
   }
 
+  const computedStyle = getComputedStyle(element);
+
   const mainCSSText = [...mainProperties.entries()].reduce<string>(
     (acc, [key, { value }]) => {
-      acc += `${key}:${value};\n`;
+      let propertyValue = value;
+      if (key.startsWith('--')) {
+        propertyValue = computedStyle.getPropertyValue(key);
+      }
+
+      acc += `${key}:${propertyValue};\n`;
 
       return acc;
     },
     '',
   );
+
+  pseudoProperties.forEach((props, key) => {
+    let cssText = '';
+    for (const key in props) {
+      let propertyValue = props[key].value;
+      if (key.startsWith('--')) {
+        propertyValue = computedStyle.getPropertyValue(key);
+      }
+
+      cssText += `${key}:${propertyValue};\n`;
+    }
+
+    pseudo.push({ cssText: cssText.trim(), pseudo: key });
+  });
 
   return {
     pseudo,
@@ -121,13 +214,15 @@ export function parseCSSStyleRule(
     styleRule: CSSStyleRule,
     mediaCondition: string | null = null,
   ) => {
-    let isPseudo = false;
+    let pseudo: string | undefined;
 
     const selector = styleRule.selectorText.split(',').find((str) => {
-      const normalizeSelector = str.trim().replace(CSS_PSEUDO_REGEX, () => {
-        isPseudo = true;
-        return '';
-      });
+      const normalizeSelector = str
+        .trim()
+        .replace(CSS_PSEUDO_REGEX, (match) => {
+          pseudo = match;
+          return '';
+        });
 
       try {
         return element.matches(normalizeSelector);
@@ -141,8 +236,16 @@ export function parseCSSStyleRule(
 
     const extractedCSSText = extractCSSText(styleRule.cssText).trim();
 
+    const weight = specificity.calculate(selector);
+    const weightTotal = +(
+      weight.A.toString() +
+      weight.B.toString() +
+      weight.C.toString()
+    );
+
     result.rules.push({
-      isPseudo,
+      pseudo,
+      specificity: weightTotal,
       selector: selector.trim(),
       cssText: extractedCSSText,
       properties: cssTextToObject(extractedCSSText),

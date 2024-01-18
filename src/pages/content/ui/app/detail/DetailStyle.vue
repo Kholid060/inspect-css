@@ -24,18 +24,20 @@
             >@media{{ wrapInParenthesis(mediaCSS.mediaCondition) }}</p
           >
           <DetailCSSEditor
+            :key="elSelector"
             :model-value="mediaCSS.cssText"
             class="text-sm mt-1"
             @change="onCSSChange({ type: 'media', index, value: $event })" />
         </div>
         <div
           v-for="(pseudoCSS, pseudoIndex) in mediaCSS.pseudo"
-          :key="pseudoCSS.selector"
+          :key="pseudoCSS.pseudo"
           class="p-2 rounded-md bg-muted/50">
           <p class="text-sm font-mono text-emerald-500 font-semibold">{{
-            pseudoCSS.selector
+            pseudoCSS.pseudo
           }}</p>
           <DetailCSSEditor
+            :key="elSelector"
             :model-value="pseudoCSS.cssText"
             class="text-sm mt-1"
             @change="
@@ -49,17 +51,19 @@
         </div>
       </div>
       <DetailCSSEditor
+        :key="elSelector"
         :model-value="appliedStyle.cssText"
         class="text-sm"
         @change="onCSSChange({ type: 'main', value: $event })" />
       <div
         v-for="(pseudoCSS, index) in appliedStyle.pseudo"
-        :key="pseudoCSS.selector"
+        :key="pseudoCSS.pseudo"
         class="p-2 rounded-md bg-muted/50">
         <p class="text-sm font-mono text-amber-500 font-semibold">{{
-          pseudoCSS.selector
+          pseudoCSS.pseudo
         }}</p>
         <DetailCSSEditor
+          :key="elSelector"
           :model-value="pseudoCSS.cssText"
           class="text-sm mt-1"
           @change="onCSSChange({ type: 'pseudo', value: $event, index })" />
@@ -136,7 +140,6 @@ const onCSSChange = debounce((detail: OnCSSChangeType) => {
     initialStyle: styleData.initialProps,
   });
   styleElement.textContent = generatedCSS;
-  console.log(generatedCSS);
 }, 500);
 
 watch(
@@ -151,7 +154,6 @@ watch(
         (item) => item.elSelector === props.elSelector,
       ) || null;
     if (!styleData) {
-      // set css to initial
       styleData = appProvider.addStyleItem({
         elSelector: props.elSelector,
         initialProps: props.appliedStyle,
