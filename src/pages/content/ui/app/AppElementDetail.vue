@@ -41,11 +41,17 @@
       </button>
     </div>
     <div style="max-height: calc(100vh - 200px)" class="overflow-auto">
-      <DetailStyle
-        :el-selector="elSelector"
-        :properties="elProperties"
-        :applied-style="elAppliedStyle!"
-        @update:applied-style="elAppliedStyle = $event" />
+      <KeepAlive>
+        <DetailStyle
+          v-if="state.activeTab === 'style'"
+          :el-selector="elSelector"
+          :properties="elProperties"
+          :applied-style="elAppliedStyle!"
+          @update:applied-style="updateAppliedStyle" />
+        <DetailAttributes
+          v-else-if="state.activeTab === 'attributes' && selectedEl"
+          :element="selectedEl" />
+      </KeepAlive>
     </div>
   </div>
 </template>
@@ -69,10 +75,13 @@ import {
   XIcon,
 } from 'lucide-vue-next';
 import { CONTENT_ZINDEX, EL_ATTR_NAME } from '@src/utils/constant';
-import { ElementProperties } from '@root/src/utils/getElProperties';
+import getElProperties, {
+  ElementProperties,
+} from '@root/src/utils/getElProperties';
 import DetailStyle from './detail/DetailStyle.vue';
 import UiElementSelector from '@root/src/pages/components/ui/UiElementSelector.vue';
 import { finder } from '@medv/finder';
+import DetailAttributes from './detail/DetailAttributes.vue';
 
 const CONTAINER_WIDTH = 350;
 
@@ -86,11 +95,12 @@ const tabItems = [
 
 const state = shallowReactive({
   isDragging: false,
-  activeTab: 'style',
+  activeTab: 'attributes',
 });
 
 const containerRef = ref<HTMLDivElement>();
 
+const selectedEl = ref<Element>();
 const elSelector = shallowRef('');
 const elProperties = shallowRef<ElementProperties | null>(null);
 const elAppliedStyle = shallowRef<ElementAppliedStyleRules | null>(null);
@@ -98,6 +108,14 @@ const elAppliedStyle = shallowRef<ElementAppliedStyleRules | null>(null);
 function closeWindow() {
   elProperties.value = null;
   elAppliedStyle.value = null;
+}
+function updateAppliedStyle(newValue: ElementAppliedStyleRules) {
+  elAppliedStyle.value = newValue;
+
+  nextTick(() => {
+    if (selectedEl.value)
+      elProperties.value = getElProperties(selectedEl.value).getAll();
+  });
 }
 function updateWindowPosition(x: number, y: number) {
   if (!containerRef.value) return;
@@ -116,16 +134,16 @@ function startDragging(pointerDownEvent: PointerEvent) {
   document.body.setAttribute(EL_ATTR_NAME.dragging, '');
 
   function pointerMoveHandler({ clientX, clientY }: PointerEvent) {
-    const x = clientX - offsetX;
-    const y = clientY - offsetY;
+    let x = clientX - offsetX;
+    let y = clientY - offsetY;
 
-    if (
-      x < 0 ||
-      y < 0 ||
-      x + containerRect.width > window.innerWidth ||
-      y + containerRect.height > window.innerHeight
-    )
-      return;
+    if (x < 0) x = 0;
+    else if (x + containerRect.width > window.innerWidth)
+      x = window.innerWidth - containerRect.width;
+
+    if (y < 0) y = 0;
+    else if (y + containerRect.height > window.innerHeight)
+      y = window.innerHeight - containerRect.height;
 
     updateWindowPosition(x, y);
   }
@@ -144,6 +162,8 @@ function onSelectElement({
   el,
   properties,
 }: EmitterEvents['content:el-selected']) {
+  selectedEl.value = el;
+
   elSelector.value = finder(el, {
     className: () => false,
     attr: (name) => name === 'data-testid',

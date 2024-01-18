@@ -14,13 +14,6 @@ function removePx(str: string) {
   return result;
 }
 
-function filterClasses(classes: string[]) {
-  const blackListClasses = ['hover-element', 'active-element'];
-  const filtered = classes.filter((name) => !blackListClasses.includes(name));
-
-  return filtered.length !== 0 ? `.${filtered.join('.')}` : '';
-}
-
 type ComputedStyles = Record<string, string | number>;
 
 export interface ElementSelector {
@@ -45,7 +38,7 @@ function getElProperties(target: Element) {
   const selector: ElementSelector = {
     tag: target.tagName.toLowerCase(),
     id: target.id ? `#${target.id}` : '',
-    classes: filterClasses(Array.from(target.classList)),
+    classes: `.${Array.from(target.classList).join('.')}`,
   };
 
   const getSize = () => {

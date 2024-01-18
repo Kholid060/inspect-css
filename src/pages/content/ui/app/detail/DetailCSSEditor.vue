@@ -2,7 +2,7 @@
   <div ref="editorEl" class="font-mono"></div>
 </template>
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
 import { EditorState } from '@codemirror/state';
 import {
   EditorView,
@@ -18,9 +18,11 @@ import { toggleCommentGutter } from '@src/lib/codemirror/extensions';
 import { autocompletion } from '@codemirror/autocomplete';
 
 interface Props {
+  styleId: string;
   modelValue: string;
 }
 const props = withDefaults(defineProps<Props>(), {
+  styleId: '',
   modelValue: '',
 });
 const emit = defineEmits<{
@@ -32,6 +34,19 @@ let editorView: EditorView;
 let editorState: EditorState;
 
 const editorEl = ref<HTMLElement>();
+
+watch(
+  () => props.styleId,
+  () => {
+    editorView.dispatch({
+      changes: {
+        from: 0,
+        insert: props.modelValue,
+        to: editorView.state.doc.length,
+      },
+    });
+  },
+);
 
 onMounted(() => {
   const updateListener = EditorView.updateListener.of((viewUpdate) => {

@@ -24,7 +24,7 @@
             >@media{{ wrapInParenthesis(mediaCSS.mediaCondition) }}</p
           >
           <DetailCSSEditor
-            :key="elSelector"
+            :style-id="elSelector"
             :model-value="mediaCSS.cssText"
             class="text-sm mt-1"
             @change="onCSSChange({ type: 'media', index, value: $event })" />
@@ -37,7 +37,7 @@
             pseudoCSS.pseudo
           }}</p>
           <DetailCSSEditor
-            :key="elSelector"
+            :style-id="elSelector"
             :model-value="pseudoCSS.cssText"
             class="text-sm mt-1"
             @change="
@@ -51,7 +51,7 @@
         </div>
       </div>
       <DetailCSSEditor
-        :key="elSelector"
+        :style-id="elSelector"
         :model-value="appliedStyle.cssText"
         class="text-sm"
         @change="onCSSChange({ type: 'main', value: $event })" />
@@ -63,7 +63,7 @@
           pseudoCSS.pseudo
         }}</p>
         <DetailCSSEditor
-          :key="elSelector"
+          :style-id="elSelector"
           :model-value="pseudoCSS.cssText"
           class="text-sm mt-1"
           @change="onCSSChange({ type: 'pseudo', value: $event, index })" />
