@@ -3,10 +3,12 @@
     <template v-if="state.selected">
       <ui-element-properties
         :properties="state.properties"
-        :show-info="false"></ui-element-properties>
+        :show-info="false"
+      ></ui-element-properties>
       <div class="flex items-center mt-6 mb-4">
         <div
-          class="border flex-1 mr-4 flex rounded-lg border-gray-100 border-opacity-5 text-gray-300">
+          class="border flex-1 mr-4 flex rounded-lg border-gray-100 border-opacity-5 text-gray-300"
+        >
           <ui-button
             v-for="tab in tabs"
             :key="tab.id"
@@ -15,8 +17,9 @@
                 ? 'text-primary bg-gray-100 bg-opacity-5'
                 : 'hover:text-white'
             "
+            class="w-6/12"
             @click="state.activeTab = tab.id"
-            class="w-6/12">
+          >
             {{ tab.name }}
           </ui-button>
         </div>
@@ -25,12 +28,13 @@
         </ui-button>
       </div>
       <ui-prism-editor
-        @change="onEditorChange"
         :model-value="state.appliedCSS[state.activeTab]"
         :readonly="state.activeTab === 'hover'"
-        class="bg-gray-100 bg-opacity-5 max-h-64"></ui-prism-editor>
+        class="bg-gray-100 bg-opacity-5 max-h-64"
+        @change="onEditorChange"
+      ></ui-prism-editor>
     </template>
-    <div class="py-10 text-center" v-else>
+    <div v-else class="py-10 text-center">
       <span class="inline-block p-6 rounded-full mb-4 bg-gray-100 bg-opacity-5">
         <ui-icon name="cursor" size="36"></ui-icon>
       </span>

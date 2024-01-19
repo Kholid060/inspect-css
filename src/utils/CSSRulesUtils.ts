@@ -1,3 +1,4 @@
+import { EL_ATTR_NAME } from './constant';
 import {
   ElementAppliedCSS,
   ElementCSSRule,
@@ -26,13 +27,20 @@ class CSSRulesUtils {
     ) {
       this._rules = [];
 
+      const excludeStyleEl = (
+        ownerNode: Element | ProcessingInstruction | null,
+      ) => {
+        if (!(ownerNode instanceof HTMLElement)) return false;
+
+        return (
+          ownerNode.id === 'inspect-css-style' ||
+          ownerNode.hasAttribute(EL_ATTR_NAME.customStyle)
+        );
+      };
+
       for (const styleSheet of document.styleSheets) {
         try {
-          if (
-            styleSheet.disabled ||
-            (styleSheet.ownerNode instanceof HTMLElement &&
-              styleSheet.ownerNode.id === 'inspect-css-style')
-          )
+          if (styleSheet.disabled || excludeStyleEl(styleSheet.ownerNode))
             continue;
 
           for (const rule of styleSheet.cssRules) {

@@ -10,19 +10,31 @@
         top: 0,
         height: '100%',
         width: '100%',
-      }" />
+      }"
+    />
   </Teleport>
   <div
     v-show="elProperties"
     ref="containerRef"
     :style="{ ...floatingStyles, zIndex: CONTENT_ZINDEX.content }"
-    class="w-72 overflow-auto bg-background text-foreground p-4 rounded-lg border">
-    <UiElementProperties v-if="elProperties" :properties="elProperties" />
-    <p class="text-sm mt-4 leading-tight text-muted-foreground">
-      Click or press
-      <kbd class="kbd text-xs">{{ IS_MAC_OS ? '⌘' : 'Ctrl' }}</kbd> +
-      <kbd class="kbd text-xs">Space</kbd> to edit element
-    </p>
+    class="w-72 overflow-auto bg-background text-foreground rounded-lg border"
+  >
+    <ScannerNavigation ref="scannerNavigation" @select="hoverElement" />
+    <div class="p-4">
+      <UiElementProperties v-if="elProperties" :properties="elProperties" />
+      <table class="text-xs mt-2 w-full text-muted-foreground">
+        <tr class="py-1">
+          <td><kbd class="kbd">Space</kbd> / <kbd class="kbd">Click</kbd></td>
+          <td>Select element</td>
+        </tr>
+        <tr class="py-1">
+          <td>
+            <kbd class="kbd">Arrow keys</kbd>
+          </td>
+          <td>Navigate element</td>
+        </tr>
+      </table>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -36,8 +48,18 @@ import getElProperties, {
 } from '@root/src/utils/getElProperties';
 import UiElementProperties from '@root/src/pages/components/ui/UiElementProperties.vue';
 import { useAppProvider } from '../app-plugin';
+import ScannerNavigation from './scanner/ScannerNavigation.vue';
 
-const IS_MAC_OS = navigator.userAgent.indexOf('Mac OS X') !== -1;
+const NAVIGATION_KEY_MAP = {
+  ArrowUp: 'up',
+  ArrowDown: 'down',
+  ArrowLeft: 'left',
+  ArrowRight: 'right',
+} as const;
+
+const scannerNavigation = ref<InstanceType<typeof ScannerNavigation> | null>(
+  null,
+);
 
 const appProvider = useAppProvider();
 
@@ -68,6 +90,16 @@ function selectElement(element: Element) {
     properties: elProperties.value!,
   });
 }
+function hoverElement(element: Element, updateNavigation = false) {
+  element.setAttribute(EL_ATTR_NAME.hover, '');
+  previousSelectedEl?.removeAttribute(EL_ATTR_NAME.hover);
+
+  if (updateNavigation) scannerNavigation.value?.updateNavigation(element);
+
+  elProperties.value = getElProperties(element).getAll();
+
+  previousSelectedEl = element;
+}
 function handlePointerMove({ clientX, clientY }: PointerEvent) {
   if (
     appProvider.state.paused ||
@@ -89,12 +121,7 @@ function handlePointerMove({ clientX, clientY }: PointerEvent) {
 
   if (!target || target === previousSelectedEl) return;
 
-  target.setAttribute(EL_ATTR_NAME.hover, 'false');
-  previousSelectedEl?.removeAttribute(EL_ATTR_NAME.hover);
-
-  elProperties.value = getElProperties(target).getAll();
-
-  previousSelectedEl = target;
+  hoverElement(target, true);
 }
 function handleKeyDown(event: KeyboardEvent) {
   if (
@@ -103,13 +130,27 @@ function handleKeyDown(event: KeyboardEvent) {
   )
     return;
 
-  const { code } = event;
-  if (code !== 'Space' || !previousSelectedEl) return;
+  switch (event.code) {
+    case 'Space': {
+      if (previousSelectedEl) {
+        event.preventDefault();
+        event.stopPropagation();
 
-  event.preventDefault();
-  event.stopPropagation();
-
-  selectElement(previousSelectedEl);
+        selectElement(previousSelectedEl);
+      }
+      break;
+    }
+    case 'ArrowUp':
+    case 'ArrowDown':
+    case 'ArrowLeft':
+    case 'ArrowRight':
+      event.preventDefault();
+      event.stopPropagation();
+      scannerNavigation.value?.navigate(NAVIGATION_KEY_MAP[event.code]);
+      break;
+    default:
+      break;
+  }
 }
 function handleClick() {
   if (!previousSelectedEl) return;

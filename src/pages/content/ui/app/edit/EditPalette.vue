@@ -2,7 +2,7 @@
   <div class="website-palettes px-4">
     <div class="text-center" v-if="state.loading">
       <ui-spinner size="32" class="my-4"></ui-spinner>
-      <p class="text-gray-300"> Extracting Colors... </p>
+      <p class="text-gray-300">Extracting Colors...</p>
     </div>
     <template v-else>
       <div class="mb-4 flex items-center">
@@ -17,15 +17,18 @@
           :key="color"
           class="h-32 flex items-center rounded-lg justify-center cursor-pointer flex-col color-card"
           :style="{ backgroundColor: color.hex }"
-          @click="copyColor(color.hex, index)">
+          @click="copyColor(color.hex, index)"
+        >
           <p
             class="color-card__text uppercase leading-none"
-            :style="{ color: color.title }">
+            :style="{ color: color.title }"
+          >
             {{ color.hex }}
           </p>
           <p
             class="color-card__copy-text text-sm invisible opacity-0"
-            :style="{ color: color.title }">
+            :style="{ color: color.title }"
+          >
             {{ color.copied ? 'copied' : 'Copy color' }}
           </p>
         </div>

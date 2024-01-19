@@ -3,10 +3,12 @@
     <UiElementSpacing
       :computed-styles="properties.computedStyles"
       class="mt-2"
-      title="margin">
+      title="margin"
+    >
       <UiElementSpacing
         :computed-styles="properties.computedStyles"
-        title="padding">
+        title="padding"
+      >
         <div class="bg-primary bg-opacity-25 rounded-md text-center py-2 px-1">
           {{ Math.floor(properties.size.width) }}x{{
             Math.floor(properties.size.height)
@@ -18,24 +20,27 @@
       <div
         v-for="(mediaCSS, index) in appliedStyle.media"
         :key="mediaCSS.mediaCondition"
-        class="p-2 rounded-md bg-muted/50 space-y-2">
+        class="p-2 rounded-md bg-muted/50 space-y-2 highlight-white/5"
+      >
         <div>
-          <p class="text-sm font-mono text-indigo-400 font-semibold"
-            >@media{{ wrapInParenthesis(mediaCSS.mediaCondition) }}</p
-          >
+          <p class="text-sm font-mono text-indigo-400 font-semibold">
+            @media{{ wrapInParenthesis(mediaCSS.mediaCondition) }}
+          </p>
           <DetailCSSEditor
             :style-id="elSelector"
             :model-value="mediaCSS.cssText"
             class="text-sm mt-1"
-            @change="onCSSChange({ type: 'media', index, value: $event })" />
+            @change="onCSSChange({ type: 'media', index, value: $event })"
+          />
         </div>
         <div
           v-for="(pseudoCSS, pseudoIndex) in mediaCSS.pseudo"
           :key="pseudoCSS.pseudo"
-          class="p-2 rounded-md bg-muted/50">
-          <p class="text-sm font-mono text-emerald-500 font-semibold">{{
-            pseudoCSS.pseudo
-          }}</p>
+          class="p-2 rounded-md bg-muted/50 highlight-white/5"
+        >
+          <p class="text-sm font-mono text-emerald-500 font-semibold">
+            {{ pseudoCSS.pseudo }}
+          </p>
           <DetailCSSEditor
             :style-id="elSelector"
             :model-value="pseudoCSS.cssText"
@@ -47,26 +52,30 @@
                 index: pseudoIndex,
                 type: 'media-pseudo',
               })
-            " />
+            "
+          />
         </div>
       </div>
       <DetailCSSEditor
         :style-id="elSelector"
         :model-value="appliedStyle.cssText"
         class="text-sm"
-        @change="onCSSChange({ type: 'main', value: $event })" />
+        @change="onCSSChange({ type: 'main', value: $event })"
+      />
       <div
         v-for="(pseudoCSS, index) in appliedStyle.pseudo"
         :key="pseudoCSS.pseudo"
-        class="p-2 rounded-md bg-muted/50">
-        <p class="text-sm font-mono text-amber-500 font-semibold">{{
-          pseudoCSS.pseudo
-        }}</p>
+        class="p-2 rounded-md bg-muted/50 highlight-white/5"
+      >
+        <p class="text-sm font-mono text-amber-500 font-semibold">
+          {{ pseudoCSS.pseudo }}
+        </p>
         <DetailCSSEditor
           :style-id="elSelector"
           :model-value="pseudoCSS.cssText"
           class="text-sm mt-1"
-          @change="onCSSChange({ type: 'pseudo', value: $event, index })" />
+          @change="onCSSChange({ type: 'pseudo', value: $event, index })"
+        />
       </div>
     </div>
   </div>
@@ -80,6 +89,7 @@ import { ElementProperties } from '@root/src/utils/getElProperties';
 import { debounce, wrapInParenthesis } from '@root/src/utils/helper';
 import { StyleDataItem, useAppProvider } from '../../app-plugin';
 import { generateElementCSS } from '@src/utils/generate-element-css';
+import { EL_ATTR_NAME } from '@root/src/utils/constant';
 
 type OnCSSChangeType =
   | {
@@ -130,7 +140,7 @@ const onCSSChange = debounce((detail: OnCSSChangeType) => {
 
   if (!styleElement) {
     styleElement = document.createElement('style');
-    styleElement.setAttribute('el-selector', props.elSelector);
+    styleElement.setAttribute(EL_ATTR_NAME.customStyle, props.elSelector);
     document.body.appendChild(styleElement);
   }
 
@@ -146,7 +156,7 @@ watch(
   () => props.elSelector,
   () => {
     styleElement = document.querySelector<HTMLStyleElement>(
-      `style[el-selector="${props.elSelector}"]`,
+      `style[${EL_ATTR_NAME.customStyle}="${props.elSelector}"]`,
     );
 
     styleData =

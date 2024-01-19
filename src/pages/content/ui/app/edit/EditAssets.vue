@@ -4,7 +4,8 @@
       <ui-select
         class="flex-1"
         placeholder="Asset type"
-        v-model="state.activeType">
+        v-model="state.activeType"
+      >
         <option v-for="type in assetTypes" :key="type.id" :value="type.id">
           {{ type.name }}
         </option>
@@ -15,24 +16,28 @@
         <div
           v-for="image in assets"
           :key="image.name"
-          class="image-card h-32 relative list-transition bg-center rounded-lg bg-cover overflow-hidden">
+          class="image-card h-32 relative list-transition bg-center rounded-lg bg-cover overflow-hidden"
+        >
           <img
             class="image-card__image max-w-full"
             :alt="image.type !== 'svg' ? image.name : ''"
             :src="image.src"
-            :style="image.style" />
+            :style="image.style"
+          />
           <div
-            class="absolute bg-black bg-opacity-50 image-card__meta bottom-0 w-full p-2 flex items-center">
+            class="absolute bg-black bg-opacity-50 image-card__meta bottom-0 w-full p-2 flex items-center"
+          >
             <p
               class="text-overflow pr-2 flex-1"
               :title="image.type !== 'svg' ? image.name : ''"
-              v-text="image.type !== 'svg' ? image.name : ''">
-            </p>
+              v-text="image.type !== 'svg' ? image.name : ''"
+            ></p>
             <ui-icon
               name="download"
               size="20"
               class="cursor-pointer"
-              @click="downloadAsset(image)"></ui-icon>
+              @click="downloadAsset(image)"
+            ></ui-icon>
           </div>
         </div>
       </transition-group>

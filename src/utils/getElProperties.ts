@@ -28,6 +28,20 @@ export interface ElementProperties {
   size: { height: number; width: number };
 }
 
+export function getElBasicSelector(target: Element) {
+  const selector: ElementSelector = {
+    tag: target.tagName.toLowerCase(),
+    id: target.id ? `#${target.id}` : '',
+    classes: Array.from(target.classList).join('.'),
+  };
+  if (selector.classes) selector.classes = `.${selector.classes}`;
+
+  return {
+    ...selector,
+    string: `${selector.tag}${selector.id}${selector.classes}`,
+  };
+}
+
 function getElProperties(target: Element) {
   const computedStyleKeys = [
     ...generateBoxModels('margin'),
@@ -35,11 +49,7 @@ function getElProperties(target: Element) {
     'fontSize',
     'fontFamily',
   ];
-  const selector: ElementSelector = {
-    tag: target.tagName.toLowerCase(),
-    id: target.id ? `#${target.id}` : '',
-    classes: `.${Array.from(target.classList).join('.')}`,
-  };
+  const selector = getElBasicSelector(target);
 
   const getSize = () => {
     const { height, width } = target.getBoundingClientRect();

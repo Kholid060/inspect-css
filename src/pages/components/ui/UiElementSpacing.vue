@@ -13,7 +13,8 @@
           ? 'horizontal-center'
           : 'vertical-center',
       ]"
-      :style="{ [direction]: '5px' }">
+      :style="{ [direction]: '5px' }"
+    >
       {{ computedStyles[`${title}-${direction}`] }}
     </span>
     <slot></slot>

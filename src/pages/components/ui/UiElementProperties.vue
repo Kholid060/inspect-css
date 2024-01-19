@@ -10,10 +10,12 @@
   <UiElementSpacing
     :computed-styles="properties.computedStyles"
     class="mt-2"
-    title="margin">
+    title="margin"
+  >
     <UiElementSpacing
       :computed-styles="properties.computedStyles"
-      title="padding">
+      title="padding"
+    >
       <div class="bg-primary bg-opacity-25 rounded-md text-center py-2 px-1">
         {{ Math.floor(properties.size.width) }}x{{
           Math.floor(properties.size.height)

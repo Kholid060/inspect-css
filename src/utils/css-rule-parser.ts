@@ -56,6 +56,7 @@ function cssTextToObject(cssText: string) {
     if (!trimmedProperty) continue;
 
     const [key, value] = trimmedProperty.split(/:(.*)/s);
+    if (!key || !value) continue;
 
     properties.push({
       key,

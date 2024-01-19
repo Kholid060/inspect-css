@@ -3,14 +3,17 @@
     v-if="elProperties"
     ref="containerRef"
     class="fixed top-0 left-0 bg-background rounded-lg text-foreground border"
-    :style="{ zIndex: CONTENT_ZINDEX.content, width: CONTAINER_WIDTH + 'px' }">
+    :style="{ zIndex: CONTENT_ZINDEX.content, width: CONTAINER_WIDTH + 'px' }"
+  >
     <div
       class="text-center py-1 bg-muted/25 cursor-move text-muted-foreground px-4 flex items-center transition-colors w-full rounded-t-lg border-b"
-      @pointerdown.self="startDragging">
+      @pointerdown.self="startDragging"
+    >
       <div class="flex-grow"></div>
       <button
         class="hover p-1 rounded-sm hover:bg-muted/50 hover:text-foreground transition"
-        @click="closeWindow">
+        @click="closeWindow"
+      >
         <XIcon class="h-5 w-5" />
       </button>
     </div>
@@ -25,7 +28,8 @@
       </div>
     </div>
     <div
-      class="flex items-center border-b px-4 mt-1 text-muted-foreground space-x-1">
+      class="flex items-center border-b px-4 mt-1 text-muted-foreground space-x-1"
+    >
       <button
         v-for="item in tabItems"
         :key="item.id"
@@ -35,7 +39,8 @@
             ? 'border-primary text-foreground'
             : 'border-transparent',
         ]"
-        @click="state.activeTab = item.id">
+        @click="state.activeTab = item.id"
+      >
         <component :is="item.icon" class="h-4 w-4 mr-2" />
         {{ item.name }}
       </button>
@@ -47,10 +52,12 @@
           :el-selector="elSelector"
           :properties="elProperties"
           :applied-style="elAppliedStyle!"
-          @update:applied-style="updateAppliedStyle" />
+          @update:applied-style="updateAppliedStyle"
+        />
         <DetailAttributes
           v-else-if="state.activeTab === 'attributes' && selectedEl"
-          :element="selectedEl" />
+          :element="selectedEl"
+        />
       </KeepAlive>
     </div>
   </div>
@@ -95,7 +102,7 @@ const tabItems = [
 
 const state = shallowReactive({
   isDragging: false,
-  activeTab: 'attributes',
+  activeTab: 'style',
 });
 
 const containerRef = ref<HTMLDivElement>();

@@ -4,17 +4,20 @@
       <p class="font-semibold">Attributes</p>
       <div class="flex-1"></div>
       <button
-        class="h-8 px-3 bg-secondary inline-flex items-center text-secondary-foreground hover:bg-secondary/80 text-sm transition rounded-md"
+        class="h-8 px-3 bg-secondary inline-flex items-center highlight-white/5 text-secondary-foreground hover:bg-secondary/80 text-sm transition rounded-sm"
         @click="addAttribute"
-        ><PlusIcon class="h-5 w-5 mr-1 -ml-1" /> Add</button
       >
+        <PlusIcon class="h-5 w-5 mr-1 -ml-1" /> Add
+      </button>
     </div>
     <div
       v-for="(attr, index) in attrs"
       :key="index"
-      class="bg-input/30 rounded-md text-sm focus-within:ring-primary focus-within:ring-2">
+      class="bg-input/30 rounded-md text-sm focus-within:ring-primary focus-within:ring-2 highlight-white/5"
+    >
       <div
-        class="bg-input/50 rounded-t-md border-b flex items-center gap-2 pr-3">
+        class="bg-input/50 rounded-t-md border-b flex items-center gap-2 pr-3"
+      >
         <input
           :value="attr.name"
           type="text"
@@ -26,7 +29,8 @@
               type: 'name',
               value: (<HTMLTextAreaElement>$event.target).value,
             })
-          " />
+          "
+        />
         <button class="text-muted-foreground" @click="deleteAttribute(index)">
           <TrashIcon class="h-5 w-5" />
         </button>
@@ -41,7 +45,8 @@
             type: 'value',
             value: (<HTMLTextAreaElement>$event.target).value,
           })
-        " />
+        "
+      />
     </div>
   </div>
 </template>

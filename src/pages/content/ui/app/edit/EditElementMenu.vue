@@ -4,24 +4,28 @@
       <button
         @click="moveExtension"
         :title="state.isOnLeft ? 'Move to right' : 'Move to left'"
-        class="p-2 rounded-lg hover:text-white">
+        class="p-2 rounded-lg hover:text-white"
+      >
         <ui-icon
           name="arrow-left"
           class="transform transition-transform"
-          :class="{ 'rotate-180': state.isOnLeft }"></ui-icon>
+          :class="{ 'rotate-180': state.isOnLeft }"
+        ></ui-icon>
       </button>
       <button
         @click="toggleBodyClass('isPauseActive', 'pause')"
         :class="[state.isPauseActive ? 'text-primary' : 'hover:text-white']"
         title="Pause"
-        class="p-2 rounded-lg">
+        class="p-2 rounded-lg"
+      >
         <ui-icon name="pause"></ui-icon>
       </button>
       <button
         @click="toggleBodyClass('isGridActive', 'display-grid')"
         :class="[state.isGridActive ? 'text-primary' : 'hover:text-white']"
         class="p-2 rounded-lg"
-        title="Show grid">
+        title="Show grid"
+      >
         <ui-icon name="grid" size="22"></ui-icon>
       </button>
     </div>
@@ -30,7 +34,8 @@
       href="https://github.com/kholid060/inspect-css"
       class="mr-4"
       target="_blank"
-      title="GitHub">
+      title="GitHub"
+    >
       <ui-icon name="github"></ui-icon>
     </a>
     <button @click="closeExtension" title="Close extension">
