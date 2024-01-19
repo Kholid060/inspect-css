@@ -2,7 +2,7 @@
   <div
     v-if="elProperties"
     ref="containerRef"
-    class="fixed top-0 left-0 bg-background rounded-lg text-foreground border"
+    class="fixed top-0 left-0 bg-background rounded-xl text-foreground border"
     :style="{ zIndex: CONTENT_ZINDEX.content, width: CONTAINER_WIDTH + 'px' }"
   >
     <div

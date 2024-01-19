@@ -1,4 +1,5 @@
 import { ElementAppliedStyleRules } from '@root/src/utils/CSSRulesUtils';
+import { EL_IDS } from '@root/src/utils/constant';
 import { resetAppliedStyleValue } from '@root/src/utils/generate-element-css';
 import { Plugin, inject, shallowReactive } from 'vue';
 export interface StyleData {
@@ -14,6 +15,7 @@ export interface StyleDataItem {
 export interface AppState {
   paused: boolean;
   showGrid: boolean;
+  interactive: boolean;
 }
 export interface AppStateProvider {
   state: AppState;
@@ -41,6 +43,7 @@ export const appPlugin: Plugin = {
     const appState = shallowReactive<AppState>({
       paused: false,
       showGrid: false,
+      interactive: true,
     });
 
     function updateState(newState: Partial<AppState>) {
@@ -61,6 +64,8 @@ export const appPlugin: Plugin = {
     function destroy() {
       app.unmount();
       shadowRoot.host.remove();
+
+      document.getElementById(EL_IDS.customCSS)?.remove();
     }
 
     app.provide<AppStateProvider>(APP_PROVIDER_KEY, {

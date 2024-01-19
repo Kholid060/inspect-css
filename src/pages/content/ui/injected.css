@@ -1,11 +1,15 @@
 @import '@src/assets/style/theme.css';
 
 .toolbar-button {
-  @apply h-11 w-11 text-center rounded-lg hover:bg-muted/80 hover:highlight-white/10 hover:text-foreground transition;
+  @apply h-10 w-10 text-center rounded-lg hover:bg-muted/80 hover:highlight-white/10 hover:text-foreground transition inline-flex items-center justify-center;
+
+  &.active {
+    @apply text-primary;
+  }
 
   svg {
-    height: theme('size.6');
-    width: theme('size.6');
+    width: theme('size.5');
+    height: theme('size.5');
   }
 }
 

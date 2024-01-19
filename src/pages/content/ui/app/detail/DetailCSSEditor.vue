@@ -1,21 +1,24 @@
 <template>
-  <div ref="editorEl" class="font-mono"></div>
+  <UiCodemirror
+    v-model="model"
+    :extensions="editorExtensions"
+    :theme-options="{
+      settings: {
+        background: 'transparent',
+        gutterBackground: 'transparent',
+      },
+    }"
+    @change="emit('change', $event)"
+  />
 </template>
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, watch } from 'vue';
-import { EditorState } from '@codemirror/state';
-import {
-  EditorView,
-  keymap,
-  highlightActiveLine,
-  highlightActiveLineGutter,
-} from '@codemirror/view';
-import { defaultKeymap, indentWithTab } from '@codemirror/commands';
+import { ref, watch } from 'vue';
+import type { Extension } from '@codemirror/state';
+import { EditorView } from '@codemirror/view';
 import { css } from '@src/lib/codemirror/css';
-import { themeInit } from '@src/lib/codemirror/theme';
 import { color } from '@uiw/codemirror-extensions-color';
 import { toggleCommentGutter } from '@src/lib/codemirror/extensions';
-import { autocompletion } from '@codemirror/autocomplete';
+import UiCodemirror from '@root/src/pages/components/ui/UiCodemirror.vue';
 
 interface Props {
   styleId: string;
@@ -23,22 +26,27 @@ interface Props {
 }
 const props = withDefaults(defineProps<Props>(), {
   styleId: '',
-  modelValue: '',
 });
 const emit = defineEmits<{
   (e: 'change', value: string): void;
-  (e: 'update:modelValue', value: string): void;
 }>();
+const model = defineModel({ type: String });
 
 let editorView: EditorView;
-let editorState: EditorState;
 
-const editorEl = ref<HTMLElement>();
+const editorExtensions: Extension[] = [
+  css(),
+  color,
+  toggleCommentGutter,
+  EditorView.lineWrapping,
+];
+
+const codemirror = ref<InstanceType<typeof UiCodemirror> | null>();
 
 watch(
   () => props.styleId,
   () => {
-    editorView.dispatch({
+    codemirror.value?.editorView?.dispatch({
       changes: {
         from: 0,
         insert: props.modelValue,
@@ -47,44 +55,4 @@ watch(
     });
   },
 );
-
-onMounted(() => {
-  const updateListener = EditorView.updateListener.of((viewUpdate) => {
-    if (!viewUpdate.docChanged) return;
-
-    const newValue = viewUpdate.state.doc.toString();
-    emit('change', newValue);
-    emit('update:modelValue', newValue);
-  });
-
-  editorState = EditorState.create({
-    doc: props.modelValue,
-    extensions: [
-      css(),
-      color,
-      updateListener,
-      autocompletion(),
-      toggleCommentGutter,
-      highlightActiveLine(),
-      EditorView.lineWrapping,
-      keymap.of(defaultKeymap),
-      keymap.of([indentWithTab]),
-      highlightActiveLineGutter(),
-      themeInit({
-        settings: {
-          background: 'transparent',
-          gutterBackground: 'transparent',
-        },
-      }),
-    ],
-  });
-
-  editorView = new EditorView({
-    state: editorState,
-    parent: editorEl.value,
-  });
-});
-onUnmounted(() => {
-  editorView.destroy();
-});
 </script>

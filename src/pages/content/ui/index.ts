@@ -14,9 +14,10 @@ function initSelectedStyleEl() {
   const selectedElStyle = document.createElement('style');
   selectedElStyle.id = 'inspect-css-style';
   selectedElStyle.textContent = `
-    [${EL_ATTR_NAME.hover}] { outline: 2px solid hsl(0deg 90.6% 70.78%) }
+    [${EL_ATTR_NAME.hover}] { outline: 2px solid hsl(0deg 90.6% 70.78%) !important }
     [${EL_ATTR_NAME.selected}="true"] { outline: 2px solid hsl(217.22deg 91.22% 59.8%) !important }
     [${EL_ATTR_NAME.dragging}] { user-select: none !important; }
+    [${EL_ATTR_NAME.showGrid}] * { outline: 1px solid hsl(0deg 90.6% 70.78% / 20%); }
   `;
 
   document.head.appendChild(selectedElStyle);

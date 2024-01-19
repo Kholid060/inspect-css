@@ -38,7 +38,7 @@
           :key="pseudoCSS.pseudo"
           class="p-2 rounded-md bg-muted/50 highlight-white/5"
         >
-          <p class="text-sm font-mono text-emerald-500 font-semibold">
+          <p class="text-sm font-mono text-amber-500 font-semibold">
             {{ pseudoCSS.pseudo }}
           </p>
           <DetailCSSEditor

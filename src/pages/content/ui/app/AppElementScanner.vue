@@ -1,7 +1,7 @@
 <template>
   <Teleport to="body">
     <div
-      v-if="!appProvider?.state.paused"
+      v-if="!appProvider.state.paused && !appProvider.state.interactive"
       ref="overlayRef"
       :style="{
         zIndex: CONTENT_ZINDEX.overlay,
@@ -17,7 +17,7 @@
     v-show="elProperties"
     ref="containerRef"
     :style="{ ...floatingStyles, zIndex: CONTENT_ZINDEX.content }"
-    class="w-72 overflow-auto bg-background text-foreground rounded-lg border"
+    class="w-72 overflow-auto bg-background text-foreground rounded-xl border"
   >
     <ScannerNavigation ref="scannerNavigation" @select="hoverElement" />
     <div class="p-4">
@@ -100,7 +100,11 @@ function hoverElement(element: Element, updateNavigation = false) {
 
   previousSelectedEl = element;
 }
-function handlePointerMove({ clientX, clientY }: PointerEvent) {
+function handlePointerMove({
+  clientX,
+  clientY,
+  target: eventTarget,
+}: PointerEvent) {
   if (
     appProvider.state.paused ||
     document.body.hasAttribute(EL_ATTR_NAME.dragging)
@@ -111,15 +115,25 @@ function handlePointerMove({ clientX, clientY }: PointerEvent) {
     getBoundingClientRect: generateBoundingClientRect(clientX, clientY),
   };
 
-  const { 1: target } = document.elementsFromPoint(clientX, clientY);
-  if (overlayRef.value === target) {
+  let target: Element;
+  if (appProvider.state.interactive) {
+    target = eventTarget as Element;
+  } else {
+    target = document.elementsFromPoint(clientX, clientY)[1];
+  }
+
+  if (
+    !target ||
+    overlayRef.value === target ||
+    appProvider.shadowRoot.host === target
+  ) {
     previousSelectedEl?.removeAttribute(EL_ATTR_NAME.hover);
     previousSelectedEl = null;
     elProperties.value = null;
     return;
   }
 
-  if (!target || target === previousSelectedEl) return;
+  if (target === previousSelectedEl) return;
 
   hoverElement(target, true);
 }
