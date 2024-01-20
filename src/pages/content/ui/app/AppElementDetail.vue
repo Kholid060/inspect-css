@@ -70,6 +70,7 @@ import {
   shallowRef,
   shallowReactive,
   nextTick,
+  watch,
 } from 'vue';
 import { emitter, EmitterEvents } from '@root/src/lib/mitt';
 import CSSRulesUtils, {
@@ -81,7 +82,11 @@ import {
   PencilRuler,
   XIcon,
 } from 'lucide-vue-next';
-import { CONTENT_ZINDEX, EL_ATTR_NAME } from '@src/utils/constant';
+import {
+  CONTENT_ZINDEX,
+  EL_ATTR_NAME,
+  SESSION_STORAGE_KEY,
+} from '@src/utils/constant';
 import getElProperties, {
   ElementProperties,
 } from '@root/src/utils/getElProperties';
@@ -89,10 +94,19 @@ import DetailStyle from './detail/DetailStyle.vue';
 import UiElementSelector from '@root/src/pages/components/ui/UiElementSelector.vue';
 import { finder } from '@medv/finder';
 import DetailAttributes from './detail/DetailAttributes.vue';
+import { debounce, parseJSON } from '@root/src/utils/helper';
+
+interface WindowPosition {
+  x: number;
+  y: number;
+}
 
 const CONTAINER_WIDTH = 350;
 
-let lastPosition: { x: number; y: number } | null = null;
+let lastPosition: WindowPosition | null = parseJSON(
+  sessionStorage.getItem(SESSION_STORAGE_KEY.elPropsPosition) ?? '',
+  null,
+);
 
 const cssRulesUtils = new CSSRulesUtils();
 const tabItems = [
@@ -115,6 +129,24 @@ const elAppliedStyle = shallowRef<ElementAppliedStyleRules | null>(null);
 function closeWindow() {
   elProperties.value = null;
   elAppliedStyle.value = null;
+}
+function checkPopupBound() {
+  if (!containerRef.value) return;
+
+  let x = lastPosition?.x ?? 0;
+  let y = lastPosition?.y ?? 0;
+
+  const containerRect = containerRef.value.getBoundingClientRect();
+
+  if (x < 0) x = 0;
+  else if (x + containerRect.width > window.innerWidth)
+    x = window.innerWidth - containerRect.width;
+
+  if (y < 0) y = 0;
+  else if (y + containerRect.height > window.innerHeight)
+    y = window.innerHeight - containerRect.height;
+
+  updateWindowPosition(x, y);
 }
 function updateAppliedStyle(newValue: ElementAppliedStyleRules) {
   elAppliedStyle.value = newValue;
@@ -159,6 +191,10 @@ function startDragging(pointerDownEvent: PointerEvent) {
   document.addEventListener(
     'pointerup',
     () => {
+      sessionStorage.setItem(
+        SESSION_STORAGE_KEY.elPropsPosition,
+        JSON.stringify(lastPosition),
+      );
       document.body.removeAttribute(EL_ATTR_NAME.dragging);
       document.removeEventListener('pointermove', pointerMoveHandler);
     },
@@ -190,12 +226,24 @@ function onSelectElement({
     updateWindowPosition(position.x, position.y);
   });
 }
+const onWindowResize = debounce(() => {
+  checkPopupBound();
+}, 200);
+
+watch(elProperties, (value) => {
+  if (value) {
+    window.addEventListener('resize', onWindowResize);
+  } else {
+    window.removeEventListener('resize', onWindowResize);
+  }
+});
 
 onMounted(() => {
   emitter.on('content:el-selected', onSelectElement);
 });
 onUnmounted(() => {
   cssRulesUtils.destroy();
+  window.removeEventListener('resize', onWindowResize);
   emitter.off('content:el-selected', onSelectElement);
 });
 </script>

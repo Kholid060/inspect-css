@@ -17,3 +17,7 @@ export const EL_IDS = {
 };
 
 export const IS_MAC_OS = navigator.userAgent.indexOf('Mac OS X') !== -1;
+
+export const SESSION_STORAGE_KEY = {
+  elPropsPosition: 'inspect-css-pos',
+};

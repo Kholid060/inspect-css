@@ -64,3 +64,11 @@
 .kbd {
   @apply rounded-sm border border-b-2 px-1 py-0.5 inline-flex items-center justify-center bg-popover min-w-2 min-h-2;
 }
+
+.tooltip {
+  @apply invisible absolute;
+}
+
+.has-tooltip:hover .tooltip {
+  @apply visible z-40;
+}

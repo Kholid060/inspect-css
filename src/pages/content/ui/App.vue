@@ -1,5 +1,9 @@
 <template>
-  <main class="text-base text-left !font-sans" style="color-scheme: dark">
+  <main
+    v-show="!state.tempHide"
+    class="text-base text-left !font-sans"
+    style="color-scheme: dark"
+  >
     <AppElementScanner v-if="!state.paused" />
     <AppElementDetail />
     <AppToolbar />

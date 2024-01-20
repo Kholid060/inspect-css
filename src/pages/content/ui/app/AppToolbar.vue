@@ -62,7 +62,7 @@
     <div
       v-if="activeTool"
       v-motion
-      class="bg-popover border-2 absolute bottom-full mb-2 rounded-lg left-1/2 min-w-80 max-w-md"
+      class="bg-popover border-2 absolute bottom-full mb-2 rounded-lg left-1/2 min-w-80 max-w-md min-h-20"
       :initial="{ y: 10 }"
       :enter="{ y: 0 }"
       :leave="{ y: -10 }"
@@ -90,9 +90,11 @@ import { useAppProvider } from '../app-plugin';
 import ToolbarAssets from './toolbar/ToolbarAssets.vue';
 import ToolbarCustomCSS from './toolbar/ToolbarCustomCSS.vue';
 import { Component, shallowRef } from 'vue';
+import ToolbarEyeDropper from './toolbar/ToolbarEyeDropper.vue';
 
 const toolCompsMap: Record<string, Component> = {
   assets: ToolbarAssets,
+  'eye-dropper': ToolbarEyeDropper,
   'custom-css': ToolbarCustomCSS,
 };
 const tools = [
@@ -102,10 +104,10 @@ const tools = [
   { id: 'palette', name: 'Color Palettes', icon: PaletteIcon },
 ];
 if (window.EyeDropper) {
-  tools.push({ id: 'eyedropper', name: 'Eye dropper', icon: PipetteIcon });
+  tools.push({ id: 'eye-dropper', name: 'Eye dropper', icon: PipetteIcon });
 }
 
 const appProvider = useAppProvider();
 
-const activeTool = shallowRef('assets');
+const activeTool = shallowRef('eye-dropper');
 </script>

@@ -15,7 +15,7 @@ const manifest = {
   name: '__MSG_extensionName__',
   version: packageJson.version,
   description: '__MSG_extensionDescription__',
-  permissions: ['activeTab', 'scripting', 'tabs'],
+  permissions: ['activeTab', 'scripting', 'storage'],
   host_permissions: ['http://*/*'],
   action: {},
   background: {
@@ -38,5 +38,9 @@ const manifest = {
     },
   ],
 };
+
+if (process.env.__DEV__) {
+  manifest.permissions.push('tabs');
+}
 
 export default manifest;

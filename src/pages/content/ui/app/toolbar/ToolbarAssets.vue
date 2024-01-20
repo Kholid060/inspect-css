@@ -15,7 +15,7 @@
         Save all
       </UiButton>
     </div>
-    <div class="grid grid-cols-2 gap-3 mt-6">
+    <div class="grid grid-cols-2 gap-3 mt-4">
       <div
         v-for="(asset, index) in assets"
         :key="asset.filename"

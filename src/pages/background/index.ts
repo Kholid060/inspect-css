@@ -29,15 +29,17 @@ Browser.action.onClicked.addListener((tab) => {
 });
 
 // DEV ONLY
-Browser.tabs.onUpdated.addListener((tabId, changeInfo) => {
-  if (!changeInfo.status || changeInfo.status !== 'complete') return;
+if (import.meta.env.MODE === 'development') {
+  Browser.tabs.onUpdated.addListener((tabId, changeInfo) => {
+    if (!changeInfo.status || changeInfo.status !== 'complete') return;
 
-  Browser.tabs.get(tabId).then((tab) => {
-    if (!tab.url || !tab.url.includes('localhost')) return;
+    Browser.tabs.get(tabId).then((tab) => {
+      if (!tab.url || !tab.url.includes('localhost')) return;
 
-    injectContentScript(tabId);
+      injectContentScript(tabId);
+    });
   });
-});
+}
 
 /**
  * Extension reloading is necessary because the browser automatically caches the css.

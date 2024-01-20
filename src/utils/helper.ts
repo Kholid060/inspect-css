@@ -59,3 +59,19 @@ export function parseURL(url: string) {
     return null;
   }
 }
+
+export function copyToClipboard(text: string) {
+  return navigator.clipboard.writeText(text);
+}
+
+export function parseJSON<T = unknown, K = unknown>(
+  input: string,
+  def?: K,
+): T | K {
+  try {
+    return JSON.parse(input) as T;
+  } catch (_error) {
+    //@ts-expect-error I don't know how to type this
+    return def;
+  }
+}

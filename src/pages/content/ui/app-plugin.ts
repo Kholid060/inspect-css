@@ -15,6 +15,7 @@ export interface StyleDataItem {
 export interface AppState {
   paused: boolean;
   showGrid: boolean;
+  tempHide: boolean;
   interactive: boolean;
 }
 export interface AppStateProvider {
@@ -42,6 +43,7 @@ export const appPlugin: Plugin = {
   install(app, shadowRoot: ShadowRoot) {
     const appState = shallowReactive<AppState>({
       paused: false,
+      tempHide: false,
       showGrid: false,
       interactive: true,
     });
