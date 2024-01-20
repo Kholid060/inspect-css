@@ -35,3 +35,27 @@ export function wrapInParenthesis(text: string) {
 
   return wrappedText;
 }
+
+export function downloadFile(filename: string, blob: Blob | string) {
+  const isString = typeof blob === 'string';
+  const objectURL = isString ? blob : URL.createObjectURL(blob);
+
+  const anchorEl = document.createElement('a');
+  anchorEl.href = objectURL;
+  anchorEl.download = filename;
+
+  document.body.appendChild(anchorEl);
+
+  anchorEl.click();
+  anchorEl.remove();
+
+  if (!isString) URL.revokeObjectURL(objectURL);
+}
+
+export function parseURL(url: string) {
+  try {
+    return new URL(url);
+  } catch (error) {
+    return null;
+  }
+}

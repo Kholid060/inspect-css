@@ -1,6 +1,6 @@
 <template>
   <div class="max-h-[300px] overflow-auto text-sm">
-    <div class="px-2 pt-2">
+    <div class="px-3 pt-3">
       <p class="font-semibold">Custom CSS</p>
       <p class="text-muted-foreground leading-tight">
         Add custom css to the page
@@ -9,7 +9,7 @@
     <UiCodemirror
       v-if="initiated"
       :model-value="customCSS"
-      class="mt-2 px-2 pb-2 w-full overflow-y-visible overflow-x-auto"
+      class="mt-2 px-3 pb-3 w-full overflow-y-visible overflow-x-auto"
       placeholder="CSS code here..."
       :extensions="editorExtensions"
       :theme-options="{

@@ -87,10 +87,12 @@ import {
   PowerIcon,
 } from 'lucide-vue-next';
 import { useAppProvider } from '../app-plugin';
+import ToolbarAssets from './toolbar/ToolbarAssets.vue';
 import ToolbarCustomCSS from './toolbar/ToolbarCustomCSS.vue';
 import { Component, shallowRef } from 'vue';
 
 const toolCompsMap: Record<string, Component> = {
+  assets: ToolbarAssets,
   'custom-css': ToolbarCustomCSS,
 };
 const tools = [
@@ -105,5 +107,5 @@ if (window.EyeDropper) {
 
 const appProvider = useAppProvider();
 
-const activeTool = shallowRef('');
+const activeTool = shallowRef('assets');
 </script>
