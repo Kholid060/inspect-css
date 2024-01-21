@@ -214,7 +214,7 @@ function copyColorVariant(color: string) {
   copyToClipboard(color).finally(() => {
     setTimeout(() => {
       copyColorIndicator.value = '';
-    }, 500);
+    }, 1000);
   });
 }
 function copyColorCode(color: string, code: string) {
@@ -260,8 +260,8 @@ function addColor(baseColor: string) {
     textIsBlack: readableColorIsBlack(baseColor),
     darkVariants: [darkVariant, getColorVariant(darkVariant.color, 'darken')],
     lightVariants: [
-      lightVariant,
       getColorVariant(lightVariant.color, 'lighten'),
+      lightVariant,
     ],
   });
 }

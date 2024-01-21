@@ -1,6 +1,6 @@
 <template>
   <div
-    class="fixed bottom-5 left-1/2 text-foreground -translate-x-1/2"
+    class="fixed bottom-2 left-1/2 text-foreground -translate-x-1/2"
     :style="{ zIndex: CONTENT_ZINDEX.toolbar }"
   >
     <div
@@ -62,12 +62,18 @@
     <div
       v-if="activeTool"
       v-motion
-      class="bg-popover border-2 absolute bottom-full mb-2 rounded-lg left-1/2 min-w-80 max-w-md min-h-20"
+      class="bg-popover border-2 absolute bottom-full mb-2 rounded-lg left-1/2 min-w-80 max-w-md min-h-20 group/content"
       :initial="{ y: 10 }"
       :enter="{ y: 0 }"
       :leave="{ y: -10 }"
       style="translate: -50%"
     >
+      <button
+        class="absolute h-8 w-8 -top-3 -right-3 flex items-center justify-center rounded-md border-2 bg-secondary group-hover/content:scale-100 scale-0 transition"
+        @click="activeTool = ''"
+      >
+        <XIcon class="h-5 w-5" />
+      </button>
       <component :is="toolCompsMap[activeTool]" />
     </div>
   </div>
@@ -85,17 +91,20 @@ import {
   PipetteIcon,
   PlayIcon,
   PowerIcon,
+  XIcon,
 } from 'lucide-vue-next';
 import { useAppProvider } from '../app-plugin';
 import ToolbarAssets from './toolbar/ToolbarAssets.vue';
 import ToolbarCustomCSS from './toolbar/ToolbarCustomCSS.vue';
 import { Component, shallowRef } from 'vue';
 import ToolbarEyeDropper from './toolbar/ToolbarEyeDropper.vue';
+import ToolbarNavigator from './toolbar/ToolbarNavigator.vue';
 
 const toolCompsMap: Record<string, Component> = {
   assets: ToolbarAssets,
-  'eye-dropper': ToolbarEyeDropper,
+  navigator: ToolbarNavigator,
   'custom-css': ToolbarCustomCSS,
+  'eye-dropper': ToolbarEyeDropper,
 };
 const tools = [
   { id: 'navigator', name: 'Navigator', icon: Layers3Icon },
@@ -109,5 +118,5 @@ if (window.EyeDropper) {
 
 const appProvider = useAppProvider();
 
-const activeTool = shallowRef('eye-dropper');
+const activeTool = shallowRef('navigator');
 </script>

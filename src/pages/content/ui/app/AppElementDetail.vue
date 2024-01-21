@@ -224,6 +224,7 @@ function onSelectElement({
     }
 
     updateWindowPosition(position.x, position.y);
+    checkPopupBound();
   });
 }
 const onWindowResize = debounce(() => {

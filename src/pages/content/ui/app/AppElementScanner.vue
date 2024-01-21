@@ -91,13 +91,14 @@ function selectElement(element: Element) {
   });
 }
 function hoverElement(element: Element, updateNavigation = false) {
+  if (element === previousSelectedEl) return;
+
   element.setAttribute(EL_ATTR_NAME.hover, '');
   previousSelectedEl?.removeAttribute(EL_ATTR_NAME.hover);
 
   if (updateNavigation) scannerNavigation.value?.updateNavigation(element);
 
   elProperties.value = getElProperties(element).getAll();
-
   previousSelectedEl = element;
 }
 function handlePointerMove({

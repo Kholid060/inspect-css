@@ -2,7 +2,7 @@ import { tags as t } from '@lezer/highlight';
 import { createTheme } from '@uiw/codemirror-themes';
 import type { CreateThemeOptions } from '@uiw/codemirror-themes';
 
-export const defaultSettingsNord: CreateThemeOptions['settings'] = {
+export const defaultSettingsTheme: CreateThemeOptions['settings'] = {
   background: '#1e1e1e',
   foreground: '#9cdcfe',
   caret: '#c6c6c6',
@@ -20,7 +20,7 @@ export const themeInit = (options?: Partial<CreateThemeOptions>) => {
   return createTheme({
     theme: theme,
     settings: {
-      ...defaultSettingsNord,
+      ...defaultSettingsTheme,
       ...settings,
     },
     styles: [
