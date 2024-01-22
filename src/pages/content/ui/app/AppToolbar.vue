@@ -78,6 +78,13 @@
               @click="activeTool = tool.id === activeTool ? '' : tool.id"
             >
               <component :is="tool.icon" class="inline-block" />
+              <span
+                v-if="
+                  tool.id === 'custom-css' &&
+                  (addedCustomCSSCount || appProvider.state.hasGlobalCSS)
+                "
+                class="rounded-md bg-red-500 text-zinc-100 w-2 h-2 text-xs absolute -top-0 -right-0"
+              />
             </button>
           </UiTooltip>
         </div>
@@ -123,7 +130,7 @@ import {
 import { useAppProvider } from '../app-plugin';
 import ToolbarAssets from './toolbar/ToolbarAssets.vue';
 import ToolbarCustomCSS from './toolbar/ToolbarCustomCSS.vue';
-import { Component, shallowRef } from 'vue';
+import { Component, computed, shallowRef } from 'vue';
 import ToolbarEyeDropper from './toolbar/ToolbarEyeDropper.vue';
 import ToolbarNavigator from './toolbar/ToolbarNavigator.vue';
 import ToolbarColorPalette from './toolbar/ToolbarColorPalette.vue';
@@ -148,5 +155,9 @@ if (window.EyeDropper) {
 
 const appProvider = useAppProvider();
 
-const activeTool = shallowRef('');
+const activeTool = shallowRef('custom-css');
+
+const addedCustomCSSCount = computed(
+  () => Object.keys(appProvider.styleData.dirtyItems.value).length,
+);
 </script>

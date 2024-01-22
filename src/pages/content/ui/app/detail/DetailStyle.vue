@@ -1,69 +1,39 @@
 <template>
-  <div class="px-4 pb-4 pt-2">
+  <UiElementSpacing
+    :computed-styles="properties.computedStyles"
+    class="mt-2"
+    title="margin"
+  >
     <UiElementSpacing
       :computed-styles="properties.computedStyles"
-      class="mt-2"
-      title="margin"
+      title="padding"
     >
-      <UiElementSpacing
-        :computed-styles="properties.computedStyles"
-        title="padding"
-      >
-        <div class="bg-primary bg-opacity-25 rounded-md text-center py-2 px-1">
-          {{ Math.floor(properties.size.width) }}x{{
-            Math.floor(properties.size.height)
-          }}
-        </div>
-      </UiElementSpacing>
-    </UiElementSpacing>
-    <div class="mt-4 space-y-2">
-      <div
-        v-for="(mediaCSS, index) in appliedStyle.media"
-        :key="mediaCSS.mediaCondition"
-        class="p-2 rounded-md bg-muted/50 space-y-2 highlight-white/5"
-      >
-        <div>
-          <p class="text-sm font-mono text-indigo-400 font-semibold">
-            @media{{ wrapInParenthesis(mediaCSS.mediaCondition) }}
-          </p>
-          <DetailCSSEditor
-            :style-id="elSelector"
-            :model-value="mediaCSS.cssText"
-            class="text-sm mt-1"
-            @change="onCSSChange({ type: 'media', index, value: $event })"
-          />
-        </div>
-        <div
-          v-for="(pseudoCSS, pseudoIndex) in mediaCSS.pseudo"
-          :key="pseudoCSS.pseudo"
-          class="p-2 rounded-md bg-muted/50 highlight-white/5"
-        >
-          <p class="text-sm font-mono text-amber-500 font-semibold">
-            {{ pseudoCSS.pseudo }}
-          </p>
-          <DetailCSSEditor
-            :style-id="elSelector"
-            :model-value="pseudoCSS.cssText"
-            class="text-sm mt-1"
-            @change="
-              onCSSChange({
-                value: $event,
-                mediaIdx: index,
-                index: pseudoIndex,
-                type: 'media-pseudo',
-              })
-            "
-          />
-        </div>
+      <div class="bg-primary bg-opacity-25 rounded-md text-center py-2 px-1">
+        {{ Math.floor(properties.size.width) }}x{{
+          Math.floor(properties.size.height)
+        }}
       </div>
-      <DetailCSSEditor
-        :key="elSelector"
-        :model-value="appliedStyle.cssText"
-        class="text-sm"
-        @change="onCSSChange({ type: 'main', value: $event })"
-      />
+    </UiElementSpacing>
+  </UiElementSpacing>
+  <div class="mt-4 space-y-2">
+    <div
+      v-for="(mediaCSS, index) in appliedStyle.media"
+      :key="mediaCSS.mediaCondition"
+      class="p-2 rounded-md bg-muted/50 space-y-2 highlight-white/5"
+    >
+      <div>
+        <p class="text-sm font-mono text-indigo-400 font-semibold">
+          @media{{ wrapInParenthesis(mediaCSS.mediaCondition) }}
+        </p>
+        <DetailCSSEditor
+          :style-id="elSelector"
+          :model-value="mediaCSS.cssText"
+          class="text-sm mt-1"
+          @change="onCSSChange({ type: 'media', index, value: $event })"
+        />
+      </div>
       <div
-        v-for="(pseudoCSS, index) in appliedStyle.pseudo"
+        v-for="(pseudoCSS, pseudoIndex) in mediaCSS.pseudo"
         :key="pseudoCSS.pseudo"
         class="p-2 rounded-md bg-muted/50 highlight-white/5"
       >
@@ -74,9 +44,37 @@
           :style-id="elSelector"
           :model-value="pseudoCSS.cssText"
           class="text-sm mt-1"
-          @change="onCSSChange({ type: 'pseudo', value: $event, index })"
+          @change="
+            onCSSChange({
+              value: $event,
+              mediaIdx: index,
+              index: pseudoIndex,
+              type: 'media-pseudo',
+            })
+          "
         />
       </div>
+    </div>
+    <DetailCSSEditor
+      :key="elSelector"
+      :model-value="appliedStyle.cssText"
+      class="text-sm"
+      @change="onCSSChange({ type: 'main', value: $event })"
+    />
+    <div
+      v-for="(pseudoCSS, index) in appliedStyle.pseudo"
+      :key="pseudoCSS.pseudo"
+      class="p-2 rounded-md bg-muted/50 highlight-white/5"
+    >
+      <p class="text-sm font-mono text-amber-500 font-semibold">
+        {{ pseudoCSS.pseudo }}
+      </p>
+      <DetailCSSEditor
+        :style-id="elSelector"
+        :model-value="pseudoCSS.cssText"
+        class="text-sm mt-1"
+        @change="onCSSChange({ type: 'pseudo', value: $event, index })"
+      />
     </div>
   </div>
 </template>
@@ -85,7 +83,10 @@ import { watch } from 'vue';
 import DetailCSSEditor from './DetailCSSEditor.vue';
 import UiElementSpacing from '@root/src/pages/components/ui/UiElementSpacing.vue';
 import { ElementAppliedStyleRules } from '@root/src/utils/CSSRulesUtils';
-import { ElementProperties } from '@root/src/utils/getElProperties';
+import {
+  ElementBasicSelector,
+  ElementProperties,
+} from '@root/src/utils/getElProperties';
 import { debounce, wrapInParenthesis } from '@root/src/utils/helper';
 import { StyleDataItem, useAppProvider } from '../../app-plugin';
 import { generateElementCSS } from '@src/utils/generate-element-css';
@@ -103,6 +104,7 @@ type OnCSSChangeType =
 interface Props {
   elSelector: string;
   properties: ElementProperties;
+  basicSelector: ElementBasicSelector;
   appliedStyle: ElementAppliedStyleRules;
 }
 const props = defineProps<Props>();
@@ -116,6 +118,8 @@ let styleData: StyleDataItem | null = null;
 let styleElement: HTMLStyleElement | null = null;
 
 const onCSSChange = debounce((detail: OnCSSChangeType) => {
+  if (!styleData) return;
+
   const copyAppliedStyle = { ...props.appliedStyle };
 
   switch (detail.type) {
@@ -136,10 +140,11 @@ const onCSSChange = debounce((detail: OnCSSChangeType) => {
 
   emits('update:appliedStyle', copyAppliedStyle);
 
-  if (!styleData) return;
+  appProvider.addDirtyStyleItem(styleData.id);
 
   if (!styleElement) {
     styleElement = document.createElement('style');
+    styleElement.setAttribute('id', `inspect-css-el-${styleData.id}`);
     styleElement.setAttribute(EL_ATTR_NAME.customStyle, props.elSelector);
     document.body.appendChild(styleElement);
   }
@@ -167,6 +172,7 @@ watch(
       styleData = appProvider.addStyleItem({
         elSelector: props.elSelector,
         initialProps: props.appliedStyle,
+        basicSelector: props.basicSelector,
       });
     }
   },

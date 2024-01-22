@@ -12,10 +12,10 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ElementSelector } from '@root/src/utils/getElProperties';
+import { ElementBasicSelector } from '@root/src/utils/getElProperties';
 
 interface Props {
-  selector: ElementSelector;
+  selector: ElementBasicSelector;
 }
 
 withDefaults(defineProps<Props>(), {

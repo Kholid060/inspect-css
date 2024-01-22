@@ -2,14 +2,18 @@ import settingsStorage from '@root/src/storages/settings.storage';
 import { ElementAppliedStyleRules } from '@root/src/utils/CSSRulesUtils';
 import { EL_IDS } from '@root/src/utils/constant';
 import { resetAppliedStyleValue } from '@root/src/utils/generate-element-css';
-import { Plugin, inject, shallowReactive } from 'vue';
+import { ElementBasicSelector } from '@root/src/utils/getElProperties';
+import { Plugin, Ref, ref, inject, shallowReactive } from 'vue';
+
 export interface StyleData {
   index: number;
   items: Record<number, StyleDataItem>;
+  dirtyItems: Ref<Record<number, boolean>>;
 }
 export interface StyleDataItem {
   id: number;
   elSelector: string;
+  basicSelector: ElementBasicSelector;
   initialProps: ElementAppliedStyleRules;
 }
 
@@ -18,20 +22,25 @@ export interface AppState {
   showGrid: boolean;
   tempHide: boolean;
   interactive: boolean;
+  hasGlobalCSS: boolean;
 }
 export interface AppStateProvider {
   state: AppState;
   destroy: () => void;
   styleData: StyleData;
   shadowRoot: ShadowRoot;
+  addDirtyStyleItem(id: number): void;
+  removeDirtyStyleItem(id: number): void;
   updateState: (state: Partial<AppState>) => void;
   addStyleItem(detail: Omit<StyleDataItem, 'id'>): StyleDataItem;
 }
 
 const APP_PROVIDER_KEY = Symbol('app-provider');
+
 const styleData: StyleData = {
   index: 0,
   items: {},
+  dirtyItems: ref({}),
 };
 
 export function useAppProvider() {
@@ -40,6 +49,8 @@ export function useAppProvider() {
   return state;
 }
 
+// To-do: use pinia?
+
 export const appPlugin: Plugin = {
   install(app, shadowRoot: ShadowRoot) {
     const appState = shallowReactive<AppState>({
@@ -47,6 +58,7 @@ export const appPlugin: Plugin = {
       tempHide: false,
       showGrid: false,
       interactive: true,
+      hasGlobalCSS: false,
     });
 
     settingsStorage.get().then((settings) => {
@@ -72,12 +84,18 @@ export const appPlugin: Plugin = {
         id: styleData.index,
         initialProps: resetAppliedStyleValue(detail.initialProps),
       };
-
       styleData.items[styleData.index] = data;
       styleData.index += 1;
 
       return data;
     }
+    function addDirtyStyleItem(id: number) {
+      styleData.dirtyItems.value[id] = true;
+    }
+    function removeDirtyStyleItem(id: number) {
+      delete styleData.dirtyItems.value[id];
+    }
+
     function destroy() {
       app.unmount();
       shadowRoot.host.remove();
@@ -92,6 +110,8 @@ export const appPlugin: Plugin = {
       updateState,
       addStyleItem,
       state: appState,
+      addDirtyStyleItem,
+      removeDirtyStyleItem,
     });
   },
 };

@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-4 p-4">
+  <div class="space-y-4 pt-2">
     <div class="flex items-center">
       <p class="font-semibold">Attributes</p>
       <div class="flex-1"></div>

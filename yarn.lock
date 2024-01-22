@@ -252,7 +252,7 @@
     "@lezer/common" "^1.1.0"
     "@lezer/highlight" "^1.0.0"
     "@lezer/lr" "^1.0.0"
-    style-mod "^4.1.0"
+    style-mod "^4.0.0"
 
 "@codemirror/state@^6.0.0", "@codemirror/state@^6.4.0":
   version "6.4.0"

@@ -16,20 +16,20 @@ function removePx(str: string) {
 
 type ComputedStyles = Record<string, string | number>;
 
-export interface ElementSelector {
+export interface ElementBasicSelector {
   id: string;
   tag: string;
   classes: string;
 }
 
 export interface ElementProperties {
-  selector: ElementSelector;
+  selector: ElementBasicSelector;
   computedStyles: ComputedStyles;
   size: { height: number; width: number };
 }
 
 export function getElBasicSelector(target: Element) {
-  const selector: ElementSelector = {
+  const selector: ElementBasicSelector = {
     tag: target.tagName.toLowerCase(),
     id: target.id ? `#${target.id}` : '',
     classes: Array.from(target.classList).join('.'),

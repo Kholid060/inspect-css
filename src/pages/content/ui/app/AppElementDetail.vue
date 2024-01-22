@@ -45,13 +45,14 @@
         {{ item.name }}
       </button>
     </div>
-    <div style="max-height: calc(100vh - 200px)" class="overflow-auto">
+    <div style="max-height: calc(100vh - 200px)" class="overflow-auto p-4">
       <KeepAlive>
         <DetailStyle
           v-if="state.activeTab === 'style' && elAppliedStyle"
           :el-selector="elSelector"
           :properties="elProperties"
           :applied-style="elAppliedStyle"
+          :basic-selector="elProperties.selector"
           @update:applied-style="updateAppliedStyle"
         />
         <DetailAttributes
@@ -103,6 +104,7 @@ interface WindowPosition {
 
 const CONTAINER_WIDTH = 350;
 
+let listenedWindowResize = false;
 let lastPosition: WindowPosition | null = parseJSON(
   sessionStorage.getItem(SESSION_STORAGE_KEY.elPropsPosition) ?? '',
   null,
@@ -127,6 +129,7 @@ const elProperties = shallowRef<ElementProperties | null>(null);
 const elAppliedStyle = shallowRef<ElementAppliedStyleRules | null>(null);
 
 function closeWindow() {
+  elSelector.value = '';
   elProperties.value = null;
   elAppliedStyle.value = null;
 }
@@ -233,18 +236,24 @@ const onWindowResize = debounce(() => {
 
 watch(elProperties, (value) => {
   if (value) {
+    if (listenedWindowResize) return;
+
     window.addEventListener('resize', onWindowResize);
+    listenedWindowResize = true;
   } else {
     window.removeEventListener('resize', onWindowResize);
+    listenedWindowResize = false;
   }
 });
 
 onMounted(() => {
   emitter.on('content:el-selected', onSelectElement);
+  emitter.on('content:remove-selected', closeWindow);
 });
 onUnmounted(() => {
   cssRulesUtils.destroy();
-  window.removeEventListener('resize', onWindowResize);
   emitter.off('content:el-selected', onSelectElement);
+  emitter.off('content:remove-selected', closeWindow);
+  window.removeEventListener('resize', onWindowResize);
 });
 </script>
