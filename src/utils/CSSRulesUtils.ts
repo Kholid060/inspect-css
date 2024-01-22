@@ -4,6 +4,7 @@ import {
   ElementCSSRule,
   ElementMediaCSSRule,
   cssTextToObject,
+  extractCSSText,
   getAppliedCSSProperties,
   parseCSSStyleRule,
 } from './css-rule-parser';
@@ -12,12 +13,18 @@ import type { SetRequired } from 'type-fest';
 const MAX_RULES_CACHE_MS = 60_000; // 1 minute
 
 export interface ElementAppliedStyleRules extends ElementAppliedCSS {
+  animation: AnimationKeyframeRule[];
   media: SetRequired<ElementAppliedCSS, 'mediaCondition'>[];
 }
 
+export type AnimationKeyframeRule = Pick<CSSKeyframesRule, 'name' | 'cssText'>;
+export type AnimationKeyframeRuleRecord = Record<string, AnimationKeyframeRule>;
+
 class CSSRulesUtils {
   private lastRetrievedRules: null | number = null;
+
   private _rules: (CSSMediaRule | CSSStyleRule)[] = [];
+  private _keyframeRules: AnimationKeyframeRuleRecord = {};
 
   constructor() {}
 
@@ -27,6 +34,7 @@ class CSSRulesUtils {
       Date.now() - this.lastRetrievedRules < MAX_RULES_CACHE_MS
     ) {
       this._rules = [];
+      this._keyframeRules = {};
 
       const excludeStyleEl = (
         ownerNode: Element | ProcessingInstruction | null,
@@ -45,10 +53,17 @@ class CSSRulesUtils {
             continue;
 
           for (const rule of styleSheet.cssRules) {
-            if (!(rule instanceof CSSStyleRule || rule instanceof CSSMediaRule))
-              continue;
-
-            this._rules.push(rule);
+            if (rule instanceof CSSKeyframesRule) {
+              this._keyframeRules[rule.name] = {
+                name: rule.name,
+                cssText: extractCSSText(rule.cssText),
+              };
+            } else if (
+              rule instanceof CSSStyleRule ||
+              rule instanceof CSSMediaRule
+            ) {
+              this._rules.push(rule);
+            }
           }
         } catch (error) {
           // 3rd-party CSS;
@@ -64,8 +79,9 @@ class CSSRulesUtils {
 
   getAppliedRules(element: Element): ElementAppliedStyleRules {
     const rules: ElementCSSRule[] = [];
-
     const mediaRules: ElementMediaCSSRule[] = [];
+    const animationRules: AnimationKeyframeRule[] = [];
+
     const mediaIndexMap = new Map<string, number>();
 
     for (const rule of this.rules) {
@@ -83,7 +99,6 @@ class CSSRulesUtils {
 
         mediaIndexMap.set(result.mediaCondition, mediaRules.length - 1);
       } else {
-        console.log(rule);
         rules.push(...result.rules);
       }
     }
@@ -101,7 +116,12 @@ class CSSRulesUtils {
     const sortedRules = rules.sort((a, b) =>
       a.specificity > b.specificity ? -1 : 1,
     );
-    const mainRules = getAppliedCSSProperties(element, sortedRules);
+    const mainRules = getAppliedCSSProperties(
+      element,
+      sortedRules,
+      this._keyframeRules,
+    );
+    animationRules.push(...mainRules.animation);
 
     const appliedMediaCSS = mediaRules.map((mediaRule) => {
       const sortedMediaRules = mediaRule.rules.sort((a, b) =>
@@ -111,12 +131,14 @@ class CSSRulesUtils {
       return getAppliedCSSProperties(
         element,
         sortedMediaRules,
+        this._keyframeRules,
         mediaRule.mediaCondition,
       ) as SetRequired<ElementAppliedCSS, 'mediaCondition'>;
     });
 
     return {
       ...mainRules,
+      animation: animationRules,
       media: appliedMediaCSS.reverse(),
     };
   }

@@ -5,22 +5,15 @@ function replaceAllStyleValue(
   css: string,
   replacement: string | ((key: string, value: string) => string),
 ) {
-  let updatedCSS = '';
-
-  for (const property of css.split(';')) {
-    if (!property.trim()) continue;
-
-    const [key, value] = property.split(/:\s*([^;]+)/);
+  return css.replace(/\s*([a-zA-Z-]+)\s*:\s*([^;]+)\s*;/g, (match) => {
+    const [key, value] = match.split(/:\s*([^;]+)/);
     const newProperty =
       typeof replacement === 'string'
         ? replacement
         : replacement(key.trim(), value);
-    if (!newProperty) continue;
 
-    updatedCSS += newProperty + '\n';
-  }
-
-  return updatedCSS;
+    return newProperty;
+  });
 }
 
 export function resetAppliedStyleValue(style: ElementAppliedStyleRules) {
@@ -28,7 +21,7 @@ export function resetAppliedStyleValue(style: ElementAppliedStyleRules) {
   const replaceValue = (key: string) => {
     if (key.startsWith('--')) return '';
 
-    return `${key}: initial !important;`;
+    return `${key}: initial !important;\n`;
   };
 
   copyStyle.cssText = replaceAllStyleValue(copyStyle.cssText, replaceValue);
@@ -44,6 +37,13 @@ export function resetAppliedStyleValue(style: ElementAppliedStyleRules) {
     ...pseudo,
     cssText: replaceAllStyleValue(pseudo.cssText, replaceValue),
   }));
+  copyStyle.animation = copyStyle.animation.map((animation) => ({
+    ...animation,
+    cssText: replaceAllStyleValue(
+      animation.cssText,
+      (key) => `${key}: initial;\n`,
+    ),
+  }));
 
   return copyStyle;
 }
@@ -57,19 +57,17 @@ export function generateElementCSS({
   style: ElementAppliedStyleRules;
   initialStyle: ElementAppliedStyleRules;
 }) {
-  let css = '';
-
   const addImportantRule = (cssStr: string) => {
     return replaceAllStyleValue(cssStr, (key, value) => {
       if (!key || !value) return `${key || ''}${value || ''}`;
       if (value.includes('!important') || key.startsWith('--'))
-        return `${key}: ${value};`;
+        return `${key}: ${value};\n`;
 
-      return `${key}: ${value} !important;`;
+      return `${key}: ${value} !important;\n`;
     });
   };
 
-  css += `${selector} {
+  let css = `${selector} {
     ${initialStyle.cssText}
 
     ${addImportantRule(style.cssText)}
@@ -86,7 +84,7 @@ export function generateElementCSS({
       )
       .join('\n');
 
-    css += `@media ${wrapInParenthesis(media.mediaCondition)} {
+    const mediaCss = `@media ${wrapInParenthesis(media.mediaCondition)} {
       ${selector} {
         ${initialStyle.media[index]?.cssText || ''}
 
@@ -95,9 +93,11 @@ export function generateElementCSS({
         ${pseudoMediaCSS}
       }
     }\n`;
+
+    css = `${css}\n${mediaCss}`;
   });
 
-  css += style.pseudo
+  const pseudoCSS = style.pseudo
     .map(
       (pseudo, pseudoIdx) =>
         `${selector}${pseudo.pseudo} {
@@ -106,6 +106,19 @@ export function generateElementCSS({
     }`,
     )
     .join('\n');
+  css = `${css}\n${pseudoCSS}`;
+
+  const animationCSS = style.animation
+    .map(
+      (animation, index) =>
+        `@keyframes ${animation.name} {
+          ${initialStyle.animation[index]?.cssText ?? ''}
+          
+          ${animation.cssText}
+        }`,
+    )
+    .join('\n');
+  css = `${css}\n${animationCSS}`;
 
   return css;
 }

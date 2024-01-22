@@ -76,6 +76,21 @@
         @change="onCSSChange({ type: 'pseudo', value: $event, index })"
       />
     </div>
+    <div
+      v-for="(animation, index) in appliedStyle.animation"
+      :key="animation.name"
+      class="p-2 rounded-md bg-muted/50 highlight-white/5"
+    >
+      <p class="text-sm font-mono text-amber-500 font-semibold">
+        @keyframes {{ animation.name }}
+      </p>
+      <DetailCSSEditor
+        :style-id="elSelector"
+        :model-value="animation.cssText"
+        class="text-sm mt-1"
+        @change="onCSSChange({ type: 'animation', value: $event, index })"
+      />
+    </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -99,6 +114,7 @@ type OnCSSChangeType =
     }
   | { type: 'pseudo'; value: string; index: number }
   | { type: 'media'; value: string; index: number }
+  | { type: 'animation'; value: string; index: number }
   | { type: 'media-pseudo'; value: string; mediaIdx: number; index: number };
 
 interface Props {
@@ -122,6 +138,7 @@ const onCSSChange = debounce((detail: OnCSSChangeType) => {
 
   const copyAppliedStyle = { ...props.appliedStyle };
 
+  // TO-DO: use object-path
   switch (detail.type) {
     case 'main':
       copyAppliedStyle.cssText = detail.value;
@@ -131,6 +148,9 @@ const onCSSChange = debounce((detail: OnCSSChangeType) => {
       break;
     case 'pseudo':
       copyAppliedStyle.pseudo[detail.index].cssText = detail.value;
+      break;
+    case 'animation':
+      copyAppliedStyle.animation[detail.index].cssText = detail.value;
       break;
     case 'media-pseudo':
       copyAppliedStyle.media[detail.mediaIdx].pseudo[detail.index].cssText =

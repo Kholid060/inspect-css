@@ -1,5 +1,11 @@
 import * as specificity from 'specificity';
 import { SetRequired } from 'type-fest';
+import {
+  AnimationKeyframeRule,
+  AnimationKeyframeRuleRecord,
+} from './CSSRulesUtils';
+
+// TO-DO: use css-tree
 
 const CSS_PSEUDO = [
   ':active',
@@ -46,10 +52,11 @@ export interface ElementMediaCSSRule {
 export interface ElementAppliedCSS {
   cssText: string;
   mediaCondition?: string;
+  animation: AnimationKeyframeRule[];
   pseudo: { cssText: string; pseudo: string }[];
 }
 
-const extractCSSText = (cssText: string) =>
+export const extractCSSText = (cssText: string) =>
   cssText.slice(cssText.indexOf('{') + 1, -1).trim();
 
 export function cssTextToObject(cssText: string) {
@@ -75,6 +82,7 @@ export function cssTextToObject(cssText: string) {
 export function getAppliedCSSProperties(
   element: Element,
   rules: ElementCSSRule[],
+  animationRules: AnimationKeyframeRuleRecord,
   mediaCondition?: string,
 ): ElementAppliedCSS {
   const pseudo: ElementAppliedCSS['pseudo'] = [];
@@ -86,6 +94,7 @@ export function getAppliedCSSProperties(
   };
 
   const mainProperties = new Map<string, PropertyValue>();
+  const animationProperties = new Map<string, AnimationKeyframeRule>();
   const pseudoProperties = new Map<string, Record<string, PropertyValue>>();
 
   const handleMainProps = (rule: ElementCSSRule) => {
@@ -172,6 +181,11 @@ export function getAppliedCSSProperties(
 
   const computedStyle = getComputedStyle(element);
 
+  const { animationName } = computedStyle;
+  if (animationName !== 'none' && animationRules[animationName]) {
+    animationProperties.set(animationName, animationRules[animationName]);
+  }
+
   const mainCSSText = [...mainProperties.entries()].reduce<string>(
     (acc, [key, { value }]) => {
       let propertyValue = value;
@@ -204,6 +218,7 @@ export function getAppliedCSSProperties(
     pseudo,
     mediaCondition,
     cssText: mainCSSText.trim(),
+    animation: [...animationProperties.values()],
   };
 }
 
