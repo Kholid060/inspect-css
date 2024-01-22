@@ -221,20 +221,22 @@ export function parseCSSStyleRule(
   ) => {
     let pseudo: string | undefined;
 
-    const selector = styleRule.selectorText.split(',').find((str) => {
-      const normalizeSelector = str
-        .trim()
-        .replace(CSS_PSEUDO_REGEX, (match) => {
-          pseudo = match;
-          return '';
-        });
+    const selector = styleRule.selectorText
+      .split(/,(?![^(]*\))/)
+      .find((str) => {
+        const normalizeSelector = str
+          .trim()
+          .replace(CSS_PSEUDO_REGEX, (match) => {
+            pseudo = match;
+            return '';
+          });
 
-      try {
-        return element.matches(normalizeSelector);
-      } catch (error) {
-        return false;
-      }
-    });
+        try {
+          return element.matches(normalizeSelector);
+        } catch (error) {
+          return false;
+        }
+      });
 
     if (!selector || (mediaCondition && !window.matchMedia(mediaCondition)))
       return;

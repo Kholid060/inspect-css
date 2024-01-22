@@ -25,6 +25,7 @@ function replaceAllStyleValue(
 
 export function resetAppliedStyleValue(style: ElementAppliedStyleRules) {
   const copyStyle = structuredClone(style);
+  console.log(copyStyle, style);
   const replaceValue = (key: string) => {
     if (key.startsWith('--')) return '';
 

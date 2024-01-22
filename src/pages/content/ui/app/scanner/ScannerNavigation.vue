@@ -35,6 +35,7 @@
 </template>
 <script setup lang="ts">
 import { getElBasicSelector } from '@root/src/utils/getElProperties';
+import { debounce } from '@root/src/utils/helper';
 import { ref, shallowRef, watch } from 'vue';
 
 interface NavigationNodeItem {
@@ -62,7 +63,7 @@ const elNavigation = shallowRef<ElementNavigation | null>(null);
 
 watch(
   [activeNode, elNavigation],
-  () => {
+  debounce(() => {
     if (!containerRef.value) return;
 
     const el = containerRef.value.querySelector<HTMLElement>(
@@ -75,7 +76,7 @@ watch(
       behavior: 'smooth',
       top: el.offsetTop - CONTAINER_HEIGHT / 2 + 6,
     });
-  },
+  }, 100),
   { flush: 'post' },
 );
 

@@ -11,9 +11,7 @@
       :leave="{ opacity: 0, y: -100 }"
       :delay="100"
     >
-      <div
-        class="bg-background border-2 p-1 rounded-xl flex items-center gap-1"
-      >
+      <div class="bg-background border p-1 rounded-xl flex items-center gap-1">
         <UiTooltip label="Interactive">
           <button
             :class="[
@@ -56,21 +54,21 @@
         <div
           v-if="activeTool"
           v-motion
-          class="bg-popover border-2 absolute bottom-full mb-2 rounded-lg left-1/2 min-w-80 max-w-md min-h-20 group/content"
+          class="bg-popover border absolute bottom-full mb-2 rounded-lg left-1/2 min-w-80 max-w-md min-h-20 group/content"
           :initial="{ y: 10 }"
           :enter="{ y: 0 }"
           :leave="{ y: -10 }"
           style="translate: -50%"
         >
           <button
-            class="absolute h-8 w-8 -top-3 -right-3 z-50 flex items-center justify-center rounded-md border-2 bg-secondary group-hover/content:scale-100 scale-0 transition"
+            class="absolute h-8 w-8 -top-3 -right-3 z-50 flex items-center justify-center rounded-md border bg-secondary group-hover/content:scale-100 scale-0 transition"
             @click="activeTool = ''"
           >
             <XIcon class="h-5 w-5" />
           </button>
           <component :is="toolCompsMap[activeTool]" />
         </div>
-        <div class="bg-background border-2 p-1 rounded-xl flex gap-1">
+        <div class="bg-background border p-1 rounded-xl flex gap-1">
           <UiTooltip v-for="tool in tools" :key="tool.id" :label="tool.name">
             <button
               :class="[
@@ -84,7 +82,7 @@
           </UiTooltip>
         </div>
       </div>
-      <div class="bg-background border-2 p-1 rounded-xl flex items-center">
+      <div class="bg-background border p-1 rounded-xl flex items-center">
         <UiTooltip label="Pause">
           <button
             class="toolbar-button"

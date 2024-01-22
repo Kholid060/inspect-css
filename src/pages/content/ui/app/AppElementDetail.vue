@@ -48,10 +48,10 @@
     <div style="max-height: calc(100vh - 200px)" class="overflow-auto">
       <KeepAlive>
         <DetailStyle
-          v-if="state.activeTab === 'style'"
+          v-if="state.activeTab === 'style' && elAppliedStyle"
           :el-selector="elSelector"
           :properties="elProperties"
-          :applied-style="elAppliedStyle!"
+          :applied-style="elAppliedStyle"
           @update:applied-style="updateAppliedStyle"
         />
         <DetailAttributes
