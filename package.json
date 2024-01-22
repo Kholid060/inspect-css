@@ -16,7 +16,11 @@
     "lint": "eslint src --ext .ts,.js,.tsx,.jsx",
     "lint:fix": "yarn lint --fix",
     "prettier": "prettier . --write",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "build:zip": "node ./utils/scripts/build-zip.js",
+    "build:prod": "yarn build:prod-chrome && yarn build:prod-firefox",
+    "build:prod-chrome": "yarn build && yarn build:zip",
+    "build:prod-firefox": "yarn build:firefox && cross-env __FIREFOX__=true yarn build:zip"
   },
   "type": "module",
   "dependencies": {
@@ -62,6 +66,7 @@
     "@typescript-eslint/parser": "6.18.1",
     "@vitejs/plugin-vue": "^5.0.3",
     "@vue/eslint-config-airbnb": "^8.0.0",
+    "archiver": "^6.0.1",
     "autoprefixer": "^10.4.16",
     "chokidar": "3.5.3",
     "cross-env": "7.0.3",
@@ -82,7 +87,7 @@
     "tailwindcss": "^3.4.1",
     "ts-loader": "9.5.0",
     "tslib": "2.6.2",
-    "typescript": "5.2.2",
+    "typescript": "^5.3.3",
     "vite": "5.0.11",
     "vue-eslint-parser": "^9.4.0",
     "vue-tsc": "^1.8.27",

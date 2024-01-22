@@ -65,7 +65,7 @@ const props = defineProps<{
   element: Element;
 }>();
 
-const IGNORE_ATTRS = Object.values(EL_ATTR_NAME);
+const IGNORE_ATTRS = Object.values(EL_ATTR_NAME) as string[];
 
 const attrs = ref<Array<AttrItem>>([]);
 
