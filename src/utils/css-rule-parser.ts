@@ -52,7 +52,7 @@ export interface ElementAppliedCSS {
 const extractCSSText = (cssText: string) =>
   cssText.slice(cssText.indexOf('{') + 1, -1).trim();
 
-function cssTextToObject(cssText: string) {
+export function cssTextToObject(cssText: string) {
   const properties: ElementStyleProperty[] = [];
 
   for (const property of cssText.split(';')) {

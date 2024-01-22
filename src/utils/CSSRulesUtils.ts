@@ -3,6 +3,7 @@ import {
   ElementAppliedCSS,
   ElementCSSRule,
   ElementMediaCSSRule,
+  cssTextToObject,
   getAppliedCSSProperties,
   parseCSSStyleRule,
 } from './css-rule-parser';
@@ -82,8 +83,19 @@ class CSSRulesUtils {
 
         mediaIndexMap.set(result.mediaCondition, mediaRules.length - 1);
       } else {
+        console.log(rule);
         rules.push(...result.rules);
       }
+    }
+
+    const inlineStyle = element.getAttribute('style');
+    if (inlineStyle) {
+      rules.push({
+        selector: '',
+        specificity: 1000,
+        cssText: inlineStyle,
+        properties: cssTextToObject(inlineStyle),
+      });
     }
 
     const sortedRules = rules.sort((a, b) =>

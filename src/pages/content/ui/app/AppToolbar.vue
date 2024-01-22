@@ -155,7 +155,7 @@ if (window.EyeDropper) {
 
 const appProvider = useAppProvider();
 
-const activeTool = shallowRef('custom-css');
+const activeTool = shallowRef('');
 
 const addedCustomCSSCount = computed(
   () => Object.keys(appProvider.styleData.dirtyItems.value).length,

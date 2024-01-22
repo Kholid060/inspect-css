@@ -36,6 +36,8 @@ const gutterMarkerCheckboxChecked = new (class extends GutterMarker {
 export const toggleCommentGutter = [
   gutter({
     lineMarker(view, line) {
+      if (line.from === line.to) return null;
+
       const insideComment = isCommented(view, line);
       return insideComment ? gutterMarkerCheckbox : gutterMarkerCheckboxChecked;
     },
