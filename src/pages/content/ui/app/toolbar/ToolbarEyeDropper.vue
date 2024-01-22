@@ -32,36 +32,42 @@
         Press the Color Picker icon to start capturing a color
       </p>
       <template v-else>
-        <div class="flex h-10 rounded-md mt-3">
+        <div class="flex h-10 rounded-md mt-3 text-xs">
           <div
             v-for="(lightVariant, index) in activeColor.lightVariants"
             :key="lightVariant.color + index"
             :class="[
-              'h-full flex-1 cursor-pointer hover:flex-[3] text-xs transition-all first:rounded-l-md flex items-center justify-center group',
+              'h-full relative flex-1 cursor-pointer hover:flex-[3] transition-all first:rounded-l-md flex items-center justify-center group',
               lightVariant.textIsBlack ? 'text-zinc-900' : 'text-zinc-100',
             ]"
             :style="{ backgroundColor: lightVariant.color }"
             @click="copyColorVariant(lightVariant.color)"
           >
-            <p class="opacity-0 group-hover:opacity-100 transition">
+            <p
+              class="opacity-0 absolute text-center w-full group-hover:opacity-100 transition"
+            >
               {{
-                copyColorIndicator === lightVariant.color ? '✅ Copied' : 'Copy'
+                copyColorIndicator === lightVariant.color
+                  ? '✅ Copied'
+                  : lightVariant.color.toUpperCase()
               }}
             </p>
           </div>
           <div
             :class="[
-              'h-full flex-[2] cursor-pointer hover:flex-[3] text-xs transition-all first:rounded-l-md flex items-center justify-center group',
+              'h-full relative flex-[2] cursor-pointer hover:flex-[3] transition-all first:rounded-l-md flex items-center justify-center group',
               activeColor.textIsBlack ? 'text-zinc-900' : 'text-zinc-100',
             ]"
             :style="{ backgroundColor: activeColor.baseColor }"
             @click="copyColorVariant(activeColor.baseColor)"
           >
-            <p class="opacity-0 group-hover:opacity-100 transition">
+            <p
+              class="opacity-0 absolute text-center w-full group-hover:opacity-100 transition"
+            >
               {{
                 copyColorIndicator === activeColor.baseColor
                   ? '✅ Copied'
-                  : 'Copy'
+                  : activeColor.baseColor.toUpperCase()
               }}
             </p>
           </div>
@@ -69,15 +75,19 @@
             v-for="(darkVariant, index) in activeColor.darkVariants"
             :key="darkVariant.color + index"
             :class="[
-              'h-full flex-1 cursor-pointer hover:flex-[3] text-xs transition-all last:rounded-r-md flex items-center justify-center group',
+              'h-full relative flex-1 cursor-pointer hover:flex-[3] transition-all last:rounded-r-md flex items-center justify-center group',
               darkVariant.textIsBlack ? 'text-zinc-900' : 'text-zinc-100',
             ]"
             :style="{ backgroundColor: darkVariant.color }"
             @click="copyColorVariant(darkVariant.color)"
           >
-            <p class="opacity-0 group-hover:opacity-100 transition">
+            <p
+              class="opacity-0 absolute text-center w-full group-hover:opacity-100 transition"
+            >
               {{
-                copyColorIndicator === darkVariant.color ? '✅ Copied' : 'Copy'
+                copyColorIndicator === darkVariant.color
+                  ? '✅ Copied'
+                  : darkVariant.color.toUpperCase()
               }}
             </p>
           </div>

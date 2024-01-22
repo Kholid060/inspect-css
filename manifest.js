@@ -16,7 +16,6 @@ const manifest = {
   version: packageJson.version,
   description: '__MSG_extensionDescription__',
   permissions: ['activeTab', 'scripting', 'storage'],
-  host_permissions: ['http://*/*'],
   action: {},
   background: {
     service_worker: 'src/pages/background/index.js',
@@ -41,6 +40,7 @@ const manifest = {
 
 if (process.env.__DEV__) {
   manifest.permissions.push('tabs');
+  // manifest.host_permissions = ['http://*/*'];
 }
 
 export default manifest;

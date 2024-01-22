@@ -75,3 +75,7 @@ export function parseJSON<T = unknown, K = unknown>(
     return def;
   }
 }
+
+export function isObject<T>(input: T) {
+  return typeof input === 'object' && !Array.isArray(input);
+}

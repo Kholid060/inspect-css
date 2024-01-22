@@ -2,8 +2,27 @@
 
 .toolbar-button {
   @apply h-10 w-10 text-center rounded-lg hover:bg-muted/80 hover:highlight-white/10 hover:text-foreground transition inline-flex items-center justify-center;
+  position: relative;
 
+  &.indicator {
+    &::before {
+      content: '';
+      height: 3px;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 0;
+      position: absolute;
+      background-color: theme('colors.muted.DEFAULT');
+      transition: all 250ms ease;
+      @apply w-2/12 rounded-full;
+    }
+    &.active::before {
+      background-color: theme('colors.primary.DEFAULT');
+      @apply w-5/12;
+    }
+  }
   &.active {
+
     @apply text-primary;
   }
 
@@ -57,4 +76,14 @@
       }
     }
   }
+}
+
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateY(30px);
 }

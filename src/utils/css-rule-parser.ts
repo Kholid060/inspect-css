@@ -14,6 +14,8 @@ const CSS_PSEUDO = [
   ':visited',
   ':first-letter',
   ':first-line',
+  ':first-child',
+  ':last-child',
   ':marker',
   ':selection',
 ] as const;

@@ -1,3 +1,4 @@
+import settingsStorage from '@root/src/storages/settings.storage';
 import { ElementAppliedStyleRules } from '@root/src/utils/CSSRulesUtils';
 import { EL_IDS } from '@root/src/utils/constant';
 import { resetAppliedStyleValue } from '@root/src/utils/generate-element-css';
@@ -48,8 +49,22 @@ export const appPlugin: Plugin = {
       interactive: true,
     });
 
+    settingsStorage.get().then((settings) => {
+      Object.assign(appState, settings);
+    });
+
     function updateState(newState: Partial<AppState>) {
       Object.assign(appState, newState);
+
+      if (
+        Object.hasOwn(newState, 'showGrid') ||
+        Object.hasOwn(newState, 'interactive')
+      ) {
+        settingsStorage.set({
+          showGrid: appState.showGrid,
+          interactive: appState.interactive,
+        });
+      }
     }
     function addStyleItem(detail: Omit<StyleDataItem, 'id'>) {
       const data: StyleDataItem = {

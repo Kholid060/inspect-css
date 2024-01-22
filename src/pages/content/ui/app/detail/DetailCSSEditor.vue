@@ -1,6 +1,7 @@
 <template>
   <UiCodemirror
     v-model="model"
+    :view-options="{ root: appProvider.shadowRoot }"
     :extensions="editorExtensions"
     :theme-options="{
       settings: {
@@ -19,6 +20,7 @@ import { css } from '@src/lib/codemirror/css';
 import { color } from '@uiw/codemirror-extensions-color';
 import { toggleCommentGutter } from '@src/lib/codemirror/extensions';
 import UiCodemirror from '@root/src/pages/components/ui/UiCodemirror.vue';
+import { useAppProvider } from '../../app-plugin';
 
 interface Props {
   styleId: string;
@@ -33,6 +35,8 @@ const emit = defineEmits<{
 const model = defineModel({ type: String });
 
 let editorView: EditorView;
+
+const appProvider = useAppProvider();
 
 const editorExtensions: Extension[] = [
   css(),

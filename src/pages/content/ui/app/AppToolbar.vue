@@ -32,16 +32,47 @@
         >
           <Grid3X3Icon class="inline-block" />
         </button>
-      </div>
-      <div class="bg-background border-2 p-1 rounded-xl flex gap-1">
-        <button
-          v-for="tool in tools"
-          :key="tool.id"
-          :class="['toolbar-button', { active: tool.id === activeTool }]"
-          @click="activeTool = tool.id === activeTool ? '' : tool.id"
+        <a
+          role="button"
+          class="toolbar-button"
+          href="https://github.com/Kholid060/inspect-css/"
+          rel="noopener"
+          target="_blank"
         >
-          <component :is="tool.icon" class="inline-block" />
-        </button>
+          <GithubIcon class="inline-block" />
+        </a>
+      </div>
+      <div class="relative">
+        <div
+          v-if="activeTool"
+          v-motion
+          class="bg-popover border-2 absolute bottom-full mb-2 rounded-lg left-1/2 min-w-80 max-w-md min-h-20 group/content"
+          :initial="{ y: 10 }"
+          :enter="{ y: 0 }"
+          :leave="{ y: -10 }"
+          style="translate: -50%"
+        >
+          <button
+            class="absolute h-8 w-8 -top-3 -right-3 z-50 flex items-center justify-center rounded-md border-2 bg-secondary group-hover/content:scale-100 scale-0 transition"
+            @click="activeTool = ''"
+          >
+            <XIcon class="h-5 w-5" />
+          </button>
+          <component :is="toolCompsMap[activeTool]" />
+        </div>
+        <div class="bg-background border-2 p-1 rounded-xl flex gap-1">
+          <button
+            v-for="tool in tools"
+            :key="tool.id"
+            :class="[
+              'toolbar-button indicator',
+              { active: tool.id === activeTool },
+            ]"
+            @click="activeTool = tool.id === activeTool ? '' : tool.id"
+          >
+            <component :is="tool.icon" class="inline-block" />
+          </button>
+        </div>
       </div>
       <div class="bg-background border-2 p-1 rounded-xl flex items-center">
         <button
@@ -59,23 +90,6 @@
         </button>
       </div>
     </div>
-    <div
-      v-if="activeTool"
-      v-motion
-      class="bg-popover border-2 absolute bottom-full mb-2 rounded-lg left-1/2 min-w-80 max-w-md min-h-20 group/content"
-      :initial="{ y: 10 }"
-      :enter="{ y: 0 }"
-      :leave="{ y: -10 }"
-      style="translate: -50%"
-    >
-      <button
-        class="absolute h-8 w-8 -top-3 -right-3 flex items-center justify-center rounded-md border-2 bg-secondary group-hover/content:scale-100 scale-0 transition"
-        @click="activeTool = ''"
-      >
-        <XIcon class="h-5 w-5" />
-      </button>
-      <component :is="toolCompsMap[activeTool]" />
-    </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -85,6 +99,7 @@ import {
   FileImageIcon,
   Grid3X3Icon,
   Layers3Icon,
+  GithubIcon,
   MousePointerClickIcon,
   PaletteIcon,
   PauseIcon,
@@ -99,18 +114,20 @@ import ToolbarCustomCSS from './toolbar/ToolbarCustomCSS.vue';
 import { Component, shallowRef } from 'vue';
 import ToolbarEyeDropper from './toolbar/ToolbarEyeDropper.vue';
 import ToolbarNavigator from './toolbar/ToolbarNavigator.vue';
+import ToolbarColorPalette from './toolbar/ToolbarColorPalette.vue';
 
 const toolCompsMap: Record<string, Component> = {
   assets: ToolbarAssets,
   navigator: ToolbarNavigator,
   'custom-css': ToolbarCustomCSS,
   'eye-dropper': ToolbarEyeDropper,
+  'color-palette': ToolbarColorPalette,
 };
 const tools = [
   { id: 'navigator', name: 'Navigator', icon: Layers3Icon },
   { id: 'custom-css', name: 'Custom CSS', icon: Code2Icon },
   { id: 'assets', name: 'Graphic Assets', icon: FileImageIcon },
-  { id: 'palette', name: 'Color Palettes', icon: PaletteIcon },
+  { id: 'color-palette', name: 'Color Palettes', icon: PaletteIcon },
 ];
 if (window.EyeDropper) {
   tools.push({ id: 'eye-dropper', name: 'Eye dropper', icon: PipetteIcon });
@@ -118,5 +135,5 @@ if (window.EyeDropper) {
 
 const appProvider = useAppProvider();
 
-const activeTool = shallowRef('navigator');
+const activeTool = shallowRef('');
 </script>

@@ -130,7 +130,6 @@ export default {
             /* eslint-disable-next-line */
             // const name = (src.split('/').pop()).replace(/[\#\?].*$/, '');
             const name = src.split('/').pop();
-            console.log(name, src);
 
             if (acc.seen.has(name)) return acc;
 

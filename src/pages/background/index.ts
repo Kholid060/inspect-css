@@ -1,3 +1,4 @@
+import RuntimeMessage from '@root/src/utils/RuntimeMessage';
 import reloadOnUpdate from 'virtual:reload-on-update-in-background-script';
 import Browser from 'webextension-polyfill';
 
@@ -40,6 +41,12 @@ if (import.meta.env.MODE === 'development') {
     });
   });
 }
+
+RuntimeMessage.onMessage('background:screenshot-tab', (sender) => {
+  if (!sender.tab?.windowId) return Promise.resolve('');
+
+  return Browser.tabs.captureVisibleTab(sender.tab.windowId, { quality: 70 });
+});
 
 /**
  * Extension reloading is necessary because the browser automatically caches the css.

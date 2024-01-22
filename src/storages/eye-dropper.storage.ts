@@ -16,16 +16,16 @@ export interface EyeDropperSettings {
   pickOnActivate: boolean;
 }
 
-export interface EyeDropperStorage {
+export interface BaseEyeDropperStorage {
   settings: EyeDropperSettings;
   history: EyeDropperHistoryItem[];
 }
 
-type ThemeStorage = BaseStorage<EyeDropperStorage> & {
-  update: (newData: Partial<EyeDropperStorage>) => Promise<void>;
+export type EyeDropperStorage = BaseStorage<BaseEyeDropperStorage> & {
+  update: (newData: Partial<BaseEyeDropperStorage>) => Promise<void>;
 };
 
-const storage = createStorage<EyeDropperStorage>(
+const storage = createStorage<BaseEyeDropperStorage>(
   'eye-dropper',
   { history: [], settings: { pickOnActivate: true } },
   {
@@ -33,7 +33,7 @@ const storage = createStorage<EyeDropperStorage>(
   },
 );
 
-const eyeDropperStorage: ThemeStorage = {
+const eyeDropperStorage: EyeDropperStorage = {
   ...storage,
   update: async (newData) => {
     await storage.set((storageData) => ({ ...storageData, ...newData }));

@@ -11,6 +11,7 @@ import {
   highlightActiveLine,
   highlightActiveLineGutter,
   placeholder as placeholderPlugin,
+  type EditorViewConfig,
 } from '@codemirror/view';
 import { defaultKeymap, indentWithTab } from '@codemirror/commands';
 import { autocompletion } from '@codemirror/autocomplete';
@@ -21,12 +22,14 @@ interface Props {
   modelValue: string;
   placeholder: string;
   extensions: Extension[];
+  viewOptions: EditorViewConfig;
   themeOptions: Partial<CreateThemeOptions>;
 }
 const props = withDefaults(defineProps<Props>(), {
   modelValue: '',
   placeholder: '',
   extensions: () => [],
+  viewOptions: () => ({}),
   themeOptions: () => ({}),
 });
 
@@ -65,6 +68,7 @@ onMounted(() => {
   editorView.value = new EditorView({
     parent: editorEl.value,
     state: editorState.value,
+    ...props.viewOptions,
   });
 });
 onUnmounted(() => {

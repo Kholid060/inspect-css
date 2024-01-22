@@ -8,6 +8,7 @@
     </div>
     <UiCodemirror
       v-if="initiated"
+      :view-options="{ root: appProvider.shadowRoot }"
       :model-value="customCSS"
       class="mt-2 px-3 pb-3 w-full overflow-y-visible overflow-x-auto"
       placeholder="CSS code here..."
@@ -29,10 +30,13 @@ import type { Extension } from '@codemirror/state';
 import { EL_IDS } from '@src/utils/constant';
 import UiCodemirror from '@root/src/pages/components/ui/UiCodemirror.vue';
 import { css } from '@codemirror/lang-css';
+import { useAppProvider } from '../../app-plugin';
 
 let styleEl: HTMLStyleElement;
 
 const editorExtensions: Extension[] = [css(), lineNumbers()];
+
+const appProvider = useAppProvider();
 
 const customCSS = shallowRef('');
 const initiated = shallowRef(false);
@@ -48,7 +52,6 @@ onMounted(() => {
     styleEl = document.createElement('style');
     styleEl.id = EL_IDS.customCSS;
     document.body.appendChild(styleEl);
-    console.log(styleEl);
   }
 
   customCSS.value = styleEl.textContent ?? '';
