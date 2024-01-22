@@ -19,7 +19,7 @@
     :style="{ ...floatingStyles, zIndex: CONTENT_ZINDEX.content }"
     class="w-72 overflow-auto bg-background text-foreground rounded-xl border"
   >
-    <!-- <ScannerNavigation ref="scannerNavigation" @select="hoverElement" /> -->
+    <ScannerNavigation ref="scannerNavigation" @select="hoverElement" />
     <div class="p-4">
       <UiElementProperties v-if="elProperties" :properties="elProperties" />
       <table class="text-xs mt-2 w-full text-muted-foreground">

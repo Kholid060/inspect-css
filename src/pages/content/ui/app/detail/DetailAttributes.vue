@@ -13,7 +13,7 @@
     <div
       v-for="(attr, index) in attrs"
       :key="index"
-      class="bg-input/30 rounded-md text-sm focus-within:ring-primary focus-within:ring-2 highlight-white/5"
+      class="bg-input/30 rounded-md text-sm focus-within:ring-primary focus-within:ring-2 highlight-white/5 relative"
     >
       <div
         class="bg-input/50 rounded-t-md border-b flex items-center gap-2 pr-3"

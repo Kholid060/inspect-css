@@ -11,27 +11,37 @@
       :leave="{ opacity: 0, y: -100 }"
       :delay="100"
     >
-      <div class="bg-background border-2 p-1 rounded-xl flex gap-1">
-        <button
-          :class="['toolbar-button', { active: appProvider.state.interactive }]"
-          @click="
-            appProvider.updateState({
-              interactive: !appProvider.state.interactive,
-            })
-          "
-        >
-          <MousePointerClickIcon class="inline-block" />
-        </button>
-        <button
-          :class="['toolbar-button', { active: appProvider.state.showGrid }]"
-          @click="
-            appProvider.updateState({
-              showGrid: !appProvider.state.showGrid,
-            })
-          "
-        >
-          <Grid3X3Icon class="inline-block" />
-        </button>
+      <div
+        class="bg-background border-2 p-1 rounded-xl flex items-center gap-1"
+      >
+        <UiTooltip label="Interactive">
+          <button
+            :class="[
+              'toolbar-button',
+              { active: appProvider.state.interactive },
+            ]"
+            @click="
+              appProvider.updateState({
+                interactive: !appProvider.state.interactive,
+              })
+            "
+          >
+            <MousePointerClickIcon class="inline-block" />
+          </button>
+        </UiTooltip>
+        <UiTooltip label="Show grid">
+          <button
+            :class="['toolbar-button', { active: appProvider.state.showGrid }]"
+            @click="
+              appProvider.updateState({
+                showGrid: !appProvider.state.showGrid,
+              })
+            "
+          >
+            <Grid3X3Icon class="inline-block" />
+          </button>
+        </UiTooltip>
+        <hr class="h-6 bg-border w-px" />
         <a
           role="button"
           class="toolbar-button"
@@ -61,33 +71,37 @@
           <component :is="toolCompsMap[activeTool]" />
         </div>
         <div class="bg-background border-2 p-1 rounded-xl flex gap-1">
-          <button
-            v-for="tool in tools"
-            :key="tool.id"
-            :class="[
-              'toolbar-button indicator',
-              { active: tool.id === activeTool },
-            ]"
-            @click="activeTool = tool.id === activeTool ? '' : tool.id"
-          >
-            <component :is="tool.icon" class="inline-block" />
-          </button>
+          <UiTooltip v-for="tool in tools" :key="tool.id" :label="tool.name">
+            <button
+              :class="[
+                'toolbar-button indicator',
+                { active: tool.id === activeTool },
+              ]"
+              @click="activeTool = tool.id === activeTool ? '' : tool.id"
+            >
+              <component :is="tool.icon" class="inline-block" />
+            </button>
+          </UiTooltip>
         </div>
       </div>
       <div class="bg-background border-2 p-1 rounded-xl flex items-center">
-        <button
-          class="toolbar-button"
-          @click="
-            appProvider.updateState({ paused: !appProvider.state.paused })
-          "
-        >
-          <PauseIcon v-if="!appProvider.state.paused" class="inline-block" />
-          <PlayIcon v-else class="inline-block" />
-        </button>
+        <UiTooltip label="Pause">
+          <button
+            class="toolbar-button"
+            @click="
+              appProvider.updateState({ paused: !appProvider.state.paused })
+            "
+          >
+            <PauseIcon v-if="!appProvider.state.paused" class="inline-block" />
+            <PlayIcon v-else class="inline-block" />
+          </button>
+        </UiTooltip>
         <hr class="h-6 mx-1 bg-border w-px" />
-        <button class="toolbar-button" @click="appProvider.destroy">
-          <PowerIcon class="inline-block" />
-        </button>
+        <UiTooltip label="Close">
+          <button class="toolbar-button" @click="appProvider.destroy">
+            <PowerIcon class="inline-block" />
+          </button>
+        </UiTooltip>
       </div>
     </div>
   </div>
@@ -115,6 +129,7 @@ import { Component, shallowRef } from 'vue';
 import ToolbarEyeDropper from './toolbar/ToolbarEyeDropper.vue';
 import ToolbarNavigator from './toolbar/ToolbarNavigator.vue';
 import ToolbarColorPalette from './toolbar/ToolbarColorPalette.vue';
+import UiTooltip from '@root/src/pages/components/ui/UiTooltip.vue';
 
 const toolCompsMap: Record<string, Component> = {
   assets: ToolbarAssets,

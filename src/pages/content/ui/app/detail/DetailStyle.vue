@@ -16,7 +16,7 @@
         </div>
       </UiElementSpacing>
     </UiElementSpacing>
-    <div class="mt-4 space-y-4">
+    <div class="mt-4 space-y-2">
       <div
         v-for="(mediaCSS, index) in appliedStyle.media"
         :key="mediaCSS.mediaCondition"
@@ -57,7 +57,7 @@
         </div>
       </div>
       <DetailCSSEditor
-        :style-id="elSelector"
+        :key="elSelector"
         :model-value="appliedStyle.cssText"
         class="text-sm"
         @change="onCSSChange({ type: 'main', value: $event })"

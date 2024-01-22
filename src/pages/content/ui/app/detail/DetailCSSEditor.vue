@@ -58,5 +58,8 @@ watch(
       },
     });
   },
+  {
+    flush: 'post',
+  },
 );
 </script>
