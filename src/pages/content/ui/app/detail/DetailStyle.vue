@@ -17,7 +17,7 @@
   </UiElementSpacing>
   <div class="mt-4 space-y-2">
     <div
-      v-for="(mediaCSS, index) in appliedStyle.media"
+      v-for="(mediaCSS, index) in styleData.currentProps.media"
       :key="mediaCSS.mediaCondition"
       class="p-2 rounded-md bg-muted/50 space-y-2 highlight-white/5"
     >
@@ -57,12 +57,12 @@
     </div>
     <DetailCSSEditor
       :key="elSelector"
-      :model-value="appliedStyle.cssText"
+      :model-value="styleData.currentProps.cssText"
       class="text-sm"
       @change="onCSSChange({ type: 'main', value: $event })"
     />
     <div
-      v-for="(pseudoCSS, index) in appliedStyle.pseudo"
+      v-for="(pseudoCSS, index) in styleData.currentProps.pseudo"
       :key="pseudoCSS.pseudo"
       class="p-2 rounded-md bg-muted/50 highlight-white/5"
     >
@@ -77,7 +77,7 @@
       />
     </div>
     <div
-      v-for="(animation, index) in appliedStyle.animation"
+      v-for="(animation, index) in styleData.currentProps.animation"
       :key="animation.name"
       class="p-2 rounded-md bg-muted/50 highlight-white/5"
     >
@@ -103,7 +103,7 @@ import {
   ElementProperties,
 } from '@root/src/utils/getElProperties';
 import { debounce, wrapInParenthesis } from '@root/src/utils/helper';
-import { StyleDataItem, useAppProvider } from '../../app-plugin';
+import { StyleDataItem } from '../../app-plugin';
 import { generateElementCSS } from '@src/utils/generate-element-css';
 import { EL_ATTR_NAME } from '@root/src/utils/constant';
 
@@ -119,24 +119,19 @@ type OnCSSChangeType =
 
 interface Props {
   elSelector: string;
+  styleData: StyleDataItem;
   properties: ElementProperties;
   basicSelector: ElementBasicSelector;
-  appliedStyle: ElementAppliedStyleRules;
 }
 const props = defineProps<Props>();
 const emits = defineEmits<{
   (e: 'update:appliedStyle', value: ElementAppliedStyleRules): void;
 }>();
 
-const appProvider = useAppProvider();
-
-let styleData: StyleDataItem | null = null;
 let styleElement: HTMLStyleElement | null = null;
 
 const onCSSChange = debounce((detail: OnCSSChangeType) => {
-  if (!styleData) return;
-
-  const copyAppliedStyle = { ...props.appliedStyle };
+  const copyAppliedStyle = { ...props.styleData.currentProps };
 
   // TO-DO: use object-path
   switch (detail.type) {
@@ -160,11 +155,9 @@ const onCSSChange = debounce((detail: OnCSSChangeType) => {
 
   emits('update:appliedStyle', copyAppliedStyle);
 
-  appProvider.addDirtyStyleItem(styleData.id);
-
   if (!styleElement) {
     styleElement = document.createElement('style');
-    styleElement.setAttribute('id', `inspect-css-el-${styleData.id}`);
+    styleElement.setAttribute('id', `inspect-css-el-${props.styleData.id}`);
     styleElement.setAttribute(EL_ATTR_NAME.customStyle, props.elSelector);
     document.body.appendChild(styleElement);
   }
@@ -172,7 +165,7 @@ const onCSSChange = debounce((detail: OnCSSChangeType) => {
   const generatedCSS = generateElementCSS({
     style: copyAppliedStyle,
     selector: props.elSelector,
-    initialStyle: styleData.initialProps,
+    initialStyle: props.styleData.initialProps,
   });
   styleElement.textContent = generatedCSS;
 }, 500);
@@ -183,18 +176,6 @@ watch(
     styleElement = document.querySelector<HTMLStyleElement>(
       `style[${EL_ATTR_NAME.customStyle}="${props.elSelector}"]`,
     );
-
-    styleData =
-      Object.values(appProvider.styleData.items).find(
-        (item) => item.elSelector === props.elSelector,
-      ) || null;
-    if (!styleData) {
-      styleData = appProvider.addStyleItem({
-        elSelector: props.elSelector,
-        initialProps: props.appliedStyle,
-        basicSelector: props.basicSelector,
-      });
-    }
   },
   { immediate: true },
 );

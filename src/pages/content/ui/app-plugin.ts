@@ -14,6 +14,7 @@ export interface StyleDataItem {
   id: number;
   elSelector: string;
   basicSelector: ElementBasicSelector;
+  currentProps: ElementAppliedStyleRules;
   initialProps: ElementAppliedStyleRules;
 }
 
@@ -32,7 +33,10 @@ export interface AppStateProvider {
   addDirtyStyleItem(id: number): void;
   removeDirtyStyleItem(id: number): void;
   updateState: (state: Partial<AppState>) => void;
-  addStyleItem(detail: Omit<StyleDataItem, 'id'>): StyleDataItem;
+  addStyleItem(
+    detail: Omit<StyleDataItem, 'id' | 'currentProps'>,
+  ): StyleDataItem;
+  updateStyleItem(id: number, detail: Partial<StyleDataItem>): void;
 }
 
 const APP_PROVIDER_KEY = Symbol('app-provider');
@@ -78,16 +82,25 @@ export const appPlugin: Plugin = {
         });
       }
     }
-    function addStyleItem(detail: Omit<StyleDataItem, 'id'>) {
+    function addStyleItem(detail: Omit<StyleDataItem, 'id' | 'currentProps'>) {
       const data: StyleDataItem = {
         ...detail,
         id: styleData.index,
+        currentProps: detail.initialProps,
         initialProps: resetAppliedStyleValue(detail.initialProps),
       };
       styleData.items[styleData.index] = data;
       styleData.index += 1;
 
       return data;
+    }
+    function updateStyleItem(id: number, detail: Partial<StyleDataItem>) {
+      if (!Object.hasOwn(styleData.items, id)) return;
+
+      styleData.items[id] = {
+        ...styleData.items[id],
+        ...detail,
+      };
     }
     function addDirtyStyleItem(id: number) {
       styleData.dirtyItems.value[id] = true;
@@ -110,6 +123,7 @@ export const appPlugin: Plugin = {
       updateState,
       addStyleItem,
       state: appState,
+      updateStyleItem,
       addDirtyStyleItem,
       removeDirtyStyleItem,
     });

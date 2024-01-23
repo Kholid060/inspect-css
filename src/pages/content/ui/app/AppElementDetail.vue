@@ -49,10 +49,10 @@
     <div style="max-height: calc(100vh - 200px)" class="overflow-auto p-4">
       <KeepAlive>
         <DetailStyle
-          v-if="state.activeTab === 'style' && elAppliedStyle"
+          v-if="state.activeTab === 'style' && elStyleData"
           :el-selector="elSelector"
+          :style-data="elStyleData"
           :properties="elProperties"
-          :applied-style="elAppliedStyle"
           :basic-selector="elProperties.selector"
           @update:applied-style="updateAppliedStyle"
         />
@@ -98,6 +98,7 @@ import UiElementSelector from '@root/src/pages/components/ui/UiElementSelector.v
 import { finder } from '@medv/finder';
 import DetailAttributes from './detail/DetailAttributes.vue';
 import { debounce, parseJSON } from '@root/src/utils/helper';
+import { StyleDataItem, useAppProvider } from '../app-plugin';
 
 interface WindowPosition {
   x: number;
@@ -118,6 +119,8 @@ const tabItems = [
   { name: 'Attributes', id: 'attributes', icon: PencilRuler },
 ];
 
+const appProvider = useAppProvider();
+
 const state = shallowReactive({
   isDragging: false,
   activeTab: 'style',
@@ -127,13 +130,13 @@ const containerRef = ref<HTMLDivElement>();
 
 const selectedEl = ref<Element>();
 const elSelector = shallowRef('');
+const elStyleData = shallowRef<StyleDataItem | null>(null);
 const elProperties = shallowRef<ElementProperties | null>(null);
-const elAppliedStyle = shallowRef<ElementAppliedStyleRules | null>(null);
 
 function closeWindow() {
   elSelector.value = '';
   elProperties.value = null;
-  elAppliedStyle.value = null;
+  elStyleData.value = null;
 }
 function checkPopupBound() {
   if (!containerRef.value) return;
@@ -154,7 +157,14 @@ function checkPopupBound() {
   updateWindowPosition(x, y);
 }
 function updateAppliedStyle(newValue: ElementAppliedStyleRules) {
-  elAppliedStyle.value = newValue;
+  if (!elStyleData.value) return;
+
+  const styleId = elStyleData.value.id;
+
+  elStyleData.value.currentProps = newValue;
+
+  appProvider.addDirtyStyleItem(styleId);
+  appProvider.updateStyleItem(styleId, { currentProps: newValue });
 
   nextTick(() => {
     if (selectedEl.value)
@@ -217,7 +227,20 @@ function onSelectElement({
     attr: (name) => name === 'data-testid',
   });
   elProperties.value = properties;
-  elAppliedStyle.value = cssRulesUtils.getAppliedRules(el);
+
+  let styleData =
+    Object.values(appProvider.styleData.items).find(
+      (item) => item.elSelector === elSelector.value,
+    ) || null;
+  if (!styleData) {
+    const appliedStyle = cssRulesUtils.getAppliedRules(el);
+    styleData = appProvider.addStyleItem({
+      initialProps: appliedStyle,
+      elSelector: elSelector.value,
+      basicSelector: elProperties.value.selector,
+    });
+  }
+  elStyleData.value = styleData;
 
   nextTick(() => {
     let position = lastPosition;
