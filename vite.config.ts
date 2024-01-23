@@ -39,6 +39,9 @@ export default defineConfig({
     isDev && watchRebuild({ afterWriteBundle: regenerateCacheInvalidationKey }),
   ],
   publicDir,
+  define: {
+    VITE_IS_FIREFOX: Boolean(process.env.__FIREFOX__),
+  },
   build: {
     outDir,
     /** Can slow down build speed. */

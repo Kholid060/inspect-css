@@ -49,3 +49,5 @@ interface EyeDropperConstructor {
 interface Window {
   EyeDropper?: EyeDropperConstructor | undefined;
 }
+
+declare const VITE_IS_FIREFOX: boolean;

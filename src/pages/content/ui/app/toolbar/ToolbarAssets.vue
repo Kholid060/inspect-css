@@ -73,6 +73,7 @@ import { DownloadIcon } from 'lucide-vue-next';
 import JSZip from 'jszip';
 import UiButton from '@root/src/pages/components/ui/UiButton.vue';
 import { downloadFile, parseURL } from '@root/src/utils/helper';
+import { IS_FIREFOX } from '@root/src/utils/constant';
 
 interface AssetItem {
   id: number;
@@ -121,13 +122,23 @@ async function saveAllAssets() {
 
     await Promise.allSettled(
       assets.value.map(async (asset) => {
-        let content: string | Blob = asset.url;
+        let content: string | Blob | Uint8Array = asset.url;
         const filename = asset.filename || `asset-svg-${asset.id}.svg`;
 
         if (asset.type === 'svg') {
-          content = new Blob([filename], {
-            type: 'text/plain;charset=utf-8',
-          });
+          const svgStr = window.atob(
+            asset.url.replace('data:image/svg+xml;base64,', ''),
+          );
+
+          // Throws error when using blob 🤔
+          if (IS_FIREFOX) {
+            content = Uint8Array.from(svgStr, (char) => char.charCodeAt(0));
+          } else {
+            const svgBlob = new Blob([svgStr], {
+              type: 'text/plain;charset=utf-8',
+            });
+            content = svgBlob;
+          }
         } else {
           content = (await getAssetContent(asset)).content || asset.url;
         }

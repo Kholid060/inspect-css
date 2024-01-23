@@ -21,3 +21,5 @@ export const IS_MAC_OS = navigator.userAgent.indexOf('Mac OS X') !== -1;
 export const SESSION_STORAGE_KEY = {
   elPropsPosition: 'inspect-css-pos',
 } as const;
+
+export const IS_FIREFOX = Boolean(VITE_IS_FIREFOX);
