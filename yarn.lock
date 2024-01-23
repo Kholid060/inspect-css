@@ -4043,10 +4043,10 @@ lru-cache@^6.0.0:
   resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-10.1.0.tgz#2098d41c2dc56500e6c88584aa656c84de7d0484"
   integrity sha512-/1clY/ui8CzjKFyjdvwPWJUYKiFVXG2I2cY0ssG7h4+hwk+XOIX7ZSG9Q7TW8TW3Kp3BUSqgFWBLgL4PJ+Blag==
 
-lucide-vue-next@^0.309.0:
-  version "0.309.0"
-  resolved "https://registry.yarnpkg.com/lucide-vue-next/-/lucide-vue-next-0.309.0.tgz#53a1a347764260adc23fe0163ca94d98bb1d5cf6"
-  integrity sha512-MRrJOV1uyAxHaCqqgwRcLN/8CwlKCwuz7MNdWo2OG/jjrGI+7wLJeJOYJ8lp/61Fps3Mat/k7+0WIskwbGhqTA==
+lucide-vue-next@^0.314.0:
+  version "0.314.0"
+  resolved "https://registry.yarnpkg.com/lucide-vue-next/-/lucide-vue-next-0.314.0.tgz#6c6da5e0e0c0eb506c0a6889fd0de9e2a35ebe17"
+  integrity sha512-Acqc709dqlmrLA467PdbgJKyv4Wog+W8E0crg1rjwkT2K7s0MBxm7BBpEi0sFBGkNnpUP1DdRiC2v8L/0BBnfQ==
 
 magic-string@^0.30.0, magic-string@^0.30.5:
   version "0.30.5"
