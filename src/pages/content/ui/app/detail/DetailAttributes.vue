@@ -21,7 +21,7 @@
         <input
           :value="attr.name"
           type="text"
-          class="bg-transparent font-semibold h-9 pl-3 pr-12 flex-1 focus:outline-none"
+          class="bg-transparent font-semibold h-9 px-3 flex-1 focus:outline-none w-auto"
           placeholder="Attribute name"
           @input="
             updateAttribute({
@@ -31,6 +31,16 @@
             })
           "
         />
+        <UiTooltip v-if="isImgEl && attr.name === 'src'" label="Update image">
+          <UiButton
+            class="flex-shrink-0"
+            size="icon-xs"
+            variant="secondary"
+            @click="inputFile?.click()"
+          >
+            <FolderOpenIcon class="h-5 w-5" />
+          </UiButton>
+        </UiTooltip>
         <button class="text-muted-foreground" @click="deleteAttribute(index)">
           <TrashIcon class="h-5 w-5" />
         </button>
@@ -49,12 +59,21 @@
       />
     </div>
   </div>
+  <input
+    ref="inputFile"
+    type="file"
+    class="hidden"
+    accept="image/*"
+    @change="updateImgSrc"
+  />
 </template>
 <script setup lang="ts">
+import UiButton from '@root/src/pages/components/ui/UiButton.vue';
+import UiTooltip from '@root/src/pages/components/ui/UiTooltip.vue';
 import { EL_ATTR_NAME } from '@root/src/utils/constant';
 import { debounce } from '@root/src/utils/helper';
-import { PlusIcon, TrashIcon } from 'lucide-vue-next';
-import { ref, watch } from 'vue';
+import { PlusIcon, TrashIcon, FolderOpenIcon } from 'lucide-vue-next';
+import { ref, shallowRef, triggerRef, watch } from 'vue';
 
 interface AttrItem {
   name: string;
@@ -67,16 +86,21 @@ const props = defineProps<{
 
 const IGNORE_ATTRS = Object.values(EL_ATTR_NAME) as string[];
 
-const attrs = ref<Array<AttrItem>>([]);
+const inputFile = ref<HTMLInputElement>();
+
+const isImgEl = shallowRef(false);
+const attrs = shallowRef<Array<AttrItem>>([]);
 
 const updateAttribute = debounce(
   ({
     type,
     index,
     value,
+    trigger,
   }: {
     index: number;
     value: string;
+    trigger?: boolean;
     type: 'name' | 'value';
   }) => {
     const attr = attrs.value[index];
@@ -92,6 +116,8 @@ const updateAttribute = debounce(
     }
 
     attr[type] = value;
+
+    if (trigger) triggerRef(attrs);
   },
   200,
 );
@@ -105,18 +131,37 @@ function deleteAttribute(index: number) {
   attrs.value.splice(index, 1);
   props.element.removeAttribute(attr.name);
 }
+function updateImgSrc() {
+  const file = inputFile.value?.files?.item(0);
+  if (!file || !file.type.startsWith('image')) return;
+
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = () => {
+    const imgSrcIndex = attrs.value.findIndex((attr) => attr.name === 'src');
+    if (imgSrcIndex === -1) return;
+
+    updateAttribute({
+      type: 'value',
+      trigger: true,
+      index: imgSrcIndex,
+      value: reader.result as string,
+    });
+  };
+}
 
 watch(
   () => props.element,
   () => {
+    isImgEl.value = props.element instanceof HTMLImageElement;
     attrs.value = [...props.element.attributes].reduce<AttrItem[]>(
       (acc, curr) => {
-        if (!IGNORE_ATTRS.includes(curr.name)) {
-          acc.push({
-            name: curr.name,
-            value: curr.value,
-          });
-        }
+        if (IGNORE_ATTRS.includes(curr.name)) return acc;
+
+        acc.push({
+          name: curr.name,
+          value: curr.value,
+        });
 
         return acc;
       },

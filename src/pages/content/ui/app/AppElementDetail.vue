@@ -9,6 +9,7 @@
       class="text-center py-1 bg-muted/25 cursor-move text-muted-foreground px-4 flex items-center transition-colors w-full rounded-t-lg border-b"
       @pointerdown.self="startDragging"
     >
+      <GripHorizontalIcon class="h-5 w-5 text-muted-foreground" />
       <div class="flex-grow"></div>
       <button
         class="hover p-1 rounded-sm hover:bg-muted/50 hover:text-foreground transition"
