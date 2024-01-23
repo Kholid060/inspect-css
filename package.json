@@ -54,7 +54,7 @@
   "devDependencies": {
     "@commitlint/cli": "18.4.4",
     "@commitlint/config-conventional": "18.1.0",
-    "@rollup/plugin-typescript": "11.1.5",
+    "@rollup/plugin-typescript": "11.1.6",
     "@rushstack/eslint-patch": "^1.6.1",
     "@types/chrome": "0.0.251",
     "@types/css-tree": "^2.3.5",
