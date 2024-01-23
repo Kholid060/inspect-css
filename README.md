@@ -4,7 +4,7 @@
 # Inspect CSS
 The easiest way to inspect and edit CSS
 
-<img src="./public/image.png" align="center" />
+<img src="./docs/image.png" align="center" />
 
 ## Features
 - 🔎 Get CSS Properties from any element by selecting it
