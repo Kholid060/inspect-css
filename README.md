@@ -1,9 +1,10 @@
+
 <img src="https://img.shields.io/chrome-web-store/v/fbopfffegfehobgoommphghohinpkego" />
 
 # Inspect CSS
 The easiest way to inspect and edit CSS
 
-<img src="./public/image.png" align="center" />
+<img src="./docs/image.png" align="center" />
 
 ## Features
 - 🔎 Get CSS Properties from any element by selecting it
@@ -11,6 +12,8 @@ The easiest way to inspect and edit CSS
 - 📷 Download website assets
 - ⌨️ Add your custom CSS to the website
 - 🎨 Get the color palette of the website
+- 🧭 DOM Navigation
+- 🎯 Color picker (Chromium only)
 
 ## Installation
 - `yarn install` to install all dependencies 

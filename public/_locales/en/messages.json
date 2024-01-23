@@ -1,6 +1,10 @@
 {
-  "extName": {
-    "message": "Inspect CSS",
-    "description": "The easiest way to inspect and edit CSS."
+  "extensionDescription": {
+    "description": "Extension description",
+    "message": "The easiest way to inspect and edit CSS"
+  },
+  "extensionName": {
+    "description": "Extension name",
+    "message": "Inspect CSS"
   }
 }
