@@ -46,7 +46,7 @@
     "mitt": "^3.0.1",
     "radix-vue": "^1.3.2",
     "specificity": "^1.0.0",
-    "type-fest": "^4.9.0",
+    "type-fest": "^4.10.1",
     "vue": "^3.4.10",
     "vue-prism-editor": "^1.3.0",
     "webextension-polyfill": "0.10.0"
