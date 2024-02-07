@@ -62,7 +62,7 @@
     "@types/webextension-polyfill": "^0.10.7",
     "@types/ws": "8.5.8",
     "@typescript-eslint/eslint-plugin": "6.19.1",
-    "@typescript-eslint/parser": "6.18.1",
+    "@typescript-eslint/parser": "6.20.0",
     "@vitejs/plugin-vue": "^5.0.3",
     "@vue/eslint-config-airbnb": "^8.0.0",
     "archiver": "^6.0.1",
