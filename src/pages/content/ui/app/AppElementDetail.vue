@@ -5,19 +5,13 @@
     class="fixed top-0 left-0 bg-background rounded-xl text-foreground border"
     :style="{ zIndex: CONTENT_ZINDEX.content, width: CONTAINER_WIDTH + 'px' }"
   >
-    <div
-      class="text-center py-1 bg-muted/25 cursor-move text-muted-foreground px-4 flex items-center transition-colors w-full rounded-t-lg border-b"
-      @pointerdown.self="startDragging"
-    >
-      <GripHorizontalIcon class="h-5 w-5 text-muted-foreground opacity-50" />
-      <div class="flex-grow"></div>
-      <button
-        class="hover p-1 rounded-sm hover:bg-muted/50 hover:text-foreground transition"
-        @click="closeWindow"
-      >
-        <XIcon class="h-5 w-5" />
-      </button>
-    </div>
+    <DetailHeader
+      :container-el="containerRef"
+      :last-position="lastPosition"
+      :selected-el="selectedEl"
+      @close-window="closeWindow"
+      @update-window-pos="updateWindowPosition"
+    />
     <div class="px-4 pt-4">
       <UiElementSelector :selector="elProperties.selector" />
       <div class="flex items-center mt-0.5 gap-1 text-sm">
@@ -86,15 +80,9 @@ import {
   BrushIcon,
   CaseSensitiveIcon,
   PencilRuler,
-  XIcon,
-  GripHorizontalIcon,
   Code2Icon,
 } from 'lucide-vue-next';
-import {
-  CONTENT_ZINDEX,
-  EL_ATTR_NAME,
-  SESSION_STORAGE_KEY,
-} from '@src/utils/constant';
+import { CONTENT_ZINDEX, SESSION_STORAGE_KEY } from '@src/utils/constant';
 import getElProperties, {
   ElementProperties,
 } from '@root/src/utils/getElProperties';
@@ -102,6 +90,7 @@ import DetailStyle from './detail/DetailStyle.vue';
 import DetailElementHTML from './detail/DetailElementHTML.vue';
 import UiElementSelector from '@root/src/pages/components/ui/UiElementSelector.vue';
 import { finder } from '@medv/finder';
+import DetailHeader from './detail/DetailHeader.vue';
 import DetailAttributes from './detail/DetailAttributes.vue';
 import { debounce, parseJSON } from '@root/src/utils/helper';
 import { StyleDataItem, useAppProvider } from '../app-plugin';
@@ -183,45 +172,6 @@ function updateWindowPosition(x: number, y: number) {
 
   lastPosition = { x, y };
   containerRef.value.style.transform = `translate(${x}px, ${y}px)`;
-}
-function startDragging(pointerDownEvent: PointerEvent) {
-  if (!containerRef.value) return;
-
-  const containerRect = containerRef.value.getBoundingClientRect();
-
-  const offsetY = pointerDownEvent.clientY - containerRect.top;
-  const offsetX = pointerDownEvent.clientX - containerRect.left;
-
-  document.body.setAttribute(EL_ATTR_NAME.dragging, '');
-
-  function pointerMoveHandler({ clientX, clientY }: PointerEvent) {
-    let x = clientX - offsetX;
-    let y = clientY - offsetY;
-
-    if (x < 0) x = 0;
-    else if (x + containerRect.width > window.innerWidth)
-      x = window.innerWidth - containerRect.width;
-
-    if (y < 0) y = 0;
-    else if (y + containerRect.height > window.innerHeight)
-      y = window.innerHeight - containerRect.height;
-
-    updateWindowPosition(x, y);
-  }
-
-  document.addEventListener('pointermove', pointerMoveHandler);
-  document.addEventListener(
-    'pointerup',
-    () => {
-      sessionStorage.setItem(
-        SESSION_STORAGE_KEY.elPropsPosition,
-        JSON.stringify(lastPosition),
-      );
-      document.body.removeAttribute(EL_ATTR_NAME.dragging);
-      document.removeEventListener('pointermove', pointerMoveHandler);
-    },
-    { once: true },
-  );
 }
 function onSelectElement({
   el,
