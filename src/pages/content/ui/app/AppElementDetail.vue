@@ -47,7 +47,7 @@
       </button>
     </div>
     <div style="max-height: calc(100vh - 200px)" class="overflow-auto p-4">
-      <KeepAlive>
+      <KeepAlive include="detail-style,DetailStyle">
         <DetailStyle
           v-if="state.activeTab === 'style' && elStyleData"
           :el-selector="elSelector"
@@ -58,6 +58,10 @@
         />
         <DetailAttributes
           v-else-if="state.activeTab === 'attributes' && selectedEl"
+          :element="selectedEl"
+        />
+        <DetailElementHTML
+          v-else-if="state.activeTab === 'html' && selectedEl"
           :element="selectedEl"
         />
       </KeepAlive>
@@ -84,6 +88,7 @@ import {
   PencilRuler,
   XIcon,
   GripHorizontalIcon,
+  Code2Icon,
 } from 'lucide-vue-next';
 import {
   CONTENT_ZINDEX,
@@ -94,6 +99,7 @@ import getElProperties, {
   ElementProperties,
 } from '@root/src/utils/getElProperties';
 import DetailStyle from './detail/DetailStyle.vue';
+import DetailElementHTML from './detail/DetailElementHTML.vue';
 import UiElementSelector from '@root/src/pages/components/ui/UiElementSelector.vue';
 import { finder } from '@medv/finder';
 import DetailAttributes from './detail/DetailAttributes.vue';
@@ -117,6 +123,7 @@ const cssRulesUtils = new CSSRulesUtils();
 const tabItems = [
   { name: 'Style', id: 'style', icon: BrushIcon },
   { name: 'Attributes', id: 'attributes', icon: PencilRuler },
+  { name: 'HTML', id: 'html', icon: Code2Icon },
 ];
 
 const appProvider = useAppProvider();
