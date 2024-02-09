@@ -13,7 +13,7 @@
     <div
       v-for="(attr, index) in attrs"
       :key="index"
-      class="bg-input/30 rounded-md text-sm focus-within:ring-primary focus-within:ring-2 highlight-white/5 relative"
+      class="bg-input/30 rounded-md text-sm border focus-within:ring-primary focus-within:ring-2 highlight-white/5 relative"
     >
       <div
         class="bg-input/50 rounded-t-md border-b flex items-center gap-2 pr-3"
@@ -40,6 +40,9 @@
           >
             <FolderOpenIcon class="h-5 w-5" />
           </UiButton>
+        </UiTooltip>
+        <UiTooltip v-if="attr.isInvalid" label="Invalid attribute name">
+          <AlertTriangleIcon class="h-5 w-5 text-red-400 mr-1" />
         </UiTooltip>
         <button class="text-muted-foreground" @click="deleteAttribute(index)">
           <TrashIcon class="h-5 w-5" />
@@ -72,12 +75,18 @@ import UiButton from '@root/src/pages/components/ui/UiButton.vue';
 import UiTooltip from '@root/src/pages/components/ui/UiTooltip.vue';
 import { EL_ATTR_NAME } from '@root/src/utils/constant';
 import { debounce } from '@root/src/utils/helper';
-import { PlusIcon, TrashIcon, FolderOpenIcon } from 'lucide-vue-next';
+import {
+  PlusIcon,
+  TrashIcon,
+  FolderOpenIcon,
+  AlertTriangleIcon,
+} from 'lucide-vue-next';
 import { ref, shallowRef, triggerRef, watch } from 'vue';
 
 interface AttrItem {
   name: string;
   value: string;
+  isInvalid: boolean;
 }
 
 const props = defineProps<{
@@ -106,23 +115,34 @@ const updateAttribute = debounce(
     const attr = attrs.value[index];
     if (!attr) return;
 
-    if (type === 'name') {
-      if (!value.trim()) return;
+    try {
+      attr[type] = value;
 
-      props.element.removeAttribute(attr.name);
-      props.element.setAttribute(value, attr.value);
-    } else {
-      props.element.setAttribute(attr.name, value);
+      if (type === 'name') {
+        if (!value.trim()) return;
+
+        props.element.removeAttribute(attr.name);
+        props.element.setAttribute(value, attr.value);
+      } else {
+        props.element.setAttribute(attr.name, value);
+      }
+
+      if (attr.isInvalid) {
+        trigger = true;
+        attr.isInvalid = false;
+      }
+    } catch (error) {
+      trigger = true;
+      attr.isInvalid = true;
+    } finally {
+      if (trigger) triggerRef(attrs);
     }
-
-    attr[type] = value;
-
-    if (trigger) triggerRef(attrs);
   },
   200,
 );
 function addAttribute() {
-  attrs.value.push({ name: '', value: '' });
+  attrs.value.push({ name: '', value: '', isInvalid: false });
+  triggerRef(attrs);
 }
 function deleteAttribute(index: number) {
   const attr = attrs.value[index];
@@ -130,6 +150,7 @@ function deleteAttribute(index: number) {
 
   attrs.value.splice(index, 1);
   props.element.removeAttribute(attr.name);
+  triggerRef(attrs);
 }
 function updateImgSrc() {
   const file = inputFile.value?.files?.item(0);
@@ -160,6 +181,7 @@ watch(
 
         acc.push({
           name: curr.name,
+          isInvalid: false,
           value: curr.value,
         });
 
