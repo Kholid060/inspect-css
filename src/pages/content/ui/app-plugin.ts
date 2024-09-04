@@ -55,15 +55,17 @@ export function useAppProvider() {
 
 // To-do: use pinia?
 
+const defaultState: AppState = {
+  paused: false,
+  tempHide: false,
+  showGrid: false,
+  interactive: true,
+  hasGlobalCSS: false,
+};
+
 export const appPlugin: Plugin = {
   install(app, shadowRoot: ShadowRoot) {
-    const appState = shallowReactive<AppState>({
-      paused: false,
-      tempHide: false,
-      showGrid: false,
-      interactive: true,
-      hasGlobalCSS: false,
-    });
+    const appState = shallowReactive<AppState>({ ...defaultState });
 
     settingsStorage.get().then((settings) => {
       Object.assign(appState, settings);
@@ -110,6 +112,8 @@ export const appPlugin: Plugin = {
     }
 
     function destroy() {
+      Object.assign(appState, defaultState);
+
       app.unmount();
       shadowRoot.host.remove();
 

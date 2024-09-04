@@ -17,7 +17,7 @@ import { useAppProvider } from './app-plugin';
 import AppElementDetail from './app/AppElementDetail.vue';
 import AppElementScanner from './app/AppElementScanner.vue';
 import AppToolbar from './app/AppToolbar.vue';
-import { watch } from 'vue';
+import { watch, onUnmounted } from 'vue';
 import { TooltipProvider } from 'radix-vue';
 
 const { state } = useAppProvider();
@@ -29,4 +29,8 @@ watch(
     else document.body.removeAttribute(EL_ATTR_NAME.showGrid);
   },
 );
+
+onUnmounted(() => {
+  document.body.removeAttribute(EL_ATTR_NAME.showGrid);
+});
 </script>

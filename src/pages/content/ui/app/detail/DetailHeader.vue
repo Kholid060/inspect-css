@@ -3,7 +3,9 @@
     class="text-center py-1 bg-muted/25 gap-2 cursor-move text-muted-foreground px-4 flex items-center transition-colors w-full rounded-t-lg border-b"
     @pointerdown.self="startDragging"
   >
-    <GripHorizontalIcon class="h-5 w-5 text-muted-foreground opacity-50" />
+    <GripHorizontalIcon
+      class="h-5 w-5 text-muted-foreground opacity-50 pointer-events-none"
+    />
     <div class="flex-grow"></div>
     <button
       class="hover h-8 w-8 inline-flex justify-center items-center rounded-sm hover:bg-muted/50 hover:text-foreground transition"
