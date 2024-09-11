@@ -14,6 +14,7 @@ import { cssCompletionSource } from '@codemirror/lang-css';
 /// highlighting and indentation information.
 export const cssLanguage = LRLanguage.define({
   name: 'css',
+  // @ts-expect-error IDK
   parser: parser.configure({
     props: [
       indentNodeProp.add({

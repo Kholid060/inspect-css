@@ -23,7 +23,7 @@ import UiCodemirror from '@root/src/pages/components/ui/UiCodemirror.vue';
 import { useAppProvider } from '../../app-plugin';
 
 interface Props {
-  styleId: string;
+  styleId?: string;
   modelValue: string;
 }
 const props = withDefaults(defineProps<Props>(), {

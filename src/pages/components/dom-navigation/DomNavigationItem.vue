@@ -57,12 +57,12 @@ import { DOM_NAVIGATOR_KEY } from '../../content/ui/keys';
 import { ToolbarNavigatorState } from '../../content/ui/app/toolbar/ToolbarNavigator.vue';
 
 interface Props {
-  path: string;
-  depth: number;
+  path?: string;
+  depth?: number;
   childIndex: number;
-  defaultOpen: boolean;
+  defaultOpen?: boolean;
   nodeObject: NodeObject;
-  parentNode: NodeObject | null;
+  parentNode?: NodeObject | null;
 }
 
 const props = withDefaults(defineProps<Props>(), {

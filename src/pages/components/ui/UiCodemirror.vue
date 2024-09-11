@@ -19,10 +19,10 @@ import { themeInit } from '@root/src/lib/codemirror/theme';
 import type { CreateThemeOptions } from '@uiw/codemirror-themes';
 
 interface Props {
-  modelValue: string;
-  placeholder: string;
-  extensions: Extension[];
-  viewOptions: EditorViewConfig;
+  modelValue?: string;
+  placeholder?: string;
+  extensions?: Extension[];
+  viewOptions?: EditorViewConfig;
   themeOptions: Partial<CreateThemeOptions>;
 }
 const props = withDefaults(defineProps<Props>(), {

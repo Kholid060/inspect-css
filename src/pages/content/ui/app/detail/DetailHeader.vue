@@ -20,8 +20,8 @@ import { EL_ATTR_NAME, SESSION_STORAGE_KEY } from '@root/src/utils/constant';
 import { XIcon, GripHorizontalIcon } from 'lucide-vue-next';
 
 interface Props {
-  selectedEl: Element;
-  containerEl: Element;
+  selectedEl?: Element;
+  containerEl?: Element;
   lastPosition: null | { x: number; y: number };
 }
 
