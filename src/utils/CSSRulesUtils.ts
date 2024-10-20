@@ -17,7 +17,10 @@ export interface ElementAppliedStyleRules extends ElementAppliedCSS {
   media: SetRequired<ElementAppliedCSS, 'mediaCondition'>[];
 }
 
-export type AnimationKeyframeRule = Pick<CSSKeyframesRule, 'name' | 'cssText'>;
+export type AnimationKeyframeRule = Pick<
+  CSSKeyframesRule,
+  'name' | 'cssText'
+> & { isDirty?: boolean };
 export type AnimationKeyframeRuleRecord = Record<string, AnimationKeyframeRule>;
 
 class CSSRulesUtils {

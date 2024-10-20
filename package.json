@@ -36,7 +36,7 @@
     "@uiw/codemirror-extensions-color": "^4.21.21",
     "@uiw/codemirror-themes": "^4.21.21",
     "@vueuse/core": "^10.7.2",
-    "@vueuse/motion": "^2.0.0",
+    "@vueuse/motion": "^2.2.3",
     "class-variance-authority": "^0.7.0",
     "color2k": "^2.0.3",
     "colorthief": "^2.4.0",

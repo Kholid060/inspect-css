@@ -5,15 +5,25 @@
   >
     No changes
   </p>
-  <UiButton
-    v-else
-    size="sm"
-    variant="secondary"
-    class="highlight-white/5"
-    @click="resetAll"
-  >
-    Reset All
-  </UiButton>
+  <div v-else class="flex items-center">
+    <UiButton
+      size="sm"
+      variant="secondary"
+      class="highlight-white/5"
+      @click="resetAll"
+    >
+      Reset all
+    </UiButton>
+    <div class="grow"></div>
+    <UiButton
+      size="sm"
+      variant="secondary"
+      class="highlight-white/5"
+      @click="copyChanges()"
+    >
+      {{ isCopied === 'all' ? '✅ Copied' : 'Copy changes' }}
+    </UiButton>
+  </div>
   <ul class="space-y-2 mt-2">
     <li
       v-for="item in elementCSS"
@@ -22,55 +32,61 @@
     >
       <UiElementSelector
         :selector="item.basicSelector"
-        class="flex-1 cursor-pointer"
-        @click="selectElement(item.selector)"
+        class="flex-1 cursor-pointer line-clamp-2 max-w-sm"
+        @click="selectElement(item.elSelector)"
       />
-      <UiButton
-        variant="secondary"
-        size="sm"
-        class="highlight-white/5 invisible group-hover:visible"
-        @click="resetElCSS(item)"
-      >
-        Reset
-      </UiButton>
+      <UiTooltip label="Copy changes">
+        <UiButton
+          variant="secondary"
+          size="icon-sm"
+          class="highlight-white/5 invisible group-hover:visible"
+          @click="copyChanges(item)"
+        >
+          <span v-if="item.id === isCopied">✅</span>
+          <CopyIcon v-else class="size-5" />
+        </UiButton>
+      </UiTooltip>
+      <UiTooltip label="Reset">
+        <UiButton
+          variant="secondary"
+          size="icon-sm"
+          class="highlight-white/5 invisible group-hover:visible"
+          @click="resetElCSS(item)"
+        >
+          <RotateCcwIcon class="size-5" />
+        </UiButton>
+      </UiTooltip>
     </li>
   </ul>
 </template>
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useAppProvider } from '../../content/ui/app-plugin';
-import getElProperties, {
-  ElementBasicSelector,
-} from '@root/src/utils/getElProperties';
+import { computed, shallowRef } from 'vue';
+import { RotateCcwIcon, CopyIcon } from 'lucide-vue-next';
+import { StyleDataItem, useAppProvider } from '../../content/ui/app-plugin';
+import getElProperties from '@root/src/utils/getElProperties';
 import UiElementSelector from '../ui/UiElementSelector.vue';
 import UiButton from '../ui/UiButton.vue';
 import { emitter } from '@root/src/lib/mitt';
 import { EL_ATTR_NAME } from '@root/src/utils/constant';
-
-interface StyleItem {
-  id: number;
-  selector: string;
-  basicSelector: ElementBasicSelector;
-}
+import { getAppliedCSS } from '@root/src/utils/get-applied-css';
+import { copyToClipboard } from '@root/src/utils/helper';
+import UiTooltip from '../ui/UiTooltip.vue';
 
 const appProvider = useAppProvider();
 
+const isCopied = shallowRef<number | string | null>(null);
+
 const elementCSS = computed(() => {
-  const styleData = appProvider.styleData;
-  const styles: StyleItem[] = [];
+  return Object.entries(appProvider.styleData.items).reduce<StyleDataItem[]>(
+    (acc, { 1: style }) => {
+      if (appProvider.styleData.dirtyItems.value[style.id]) {
+        acc.push(style);
+      }
 
-  for (const key in styleData.dirtyItems.value) {
-    const style = styleData.items[key];
-    if (!style) continue;
-
-    styles.push({
-      id: style.id,
-      selector: style.elSelector,
-      basicSelector: style.basicSelector,
-    });
-  }
-
-  return styles;
+      return acc;
+    },
+    [],
+  );
 });
 
 function selectElement(selector: string) {
@@ -88,9 +104,9 @@ function selectElement(selector: string) {
     el: element,
   });
 }
-function resetElCSS(item: Pick<StyleItem, 'id' | 'selector'>) {
+function resetElCSS(item: StyleDataItem) {
   const styleEl = document.querySelector(
-    `[${EL_ATTR_NAME.customStyle}="${item.selector}"]`,
+    `[${EL_ATTR_NAME.customStyle}="${item.elSelector}"]`,
   );
   if (!styleEl) return;
 
@@ -100,12 +116,21 @@ function resetElCSS(item: Pick<StyleItem, 'id' | 'selector'>) {
   appProvider.removeDirtyStyleItem(item.id);
 }
 function resetAll() {
-  const { styleData } = appProvider;
-  for (const key in styleData.dirtyItems.value) {
-    const item = styleData.items[key];
-    if (!item) continue;
+  elementCSS.value.forEach(resetElCSS);
+}
+function copyChanges(item?: StyleDataItem) {
+  const cssText = getAppliedCSS(item ? [item] : elementCSS.value).trim();
 
-    resetElCSS({ id: item.id, selector: item.elSelector });
-  }
+  copyToClipboard(cssText)
+    .then(() => {
+      isCopied.value = item?.id ?? 'all';
+      setTimeout(() => {
+        isCopied.value = null;
+      }, 1000);
+    })
+    .catch((error) => {
+      alert('Error when trying copy CSS to clipboard');
+      console.error(error);
+    });
 }
 </script>

@@ -136,18 +136,24 @@ const onCSSChange = debounce((detail: OnCSSChangeType) => {
   // TO-DO: use object-path
   switch (detail.type) {
     case 'main':
+      copyAppliedStyle.isDirty = true;
       copyAppliedStyle.cssText = detail.value;
       break;
     case 'media':
+      copyAppliedStyle.media[detail.index].isDirty = true;
       copyAppliedStyle.media[detail.index].cssText = detail.value;
       break;
     case 'pseudo':
+      copyAppliedStyle.pseudo[detail.index].isDirty = true;
       copyAppliedStyle.pseudo[detail.index].cssText = detail.value;
       break;
     case 'animation':
+      copyAppliedStyle.animation[detail.index].isDirty = true;
       copyAppliedStyle.animation[detail.index].cssText = detail.value;
       break;
     case 'media-pseudo':
+      copyAppliedStyle.media[detail.mediaIdx].pseudo[detail.index].isDirty =
+        true;
       copyAppliedStyle.media[detail.mediaIdx].pseudo[detail.index].cssText =
         detail.value;
       break;

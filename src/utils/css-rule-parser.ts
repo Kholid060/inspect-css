@@ -49,11 +49,18 @@ export interface ElementMediaCSSRule {
   mediaCondition?: string;
 }
 
+export interface ElementAppliedPseudoCSS {
+  pseudo: string;
+  cssText: string;
+  isDirty?: boolean;
+}
+
 export interface ElementAppliedCSS {
   cssText: string;
+  isDirty?: boolean;
   mediaCondition?: string;
   animation: AnimationKeyframeRule[];
-  pseudo: { cssText: string; pseudo: string }[];
+  pseudo: ElementAppliedPseudoCSS[];
 }
 
 export const extractCSSText = (cssText: string) =>
